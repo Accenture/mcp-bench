@@ -95,8 +95,7 @@ python ./utils/collect_mcp_info.py
 
 # 2. List available models
 source .env
-python run_benchmark.py --list-models \
---tasks-file tasks/mcpbench_tasks_single_runner_format.json
+python run_benchmark.py --list-models 
 
 # 3. Run benchmark (gpt-oss-20b as an example)
 ## run all tasks
