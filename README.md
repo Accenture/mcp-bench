@@ -11,6 +11,33 @@
 
 MCP-Bench is a comprehensive evaluation framework designed to assess Large Language Models' (LLMs) capabilities in tool-use scenarios through the Model Context Protocol (MCP). This benchmark provides an end-to-end pipeline for evaluating how effectively different LLMs can discover, select, and utilize tools to solve real-world tasks.
 
+## Leaderboard
+
+| Rank | Model | Overall Score |
+|------|-------|---------------|
+| 1 | gpt-5 | 0.749 |
+| 2 | o3 | 0.715 |
+| 3 | gpt-oss-120b | 0.692 |
+| 4 | gemini-2.5-pro | 0.690 |
+| 5 | claude-sonnet-4 | 0.681 |
+| 6 | qwen3-235b-a22b-2507 | 0.678 |
+| 7 | glm-4.5 | 0.668 |
+| 8 | gpt-oss-20b | 0.654 |
+| 9 | kimi-k2 | 0.629 |
+| 10 | qwen3-30b-a3b-instruct-2507 | 0.627 |
+| 11 | gemini-2.5-flash-lite | 0.598 |
+| 12 | gpt-4o | 0.595 |
+| 13 | gemma-3-27b-it | 0.582 |
+| 14 | llama-3-3-70b-instruct | 0.558 |
+| 15 | gpt-4o-mini | 0.557 |
+| 16 | mistral-small-2503 | 0.530 |
+| 17 | llama-3-1-70b-instruct | 0.510 |
+| 18 | nova-micro-v1 | 0.508 |
+| 19 | llama-3-2-90b-vision-instruct | 0.495 |
+| 20 | llama-3-1-8b-instruct | 0.428 |
+
+*Overall Score represents the average performance across all evaluation dimensions including rule-based schema understanding, LLM-judged task completion, tool usage, and planning effectiveness. Scores are averaged across single-server and multi-server settings.*
+
 ## Quick Start
 
 ### Installation
