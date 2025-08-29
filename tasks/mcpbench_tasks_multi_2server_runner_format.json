@@ -1,0 +1,878 @@
+{
+  "generation_info": {
+    "status": "completed"
+  },
+  "server_tasks": [
+    {
+      "server_name": "Paper Search+BioMCP",
+      "tasks": [
+        {
+          "task_id": "paper_search_biomcp_000",
+          "task_description": "Investigate the current research landscape and clinical investigations of the BRAF V600E mutation in melanoma treatment resistance. 1) Use BioMCP:think (thoughtNumber=1, totalThoughts=5) to outline the plan. 2) Retrieve gene annotation for BRAF with BioMCP:gene_getter (gene_id_or_symbol=\"BRAF\"). 3) Search MyVariant.info for the BRAF p.V600E variant using BioMCP:variant_searcher (gene=\"BRAF\", hgvsp=\"p.V600E\"). 4) If variant_searcher returns at least one record, fetch the top variant details with BioMCP:variant_getter (variant_id=<top_result.id>, include_external=true). 5) Search for recent research articles about BRAF V600E and melanoma treatment resistance with BioMCP:article_searcher (genes=[\"BRAF\"], variants=[\"V600E\"], diseases=[\"melanoma\"], keywords=[\"treatment resistance\"], include_preprints=true, page_size=5). 6) For the top two article identifiers returned, fetch full text and abstract with BioMCP:article_getter (pmid=<first_id>) and (pmid=<second_id>). 7) In parallel, use Paper Search:search_arxiv (query=\"melanoma BRAF V600E treatment resistance\", max_results=5). From its top result, download and extract the PDF text with Paper Search:download_arxiv (paper_id=<top_arxiv_id>, save_path=\"./downloads\") then Paper Search:read_arxiv_paper (paper_id=<top_arxiv_id>, save_path=\"./downloads\"). 8) Also use Paper Search:search_pubmed (query=\"melanoma BRAF V600E treatment resistance\", max_results=5). From the top two PMIDs, fetch abstracts via BioMCP:article_getter. 9) Identify ongoing clinical trials testing BRAF inhibitors in melanoma with BioMCP:trial_searcher (conditions=[\"Melanoma\"], interventions=[\"vemurafenib\"], phase=\"PHASE2\"). If no Phase 2 trials are returned, repeat trial_searcher with phase=\"PHASE3\". 10) For each NCT ID returned, get full trial details with BioMCP:trial_getter (nct_id=<nct_id>) and site locations with BioMCP:trial_locations_getter (nct_id=<nct_id>). 11) Search NCI’s trial organization database for cancer centers in Boston, MA using BioMCP:nci_organization_searcher (city=\"Boston\", state=\"MA\"). 12) Cross-match the list of trial site institutions against the Boston-area NCI organizations to highlight which local centers are conducting BRAF V600E melanoma trials. 13) Summarize and output a JSON report containing: gene_info, variant_info, literature_findings (titles, abstracts), arxiv_summary (extracted text snippets), pubmed_summaries, trial_list (NCT IDs, titles, phases), trial_locations, and boston_nci_orgs_conducting_trials.",
+          "fuzzy_description": "I’m working on a project about why melanoma patients with the BRAF V600E mutation so often become resistant to treatment, and I’m a bit stuck piecing everything together. I’d love to know:\n\n• What we actually know about that V600E change in BRAF – basic gene details, how it tweaks the protein’s function, and any hotspots or annotations researchers point to.  \n• The most important recent studies (including a couple of preprints if there’s anything interesting) that dive into resistance mechanisms. Can you give me their titles, abstracts or main take-home points, and any standout data?  \n• Which clinical trials are currently testing BRAF inhibitors in melanoma (ideally phase 2 or 3), plus their IDs, names, phases, and where they’re recruiting.  \n• And, almost as a bonus, whether any of those trial sites line up with the big cancer centers in Boston.\n\nI really need solid numbers and references—I can’t present this to my supervisor with just vague summaries. Thanks!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies: search→fetch→read chains for both servers; e.g., BioMCP:gene_getter output feeds variant_searcher; variant_searcher returns variant IDs for variant_getter; article_searcher/ search_pubmed produce PMIDs/DOIs consumed by article_getter; Paper Search:search_arxiv yields arXiv IDs for download_arxiv/read_arxiv_paper. Scenario-based dependencies: if variant_searcher returns no records, skip variant_getter; if no Phase2 trials, switch to Phase3. Parallel workflows: BioMCP article_searcher runs in parallel with Paper Search searches (arXiv and PubMed). Cross-server dependencies: PubMed PMIDs from Paper Search:search_pubmed are fetched via BioMCP:article_getter; arXiv preprints feed into Paper Search read pipeline; clinical trial site names from BioMCP:trial_locations_getter are matched against Boston NCI organizations returned by BioMCP:nci_organization_searcher. Critical decision points: variant existence triggers deep variant analysis; trial phase availability dictates branch to Phase3; cross-matching trial sites against local NCI orgs. The workflow requires strict sequential ordering where each tool’s output parameterizes the next, with conditional loops and parallel branches across both Paper Search and BioMCP servers.",
+          "distraction_servers": [
+            "FruityVice",
+            "Google Maps",
+            "Math MCP",
+            "Medical Calculator",
+            "National Parks",
+            "NixOS",
+            "OSINT Intelligence",
+            "OpenAPI Explorer",
+            "Unit Converter",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Paper Search",
+        "BioMCP"
+      ],
+      "combination_name": "Academic Research Duo",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Paper Search+BioMCP",
+      "tasks": [
+        {
+          "task_id": "paper_search_biomcp_001",
+          "task_description": "Perform a comprehensive analysis of BRAF V600E–targeted Phase 3 melanoma clinical trials and associated resistance mechanisms by integrating BioMCP and Paper Search tools. The agent should:\n\n1. Plan the research strategy using BioMCP:think.\n2. Retrieve gene annotation for BRAF with BioMCP:gene_getter (gene_id_or_symbol=\"BRAF\").\n3. Query MyVariant.info for the V600E variant with BioMCP:variant_searcher (gene=\"BRAF\", hgvsp=\"p.V600E\").\n4. Identify all ongoing or completed Phase 3 melanoma trials of BRAF inhibitors via BioMCP:trial_searcher (conditions=[\"melanoma\"], interventions=[\"BRAF inhibitor\"], phase=\"PHASE3\", page_size=10).\n5. For each returned NCT ID:\n   a. Extract protocol details with BioMCP:trial_protocol_getter.\n   b. Extract outcome measures with BioMCP:trial_outcomes_getter.\n   c. List all linked publications with BioMCP:trial_references_getter.\n   d. For each PMID from references, fetch title, abstract, and full text with BioMCP:article_getter.\n6. Search for preprints on resistance to BRAF therapy with Paper Search:search_biorxiv (query=\"BRAF V600E melanoma resistance\", max_results=5).\n7. For each bioRxiv DOI:\n   a. Download the PDF with Paper Search:download_biorxiv.\n   b. Extract text with Paper Search:read_biorxiv_paper.\n   c. Detect any novel protein-level variants matching pattern \"p.[A-Z][0-9]+[A-Z]\".\n   d. For each novel variant:\n      i. Query BioMCP:variant_searcher (hgvsp=<variant>, include_cbioportal=false).\n      ii. If significance=\"pathogenic\" and frequency_max<0.01, retrieve full annotations with BioMCP:variant_getter (variant_id=<variant>).\n8. If any trial outcome shows an adverse event rate above 20%, extract the drug names from the trial interventions and call BioMCP:drug_getter for each drug.\n9. Compile a JSON report containing:\n   • BRAF gene summary\n   • V600E variant frequency and clinical significance\n   • Phase 3 trial list with protocol summaries, outcome metrics, and publication abstracts\n   • Novel resistance variants with database annotations\n   • Drug profiles for interventions with high adverse event rates",
+          "fuzzy_description": "Hey, I’m prepping a report for my boss on BRAF V600E in melanoma and I’ve hit a wall. I really need to know how common that V600E swap is and what clinical impact it actually has. Then I want a clear rundown of the big Phase III trials testing BRAF inhibitors in melanoma—what each one showed on outcomes, whether any of them saw serious side-effect rates above about 20% (and if so, which drugs were involved), plus the key publications behind each trial. On top of that, I’ve heard whispers about brand-new protein-level tweaks that help tumors resist those drugs—some of it even only on preprint servers in the last few months. Could you dig up the hard numbers, abstracts or summaries (even DOIs or PubMed IDs), and basically give me solid, evidence-backed info I can actually cite? I don’t want just high-level chatter—I need real data for slides. Thanks!",
+          "dependency_analysis": "Key tool chains and data flow:\n• Initial planning with BioMCP:think to structure the workflow.\n• BioMCP:gene_getter → provides BRAF official annotation; output feeds into BioMCP:variant_searcher.\n• BioMCP:variant_searcher (gene and protein-level filters) → yields variant frequency and significance; conditional branch: if pathogenic and rare, invoke BioMCP:variant_getter.\n• BioMCP:trial_searcher → returns multiple NCT IDs; for each ID invoke three sequential getters (protocol, outcomes, references) to build trial dossiers.\n• BioMCP:trial_references_getter → yields PMIDs; each PMID drives BioMCP:article_getter for full text retrieval.\n• Paper Search:search_biorxiv → cross-server dependency: preprint DOIs feed download/read pipeline.\n• Paper Search:download_biorxiv → PDF path → Paper Search:read_biorxiv_paper → raw text; text mining yields novel variant patterns.\n• Novel variant strings → BioMCP:variant_searcher → conditional BioMCP:variant_getter if criteria met.\n• Outcome analysis introduces decision point: adverse events >20% triggers BioMCP:drug_getter calls for each implicated intervention drug.\n\nCritical decision points:\n1. Branch to variant_getter only for rare pathogenic variants.\n2. Branch to drug_getter only if adverse event threshold is exceeded.\n3. Loop over each trial and each preprint DOI sequentially, with outputs determining next calls.\n\nCross-server dependencies:\n– Literature and preprint text from Paper Search guides variant searches in MyVariant.info (BioMCP).\n– Trial-linked PubMed IDs from BioMCP feed into BioMCP:article_getter rather than Paper Search PubMed search.\n\nParallel vs sequential:\n– Trials processing is parallelizable per NCT but must sequence getters per trial.\n– Preprint download/read is sequential per DOI, then mining → variant queries.\n\nThis workflow cannot proceed without following the tool chain in order and reflecting conditional branches based on intermediate results.",
+          "distraction_servers": [
+            "DEX Paprika",
+            "FruityVice",
+            "Huge Icons",
+            "Math MCP",
+            "Medical Calculator",
+            "Movie Recommender",
+            "OKX Exchange",
+            "OSINT Intelligence",
+            "Weather Data",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "Paper Search",
+        "BioMCP"
+      ],
+      "combination_name": "Academic Research Duo",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Wikipedia+NASA Data",
+      "tasks": [
+        {
+          "task_id": "wikipedia_nasa_data_000",
+          "task_description": "Using NASA Data:get_notifications with notification_type=\"all\" for the past 7 days, retrieve all DONKI space weather notifications. From the response, identify each unique event category present: FLR (solar flares), CME (coronal mass ejections), GST (geomagnetic storms), SEP (solar energetic particles), MPC (magnetopause crossings), RBE (radiation belt enhancements), and HSS (high speed streams). For each category found:\n1. Filter that category’s notifications and select the one with the highest magnitude or intensity field; record its \"event_date\".\n2. Call the matching detailed NASA Data tool with start_date and end_date both set to that event_date:\n   • FLR → get_solar_flare\n   • CME → get_coronal_mass_ejection\n   • GST → get_geomagnetic_storm\n   • SEP → get_solar_energetic_particle\n   • MPC → get_magnetopause_crossing\n   • RBE → get_radiation_belt_enhancement\n   • HSS → get_hight_speed_stream\n3. From the detailed metrics output, keep the full JSON response.\n4. Use the category name (e.g., \"Solar flare\", \"Coronal mass ejection\") to query Wikipedia: call Wikipedia:search_wikipedia with that exact query and limit=5; pick the first title from the results.\n5. Call Wikipedia:summarize_article_for_query with the chosen title, query=\"impact on Earth\", max_length=250 to get a focused summary.\n6. Call Wikipedia:extract_key_facts with title, topic_within_article=\"impact on Earth\", count=5 to extract five key facts.\n7. Call Wikipedia:get_related_topics with title, limit=5 to list related topics.\n8. Construct a final JSON report with an array \"events\", where each element includes:\n   • \"category\": event category\n   • \"nasa_metrics\": JSON from step 2\n   • \"wiki_summary\": the 250-character summary\n   • \"wiki_key_facts\": list of five key facts\n   • \"wiki_related_topics\": list of five related topics\n   • \"validation\": a short statement comparing the NASA magnitude/intensity to Wikipedia’s described typical ranges or impacts (e.g., “The X9.3 flare magnitude matches Wikipedia’s definition of a severe solar flare”).",
+          "fuzzy_description": "I’m working on a little side project for my boss about last week’s space weather chaos. I know we had a mix of solar flares, CMEs, geomagnetic storms, particle events, magnetopause crossings and high-speed streams, but I really want to nail down exactly which single event in each category was the most intense over the past seven days and the precise date it happened. \n\nOnce we’ve got those peak events, could you pull in the full, raw metrics for each one so I’ve got the hard numbers? Then—just to make sure I’m not shooting in the dark—can you look up each type on Wikipedia (grab the first hit), give me a concise summary (around 200–250 characters) focused on its impact on Earth, extract about five key facts about those impacts, and suggest a few related topics I could dig into? Finally, I need a quick line for each event comparing our numbers to what Wikipedia calls “mild,” “moderate,” or “severe,” so I know if we really saw a monster flare or just a run-of-the-mill storm. \n\nI’ve got to present all this with real data and solid sources—no hand-waving—so any help would be awesome. Thanks!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies: NASA Data:get_notifications → parses to event categories → each category maps to a specific detailed NASA Data tool (get_solar_flare, get_coronal_mass_ejection, etc.). Wikipedia:search_wikipedia → returns a title → Wikipedia:summarize_article_for_query consumes the title and query → Wikipedia:extract_key_facts and Wikipedia:get_related_topics both consume the title. Scenario-based dependencies: the output of get_notifications dynamically determines which detailed NASA Data tools to invoke and with which event_date parameters. The NASA Data detailed outputs set the \"nasa_metrics\" branch. Each category name from NASA output drives the Wikipedia search query. Decision points: skip categories that do not appear in the notifications payload; within each category, select the notification with highest magnitude. Parallel vs sequential: get_notifications is the single entry point and must complete first; subsequent detailed NASA Data calls for each present category can run in parallel. After each NASA detail call, its result triggers a parallel chain of three Wikipedia calls. Cross-server dependencies: NASA Data outputs (event_date and category names) feed directly into the parameters for Wikipedia tools, and Wikipedia outputs (summaries, key facts) are used to validate or contextualize NASA metrics. Data flow: notifications → parse → per-category detail fetch → parse metrics → per-category Wikipedia search and analysis → combine into final report.",
+          "distraction_servers": [
+            "Context7",
+            "DEX Paprika",
+            "Game Trends",
+            "Google Maps",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "NixOS",
+            "OpenAPI Explorer",
+            "Paper Search",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Wikipedia",
+        "NASA Data"
+      ],
+      "combination_name": "Knowledge Explorer",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Wikipedia+NASA Data",
+      "tasks": [
+        {
+          "task_id": "wikipedia_nasa_data_001",
+          "task_description": "Analyze all near-Earth asteroids that made their closest Earth approach in the past 7 days, assess whether high solar flare activity coincided with their approach (potentially disrupting observations), and compile detailed background research on the top three hazard-ranked asteroids. Steps: 1) Call NASA Data:get_asteroids_feed with start_date = \"7 days ago\" to list all approaching asteroids. 2) For each asteroid in the feed, call NASA Data:get_asteroid_lookup using its NASA JPL ID to retrieve approach distance, velocity, estimated diameter, and hazard potential. 3) In parallel, call NASA Data:get_solar_flare with start_date = \"7 days ago\" and end_date = \"today\" to retrieve all solar flares in the same period. 4) For each asteroid, flag it as having an observational challenge if any solar flare of class M or higher occurred within ±1 day of its close approach date. 5) Rank asteroids by estimated diameter and select the top three that were flagged. 6) For each of these three asteroids: a) Call Wikipedia:search_wikipedia with query equal to the asteroid’s name to identify the main article title. b) Call Wikipedia:get_article to fetch full article content. c) Call Wikipedia:extract_key_facts with topic_within_article = \"orbit\" and count = 5. d) Call Wikipedia:summarize_article_section with section_title = \"Discovery\" and max_length = 200. 7) Produce a final report containing: • A table of all asteroids with columns: Name, Close Approach Date, Distance (km), Velocity (km/s), Estimated Diameter (m), Hazard Potential (yes/no), Observational Challenge Flag (yes/no). • For each of the top three flagged asteroids: key orbit facts list and a 200-word summary of the Discovery section. Output the report as JSON with two fields: “overview_table” (array of rows) and “detailed_background” (object keyed by asteroid name).",
+          "fuzzy_description": "I’ve got this astronomy assignment for my research group, and it’s been bugging me: I need to know which near-Earth rocks swung by in the past week, and whether any big solar storms might’ve garbled our telescope data. Basically, I want a rundown of every asteroid that made its closest pass in the last seven days—when it came by, how far it was, how fast it was going, how big it is, and whether it’s officially considered hazardous. Then, for each one, flag if an M-class (or stronger) flare popped off within about a day of its flyby, since that could’ve messed up observations.\n\nOnce we’ve got that list, I’m especially interested in the three most dangerous candidates—give me a handful of concrete orbit facts for each (like key numbers about their path), plus a roughly 200-word style summary of their discovery history. I’m going to pull all this together into a report, so I really need precise figures and real-source info—not just vague descriptions. Can you dig that up for me?",
+          "dependency_analysis": "Natural tool chains: get_asteroids_feed → get_asteroid_lookup produces detailed asteroid parameters. Parallel retrieval: get_solar_flare runs concurrently to gather solar flare events. Cross-server dependency: NASA Data outputs (asteroid names and approach dates) feed into Wikipedia:search_wikipedia queries. Wikipedia:get_article output is then consumed by extract_key_facts and summarize_article_section. Critical decision points: determining observational challenges by matching flare magnitude ≥ M within ±1 day of approach; filtering and ranking asteroids by estimated diameter and challenge flag. Sequential steps: feed → lookup → flare retrieval → matching logic → ranking → Wikipedia search → article fetch → fact extraction and section summarization. Parallel vs sequential: solar flare retrieval parallel to asteroid lookups; Wikipedia calls parallel across the top three asteroids. Cross-validation: hazard and flare matching validate potential observation disruptions. Iterative refinement: initial asteroid list refined by challenge flag and size ranking before deeper Wikipedia analysis.",
+          "distraction_servers": [
+            "Call for Papers",
+            "Context7",
+            "Google Maps",
+            "Huge Icons",
+            "NixOS",
+            "OKX Exchange",
+            "OSINT Intelligence",
+            "Paper Search",
+            "Reddit",
+            "Scientific Computing"
+          ]
+        }
+      ],
+      "servers": [
+        "Wikipedia",
+        "NASA Data"
+      ],
+      "combination_name": "Knowledge Explorer",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Google Maps+National Parks",
+      "tasks": [
+        {
+          "task_id": "google_maps_national_parks_000",
+          "task_description": "Plan a 3-day hiking and waterfall-viewing trip during the upcoming week for a group starting in Denver, CO. 1) Use Google Maps:maps_geocode to convert “Denver, CO” into latitude/longitude. 2) Use National Parks:findParks with stateCode=\"CO,UT,WY\" and activities=\"hiking\" to list candidate parks. 3) For each parkCode returned, call National Parks:getParkDetails to obtain the park’s coordinates. 4) For each park’s coordinates, call Google Maps:search_nearby with keyword=\"waterfall viewpoint\", radius=10000 m, minRating=4.0 to find nearby waterfall viewpoints. 5) For each waterfall placeId, call Google Maps:get_place_details to collect detailed ratings and verify it meets the minimum rating. 6) Use Google Maps:maps_distance_matrix with origins set to Denver’s coordinates and destinations set to each park’s coordinates (mode=\"driving\") to calculate driving durations; filter out parks with duration greater than 5 hours. 7) For remaining parkCodes, call National Parks:getAlerts to exclude any park with active closure alerts. 8) For still-valid parkCodes, call National Parks:getVisitorCenters and confirm at least one visitor center is open at 12:00 PM local time on any day during the upcoming week. 9) For those parks, call National Parks:getCampgrounds to confirm at least one campground is available. 10) Rank the remaining parks by the highest waterfall viewpoint rating obtained earlier, and select the top 2 parks. 11) For each selected park, take its campground(s) and compute distances from the campground to its top-rated waterfall viewpoint using Google Maps:maps_distance_matrix; pick the campground closest to that viewpoint. 12) For each selected campground, generate turn-by-turn directions from Denver, CO to the campground using Google Maps:maps_directions with departure_time=\"immediate\" and mode=\"driving\". 13) For each chosen campground location, call Google Maps:maps_elevation to obtain elevation data. 14) Produce a JSON itinerary listing for each of the two parks: park name, waterfall viewpoint name and rating, chosen campground name and amenities, driving distance and duration from Denver, turn-by-turn directions, and campground elevation.",
+          "fuzzy_description": "Hey, I’m trying to nail down a three-day hiking and waterfall road trip next week, starting from Denver. Ideally I want parks within about a five-hour drive where there’s at least one waterfall viewpoint rated around four stars or higher within roughly 10 km of the park’s core, no active closure alerts, a visitor center open around lunchtime for any last-minute trail info, and at least one campsite with vacancies. Could you pick the two best parks that check all those boxes, tell me the waterfall names and their ratings, point out which campground sits closest to each top waterfall, give me the drive distance and time from Denver, step-by-step directions if we head out right now, and even the elevation at the campsite? I really need actual numbers on ratings, distances, availability—nothing vague—so I can lock in our reservations.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "• maps_geocode → provides Denver coordinates as the origin for distance and directions tools.  \n• findParks → initial park list (parkCode) → getParkDetails to fetch each park’s lat/long (cross-server: NPS → Google Maps).  \n• getParkDetails output → used by search_nearby (Google Maps) to find waterfall viewpoints; ensures proper centering for local searches.  \n• search_nearby results → get_place_details → confirm and compare ratings; drives ranking and filtering of parks.  \n• parks’ coordinates + Denver coordinates → maps_distance_matrix → decision point: remove parks >5 hours drive.  \n• Remaining parkCodes → getAlerts → conditional branch: remove if any active closure alerts.  \n• Further remaining parkCodes → getVisitorCenters → conditional check: require at least one center open at midday in the upcoming week.  \n• Qualified parks → getCampgrounds → require at least one available campsite.  \n• Decision point: rank by waterfall rating → select top 2 parks.  \n• For each selected park: campground list + viewpoint coordinates → maps_distance_matrix to choose closest campground (nested dependency).  \n• Final steps for each campground: maps_directions for route planning, maps_elevation for site elevation.  \n• Sequence enforces deep chains, cross-validation between NPS and Google Maps data, multiple decision filters, parallel search → sequential refinement → final itinerary generation.",
+          "distraction_servers": [
+            "BioMCP",
+            "Call for Papers",
+            "Context7",
+            "FruityVice",
+            "Game Trends",
+            "Huge Icons",
+            "Metropolitan Museum",
+            "NixOS",
+            "OpenAPI Explorer",
+            "Paper Search"
+          ]
+        }
+      ],
+      "servers": [
+        "Google Maps",
+        "National Parks"
+      ],
+      "combination_name": "Travel Navigation",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Google Maps+National Parks",
+      "tasks": [
+        {
+          "task_id": "google_maps_national_parks_001",
+          "task_description": "Plan a detailed 5-day camping and exploration itinerary for the optimal national park located within 200 km of Denver, Colorado. The agent must:\n1. Use Google Maps:maps_geocode to convert “Denver, Colorado” into coordinates.\n2. Use National Parks:findParks to list all parks in stateCode=“CO” offering hiking and camping.\n3. For each park, call National Parks:getParkDetails to retrieve its main entrance coordinates.\n4. Use Google Maps:maps_distance_matrix (mode=driving) with origin=Denver coordinates and each park entrance to compute driving distances and durations.\n5. Filter to parks within 200 km driving distance and select the single park with the shortest drive time.\n6. For the chosen park:\n   a. Call National Parks:getParkDetails again to capture full description, boundaries, and official name.\n   b. Call National Parks:getAlerts (limit=10) to retrieve current alerts.\n   c. Call National Parks:getEvents for events in the upcoming 7 days.\n   d. Call National Parks:getVisitorCenters to list visitor centers and their operating hours.\n   e. Call National Parks:getCampgrounds to list all campgrounds in the park.\n7. From the campground list, pick the three whose geographic locations maximize elevation spread:\n   a. Use Google Maps:maps_elevation to fetch elevation for each campground’s latitude/longitude.\n   b. Rank campgrounds by the difference between their elevation and the lowest-elevation campground; select the top three.\n8. For each of the three selected campgrounds:\n   a. Use Google Maps:maps_reverse_geocode to identify the nearest town center.\n   b. Use Google Maps:search_nearby with center=that town’s coordinates, keyword=“restaurant”, radius=10000 m, openNow=true, minRating=4 to find up to five high-rated restaurants.\n   c. For the single highest-rated restaurant, compute driving distance and duration from the campground via Google Maps:maps_distance_matrix.\n   d. Retrieve turn-by-turn directions for that route via Google Maps:maps_directions.\n9. Construct a 5-day itinerary JSON with:\n   – park: parkCode, name, description, coordinates, alerts, events, visitorCenters\n   – campgrounds: array of three objects, each with name, coordinates, elevation, nearestTown, topRestaurant (name, rating, distance, duration, directions steps)\n   – itinerary: day-by-day schedule (Day 1 through Day 5), assigning one campground per day (Days 1–3 at each of the three selected campgrounds, Days 4–5 at a chosen visitor center base), with morning/afternoon/evening activities (arrival, visitor center tours, dining at the selected restaurant, and any scheduled event)\n\nThe output must be a single JSON object matching the above structure. All relative time spans should refer to “upcoming 7 days.”",
+          "fuzzy_description": "I’ve been itching to head out of Denver for a 5-day camping trip sometime in the next week, but I’m kind of torn on which national park makes the most sense. Ideally it’s no more than about a 200 km drive, offers solid hiking and camping, and has a visitor center where I can catch any talks or events going on that week. I’m also really curious about spending nights at camp spots that vary in elevation—maybe one high ridge, one mid-level meadow and one lower valley—just to see how the landscape and weather change. \n\nOn top of that, I don’t want to be stuck cooking at every stop, so it’d be awesome to know what town is nearest each campsite and where I can grab a good meal—not just any greasy spoon, but something rated at least four stars, and I need to know how long the drive is and exactly how to get there. In the middle of the trip I’d like to base myself at a visitor center for a couple of nights to break things up and dive into any ranger-led programs.\n\nCould you put together a day-by-day itinerary for the upcoming week that does all of that—picks the best park within a reasonable drive from Denver, highlights three campsites that maximize elevation differences, flags any alerts or events happening, finds the nearest town restaurants with ratings and drive times, and then lays out morning/afternoon/evening plans for each of the five days? I really need actual data on this—can’t go wandering off with just vague advice. Whatever you find, please back it up with real numbers or solid sources, okay?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent Tool Chains:\n- maps_geocode → provides coordinates for Denver → required by maps_distance_matrix and search_nearby.\n- findParks → yields parkCodes → used by getParkDetails, getAlerts, getEvents, getVisitorCenters, getCampgrounds.\n- getParkDetails → yields park entrance coordinates → input to maps_distance_matrix.\n- maps_distance_matrix → filters parks by distance → determines chosen park.\n- getCampgrounds → yields campground coordinates → input to maps_elevation and maps_reverse_geocode.\n- maps_elevation → provides elevation data → used to rank campgrounds.\n- maps_reverse_geocode → provides nearest town → center for search_nearby.\n- search_nearby → yields restaurants → select top candidate → used by maps_distance_matrix and maps_directions.\n\nScenario-Based Dependencies:\n- Decision Point 1: After computing drive times, select only parks ≤200 km and pick the single shortest drive.\n- Decision Point 2: From all campgrounds, compute elevation spread and choose top three with greatest elevation difference.\n- Conditional Workflow: If no restaurants meet minRating=4, fallback to restaurants with minRating=3 (not required if at least one exists).\n- Parallel vs Sequential: Steps 7–8 for each campground can be executed in parallel once campgrounds are ranked; earlier steps must be sequential.\n\nCross-Server Dependencies:\n- Google Maps output (Denver coords, distances) influences National Parks selection by distance.\n- National Parks:getCampgrounds outputs feed back into Google Maps tools (elevation, reverse_geocode, distance_matrix, directions).\n- Combined data from both servers must be cross-validated (e.g., ensure campground coords match park boundaries and that restaurant distances align with drive times).\n\nThis chain ensures the agent cannot skip any tool, as each output drives the next selection, filtering, or branching logic.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Car Price Evaluator",
+            "DEX Paprika",
+            "Game Trends",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "Movie Recommender",
+            "OKX Exchange",
+            "Paper Search",
+            "Reddit"
+          ]
+        }
+      ],
+      "servers": [
+        "Google Maps",
+        "National Parks"
+      ],
+      "combination_name": "Travel Navigation",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "NixOS+Context7",
+      "tasks": [
+        {
+          "task_id": "nixos_context7_000",
+          "task_description": "You are tasked with designing a fully reproducible Nix-based development environment for a Python web application that uses Python 3.10, Flask, Redis, and Docker. Your environment must work on NixOS (channel 25.05), Home Manager, and nix-darwin (macOS). Finally, fetch documentation snippets for the Flask library from Context7. Produce a single JSON summary with: channel metadata, overall stats, chosen package names with NixOS version and commit hashes, Home Manager configuration options, nix-darwin configuration options, chosen NixOS flake metadata (or fallback if none), and a 500-token snippet of Flask routing documentation.\n\nSteps to follow:\n1. Call nixos_channels and pick the channel \"25.05\". 2. Call nixos_stats for channel \"25.05\". 3. For each of the four core components (\"python3\", \"flask\", \"redis\", \"docker\"):  \n   a. Call nixos_search(query=<name>, search_type=\"packages\", limit=1, channel=\"25.05\").  \n   b. Call nixos_info(name=<exact package name from search>, type=\"package\", channel=\"25.05\").  \n   c. For the \"python3\" package, verify commit hash: call nixhub_find_version(package_name=\"python3\", version=\"3.10.5\"). If not found, call nixhub_package_versions(package_name=\"python3\", limit=10) to retrieve latest history.  \n4. Call home_manager_search(query=\"programs.python\", limit=5) and home_manager_options_by_prefix(option_prefix=\"programs.docker\").  \n5. Call home_manager_stats.  \n6. Call darwin_search(query=\"programs.python\", limit=5) and darwin_options_by_prefix(option_prefix=\"programs.docker\").  \n7. Call darwin_stats.  \n8. Call nixos_flakes_stats, then nixos_flakes_search(query=\"poetry\", limit=10). If at least one flake is returned, select the top result and include its metadata; otherwise note that no poetry flake was found and proceed without.  \n9. Use resolve-library-id(libraryName=\"flask\") to get a Context7-compatible library ID, then get-library-docs(context7CompatibleLibraryID=<returned ID>, topic=\"routing\", tokens=500).  \n10. Compile a JSON report containing:  \n   • channel: name and status  \n   • channel stats: total packages/options counts  \n   • for each core component: NixOS package name, version, NixHub commit hash  \n   • Home Manager: selected options and descriptions  \n   • nix-darwin: selected options and descriptions  \n   • flake: chosen flake name, owner, description (or fallback note)  \n   • Flask routing docs snippet (max 500 tokens)",
+          "fuzzy_description": "I’ve been banging my head trying to get a Flask-based web app running in a totally reproducible way across our team’s setups. We need Python 3.10, Flask itself, Redis, and Docker all coming from the same Nix channel (we’re on 25.05), plus config snippets that play nicely with Home Manager on Linux laptops and nix-darwin on macOS. On top of that, my lead wants a tiny excerpt—like 500 words or so—on how Flask routing works to stick in our README. \n\nWhat would really help is if you could pull together:\n• A quick snapshot of the 25.05 channel (how big it is, broadly speaking)  \n• The exact Nix package names and versions for python3, flask, redis, and docker, ideally with the commit or revision that pins them  \n• The main Home Manager options we should set for Python and Docker, with their descriptions  \n• The equivalent nix-darwin settings so my mac-using teammate can just drop them in  \n• Whether there’s a Poetry flake out there we can lean on (or a note if none exist)  \n• And finally, about 500 tokens’ worth of official Flask routing docs so I can paste it straight into our project guide  \n\nIf you could wrap all of that up as a single JSON I can hand off to my team, that’d save me hours of guesswork—and give me the hard data I need to prove this setup will actually work everywhere. Thanks!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "• NixOS channel selection chain: nixos_channels → nixos_stats (sequential).  \n• Core package chain (per component): nixos_search → nixos_info → (conditional) nixhub_find_version or nixhub_package_versions. Version info from nixos_info informs NixHub calls.  \n• Home Manager chain: home_manager_search → home_manager_options_by_prefix → home_manager_stats (sequential, parallel within HM).  \n• nix-darwin chain: darwin_search → darwin_options_by_prefix → darwin_stats (sequential, parallel within Darwin).  \n• Flake chain: nixos_flakes_stats → nixos_flakes_search → conditional branch (if no poetry flake, skip metadata).  \n• Context7 chain: resolve-library-id → get-library-docs (sequential, cross-server dependency: package name “flask” from NixOS -> Context7).  \n• Cross-validation: Python version from nixos_info is validated against NixHub commit history; missing versions trigger alternative historical lookup.  \n• Decision points: missing poetry flake triggers fallback; missing Python commit triggers version history lookup.  \n• Data flow: outputs from NixOS tools feed parameters into NixHub and Context7, and feed into Home Manager and Darwin searches to ensure consistent naming across all layers.  \n• Parallel vs sequential: Home Manager and Darwin searches can run in parallel after core NixOS package resolution; Context7 docs retrieval must wait for package name resolution.  \n• Cross-server: NixOS outputs (package names, versions) drive NixHub and Context7 queries, ensuring unified environment definition across Linux and macOS configuration layers.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Call for Papers",
+            "Car Price Evaluator",
+            "FruityVice",
+            "Hugging Face",
+            "NASA Data",
+            "National Parks",
+            "OSINT Intelligence",
+            "Scientific Computing",
+            "Unit Converter"
+          ]
+        }
+      ],
+      "servers": [
+        "NixOS",
+        "Context7"
+      ],
+      "combination_name": "Dev Environment",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "NixOS+Context7",
+      "tasks": [
+        {
+          "task_id": "nixos_context7_001",
+          "task_description": "Audit and document the MongoDB service setup on NixOS (unstable) and fetch its upstream indexing documentation. Perform the following steps in sequence:\n\n1. List all available NixOS channels and confirm the unstable channel is active.\n2. Retrieve statistics for the unstable channel (package and option counts).\n3. Search for the ‘mongodb’ package in the unstable channel and identify the exact package name and latest version.\n4. Get detailed info on the ‘mongodb’ package to extract its version string.\n5. Use NixHub to find the commit hash corresponding to that exact MongoDB version for reproducible builds.\n6. Browse Home Manager options with the prefix ‘services.mongodb’ to determine how to enable the MongoDB service in home configurations.\n   • If no Home Manager options are found, fall back to listing nix-darwin options with the same prefix.\n7. Resolve the Context7 library ID for ‘mongodb’ to locate the official MongoDB documentation endpoint.\n8. Fetch up to 2,000 tokens of the ‘indexing’ section from the MongoDB docs via Context7.\n\nExpected output format:\n- A summary table of channels and the unstable channel status.\n- Unstable channel stats (total packages/options).\n- The exact MongoDB package name and version.\n- The NixHub commit hash for that version.\n- A list of available Home Manager options for ‘services.mongodb.enable’ (or fallback nix-darwin options).\n- The Context7 library ID chosen and a 2000-token excerpt of the ‘indexing’ topic from MongoDB docs.",
+          "fuzzy_description": "Hey, I’m setting up a NixOS box on the unstable branch for a project that needs MongoDB, but I’m not even 100% sure I’m on unstable right now. I’d love to double-check which channels are active and get a feel for how big the unstable channel is these days (packages and options count, roughly). After that, I want to know exactly which MongoDB package is shipped there today, grab its precise version string, and pin down the commit hash behind that build so I can keep things fully reproducible. \n\nOnce I know that, I need to enable MongoDB via Home Manager—though if there isn’t a `services.mongodb` option there I might have to fall back to checking nix-darwin. And finally, I really need a solid excerpt (around two thousand tokens or so) from the official MongoDB docs on indexing. \n\nI can’t walk into a planning meeting with “it should work”—I need actual numbers, commands or logs, commit IDs, and a real doc snippet. Can you pull all that together?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "We build a linear, multi-server chain with decision points and cross-validation:\n\n1. NIXOS SERVER: Start with nixos_channels() to enumerate channels → feeds into step 2.\n2. NIXOS SERVER: nixos_stats(channel=\"unstable\") → confirms unstable channel viability and provides context for search volume.\n3. NIXOS SERVER: nixos_search(query=\"mongodb\", search_type=\"packages\", channel=\"unstable\") → returns candidate package names → choose ‘mongodb’.\n4. NIXOS SERVER: nixos_info(name=\"mongodb\", type=\"package\", channel=\"unstable\") → extracts exact version string for downstream use.\n5. NIXHUB SERVER: nixhub_find_version(package_name=\"mongodb\", version=<version from step 4>) → yields commit hash for reproducibility.\n6. HOME MANAGER SERVER: home_manager_options_by_prefix(option_prefix=\"services.mongodb\") → lists how to enable MongoDB in Home Manager.\n   • Decision Point: if output is empty → go to step 7; else record Home Manager options and skip step 7.\n7. DARWIN SERVER: darwin_options_by_prefix(option_prefix=\"services.mongodb\") → fallback listing of nix-darwin service options.\n8. CONTEXT7 SERVER: resolve-library-id(libraryName=\"mongodb\") → returns Context7-compatible library ID (e.g. '/mongodb/docs').\n9. CONTEXT7 SERVER: get-library-docs(context7CompatibleLibraryID=<ID from step 8>, topic=\"indexing\", tokens=2000) → retrieves the docs excerpt.\n\nKey points:\n- Strict sequencing: each step’s output provides inputs for the next.\n- Conditional branch between Home Manager and nix-darwin listings ensures coverage across both Nix-based configuration tools.\n- Cross-server dependency: the version discovered on NixOS drives the NixHub query; the package name drives Context7 resolution.\n- Provides cross-validation of service options across Home Manager and nix-darwin before fetching external docs.",
+          "distraction_servers": [
+            "BioMCP",
+            "Call for Papers",
+            "FruityVice",
+            "Google Maps",
+            "Hugging Face",
+            "Math MCP",
+            "OKX Exchange",
+            "OSINT Intelligence",
+            "Scientific Computing",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "NixOS",
+        "Context7"
+      ],
+      "combination_name": "Dev Environment",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Google Maps+Weather Data",
+      "tasks": [
+        {
+          "task_id": "google_maps_weather_data_000",
+          "task_description": "You are planning a one-day walking tour in Seattle, starting from your hotel in Downtown Seattle. You must use Google Maps and Weather Data tools to build a complete itinerary, select the optimal travel day based on forecast, and verify routes by both walking and driving. Follow these steps and return a final JSON with sections: “coffee_shops” (top 3 with name, address, rating), “selected_day” (date and weather summary), “current_weather” (temperature, conditions, humidity, wind), “itinerary” (ordered list of legs with origin, destination, mode, departure_time, duration), and “viewpoint” (formatted_address, elevation_meters):\n\n1. Geocode “Downtown Seattle” to get starting coordinates.\n2. Search nearby with keyword “Pike Place Market” within a 2000 m radius of those coordinates.\n3. Get place details for the Pike Place Market placeId.\n4. From the Pike Place coordinates, search nearby with keyword “coffee shop”, radius 500 m, minRating 4.5.  \n5. From that list, select the top 3 by rating and get place details for each.\n6. Use Weather Data search_locations_tool with query “Seattle” to confirm the city name.\n7. Call get_current_weather_tool and get_live_temp for “Seattle” to cross-validate current temperature and conditions.\n8. Call get_weather_forecast_tool for “Seattle” for the next 7 days. From the returned daily forecasts, pick the first day with zero precipitation probability and average temperature between 15 °C and 25 °C. If no day meets both, choose the day with the lowest precipitation probability.\n9. Geocode “Kerry Park viewpoint, Seattle” to get viewpoint coordinates.\n10. For the chosen travel day:\n   a. Get walking directions from your hotel (Downtown Seattle coords) to Pike Place Market, departing at 09:00 local time on that day.\n   b. Get walking directions from Pike Place Market to the highest-rated coffee shop, departing at 09:30 on that day.\n   c. Get walking directions from that coffee shop to Kerry Park viewpoint, departing at 10:00 on that day.\n11. Get a driving distance matrix from your hotel to Kerry Park viewpoint to compare driving duration.\n12. Get elevation for the Kerry Park viewpoint coordinates.\n13. Reverse geocode the viewpoint coordinates to obtain its formatted address.\n\nReturn a single JSON object with keys: “coffee_shops”, “selected_day”, “current_weather”, “itinerary”, and “viewpoint”.",
+          "fuzzy_description": "I’m heading to Seattle for just one day soon and staying right in downtown. I really want to start my morning at Pike Place Market, grab coffee at the highest-rated spot nearby, then finish up at that famous skyline overlook (you know, the one everyone snaps on Instagram). \n\nProblem is, I’m not sure which day in the next week will give me a dry window with temps around 15–25 °C. And I’d like to know what Seattle’s weather looks like right now, too—temperature, humidity, wind, all that. \n\nOnce we’ve nailed down the best day, could you sketch out a walking plan? Something like leaving my hotel around 9 am to Pike Place, then strolling over to the top coffee shop around 9:30, and then hiking up to Kerry Park by 10. I’d also love to see how those walking times compare to just driving straight from the hotel to Kerry Park, purely for kicks. And finally, what’s the exact address of that viewpoint and its elevation above sea level?\n\nI really need actual numbers and solid details—can’t go showing up with just guesses!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent and scenario-based dependencies:\n- Geocoding → Nearby Search: maps_geocode('Downtown Seattle') provides coords for search_nearby('Pike Place Market').\n- Nearby Search → Place Details: search_nearby('coffee shop') yields placeIds used by get_place_details in parallel for top 3.\n- Geocode → Coordinates for viewpoint: maps_geocode('Kerry Park viewpoint, Seattle') feeds maps_elevation and maps_reverse_geocode.\n- Weather Data cross-server: search_locations_tool('Seattle') standardizes city name for get_current_weather_tool, get_live_temp and get_weather_forecast_tool.\n- Forecast → Decision point: select travel day based on precipitation and temperature thresholds; fallback to lowest precipitation day if needed.\n- Forecast → Directions parameters: chosen date sets departure_time ISO strings for maps_directions calls.\n- Directions → Verification: maps_distance_matrix(driving) cross-validates driving time to viewpoint alongside walking directions durations.\n- Parallel vs sequential: geocode→search_nearby→get_place_details chains are sequential; fetching details for 3 coffee shops runs in parallel; current weather and legacy live temp calls run in parallel; directions for each leg must run sequentially in itinerary order.\n- Cross-validation: current_weather_tool vs get_live_temp outputs are compared to ensure consistency.\n- Data flow: coords from geocode feed all mapping tools; forecast data feeds decision logic and parameters for directions; elevation and reverse_geocode feed final viewpoint info.\nUsing all Google Maps tools and all Weather Data tools creates a deep dependency chain and conditional branches around weather-based day selection.",
+          "distraction_servers": [
+            "Context7",
+            "DEX Paprika",
+            "FruityVice",
+            "Math MCP",
+            "Medical Calculator",
+            "NASA Data",
+            "National Parks",
+            "OSINT Intelligence",
+            "OpenAPI Explorer",
+            "Unit Converter"
+          ]
+        }
+      ],
+      "servers": [
+        "Google Maps",
+        "Weather Data"
+      ],
+      "combination_name": "Location Services",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Google Maps+Weather Data",
+      "tasks": [
+        {
+          "task_id": "google_maps_weather_data_001",
+          "task_description": "Using only the provided tools, plan a one-day food and sightseeing itinerary in downtown Seattle that includes:\n\n1. Morning coffee: find the top-rated cafe (rating ≥4.5) currently open within 1 km of “downtown Seattle.”\n2. Midday lunch: from that cafe’s location, find a restaurant (rating ≥4.0) within a 15-minute walk (≤1 km) that is open at 12:00 noon, and select the highest-rated one.\n3. Afternoon sightseeing: from the chosen restaurant’s location, find the two highest-rated tourist attractions (rating ≥4.5) within 2 km.\n4. Weather check: fetch today’s weather forecast for Seattle. If precipitation is forecasted, plan the afternoon sightseeing on foot; otherwise plan by bicycle.\n5. Directions: generate turn-by-turn directions for\n   a. the walking route from the cafe to the restaurant,\n   b. the afternoon route from the restaurant to attraction #1,\n   c. the afternoon route from attraction #1 to attraction #2,\n   using the chosen travel mode.\n6. Elevation analysis: get elevation for the cafe, restaurant, and both attractions, compute the elevation gain for each leg (cafe→restaurant, restaurant→attraction #1, attraction #1→attraction #2), and flag any segment with a gain >50 m.\n\nReturn a final itinerary in JSON with place names, addresses, ratings, opening hours at the relevant times, travel times, chosen travel mode, weather summary, directions steps, elevation values, and any elevation-gain warnings.",
+          "fuzzy_description": "Hey, I’m heading to Seattle this weekend with just one full day to explore downtown, and I’d love your help piecing together the perfect itinerary. I’d like to start my morning at a really top-rated coffee shop that’s actually open when I arrive—ideally within about a kilometer of the city center—and then around noon stroll over to the best lunch spot you can find within a 15-minute walk of that café. After lunch, I want to spend the afternoon hitting two must-see attractions, both highly rated and within a couple of kilometers of the restaurant.\n\nI’m also debating whether to walk or rent a bike for the afternoon, so could you check today’s weather forecast and recommend the best travel mode? And because I’m not a fan of brutal uphill battles, it’d be awesome if you could give me turn-by-turn directions for each leg and flag any climbs over roughly 50 meters in elevation. \n\nCould you send me a detailed plan—place names, addresses, ratings, opening hours at the times I need them, travel times, chosen travel mode, a quick weather summary, step-by-step directions, elevation numbers, and any warning about steep stretches? I really need solid numbers and facts, since I’m going to follow it exactly.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Key tool chains and data flow:\n• maps_geocode('downtown Seattle') → coords_center → search_nearby(center=coords_center, keyword='cafe', radius=1000, openNow=true, minRating=4.5) → cafe_list. Select top-rated cafe → get_place_details(placeId) to confirm hours and obtain full address and exact coordinates.\n\n• search_nearby(center=cafe_coords, keyword='restaurant', radius=1500, minRating=4.0) → restaurant_list. Parallel calls:\n  – maps_distance_matrix(origins=[cafe_address], destinations=restaurant_addresses, mode='walking') → distances & times → filter for ≤1000 m & ≤15 min\n  – get_place_details(placeId) for each candidate → operating hours → filter for open at 12:00\nSelect highest-rated valid restaurant → record its address & coords.\n\n• search_nearby(center=restaurant_coords, keyword='tourist attraction', radius=2000, minRating=4.5) → attraction_list. Select top two by rating → get_place_details for each → yields full address & coordinates.\n\nCross-server dependency & decision point:\n• get_weather_forecast_tool(city='Seattle', days=1) → forecast_data. If forecast_data includes precipitation, set travel_mode='walking'; else travel_mode='bicycling'.\n\n• maps_directions(origin=cafe_address, destination=restaurant_address, mode='walking') for morning; then\n  maps_directions(origin=restaurant_address, destination=attraction1_address, mode=travel_mode) and\n  maps_directions(origin=attraction1_address, destination=attraction2_address, mode=travel_mode).\n\n• maps_elevation(locations=[cafe_coords, restaurant_coords, attraction1_coords, attraction2_coords]) → elevations. Compute elevation gain per leg and flag any gain >50 m.\n\nSequential requirements:\n1→2→3→4→5→6. Parallel branches within step 2 for distance_matrix and get_place_details. Cross-validation: hours from get_place_details vs openNow filter. Weather tool output determines travel_mode for maps_directions. All data flows are strictly from one tool’s output into the next tool’s input, ensuring no external dependencies.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "BioMCP",
+            "Car Price Evaluator",
+            "FruityVice",
+            "Huge Icons",
+            "Movie Recommender",
+            "NixOS",
+            "OKX Exchange",
+            "Paper Search",
+            "Scientific Computing"
+          ]
+        }
+      ],
+      "servers": [
+        "Google Maps",
+        "Weather Data"
+      ],
+      "combination_name": "Location Services",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "DEX Paprika+OKX Exchange",
+      "tasks": [
+        {
+          "task_id": "dex_paprika_okx_exchange_000",
+          "task_description": "Conduct a multi-network arbitrage analysis for the token 'UNI' by executing the following steps:\n\n1. Call DEX Paprika:getNetworks to confirm supported networks.\n2. Search for the token 'UNI' across all networks using DEX Paprika:search with {\"query\": \"UNI\"}. Extract the tokenAddress for each network from the search results.\n3. Filter down to exactly the 'ethereum', 'polygon', and 'binance-smart-chain' networks and their corresponding UNI tokenAddress values.\n4. For each of these three networks:\n   a. Call DEX Paprika:getTokenDetails with the network and tokenAddress to confirm token metadata.\n   b. Call DEX Paprika:getTokenPools with network, tokenAddress, page=0, limit=5, sort='desc', orderBy='volume_usd' to retrieve the top 5 liquidity pools trading UNI.\n   c. For each of the top 5 pools returned:\n      i. Call DEX Paprika:getPoolDetails with network and poolAddress to fetch current pool price_usd.\n     ii. Call DEX Paprika:getPoolOHLCV with network, poolAddress, start='past 7 days', interval='24h', limit=7 to retrieve daily OHLCV for the past week.\n    iii. In parallel, call OKX Exchange:get_price with {\"instrument\": \"UNI-USDT\"} to get the latest spot price, and OKX Exchange:get_candlesticks with {\"instrument\": \"UNI-USDT\", \"bar\": \"1D\", \"limit\": 7} to retrieve the last 7 daily candlesticks.\n     iv. Compute the average pool close price from the 7 OHLCV points and the average OKX close price from candlesticks. Calculate the average percentage price difference between each pool and OKX.\n      v. If the average percentage price difference exceeds 2%, call DEX Paprika:getPoolTransactions with network, poolAddress, page=0, limit=20 to gather the 20 most recent transactions for liquidity depth analysis.\n5. Aggregate all findings into a JSON table with fields: network, poolAddress, DEX identifier, average pool price (USD), average OKX price (USD), average percentage difference, and average swap size in USD (if transaction analysis was triggered).\n6. Highlight all pools where the average percentage difference is above 2%.",
+          "fuzzy_description": "Hey, I’m looking into whether there’s any easy arbitrage for UNI right now on its main chains—Ethereum, Polygon, and BSC—over the past week. I know some pools on those networks can trade a bit above or below what UNI goes for on OKX’s UNI-USDT pair, but I’m not sure how big those gaps really are. Could you pull the biggest UNI pools by volume on each chain, figure out their average daily closing price for the last seven days, and then compare that to OKX’s average daily close? If any of those pools are drifting more than about 2% from OKX, I’d also like to see what kind of trade sizes or liquidity they’ve actually seen recently so I can tell if there’s enough depth to make a move. I need real numbers—average pool price, average OKX price, percent differences, and any swap-size or volume details for the outliers—because I’m trying to build a quick, data-driven arbitrage playbook. Thanks!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies: DEX Paprika:getNetworks must run first to list network IDs, which are then used by DEX Paprika:search to find UNI tokenAddress across networks. The tokenAddress outputs feed into getTokenDetails and getTokenPools. getTokenPools returns poolAddress values that sequentially feed getPoolDetails, getPoolOHLCV, and—conditionally based on price gap—getPoolTransactions. Parallel cross-validation: for each pool, OKX Exchange:get_price and get_candlesticks run in parallel using the 'UNI-USDT' instrument. Data flow: network→tokenAddress→pool list→pool details & OHLCV→computed price difference→conditional transaction analysis. Key decision points: filtering to three specific networks; selecting top 5 pools by volume_usd; gating getPoolTransactions calls if average pool vs OKX price difference >2%. Cross-server dependency: pool prices and historical OHLCV from DEX Paprika are compared against live and historical OKX data to identify arbitrage gaps.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "BioMCP",
+            "Car Price Evaluator",
+            "Game Trends",
+            "Math MCP",
+            "NixOS",
+            "Paper Search",
+            "Scientific Computing",
+            "Unit Converter",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "DEX Paprika",
+        "OKX Exchange"
+      ],
+      "combination_name": "Crypto Trading",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "DEX Paprika+OKX Exchange",
+      "tasks": [
+        {
+          "task_id": "dex_paprika_okx_exchange_001",
+          "task_description": "You are tasked with performing a deep liquidity and price correlation analysis for the leading Ethereum-based DEX pool and cross-validating its price dynamics against OKX market data.  Follow these steps exactly:\n\n1. Retrieve high-level DEX ecosystem statistics.\n2. List all supported networks and confirm Ethereum is available.\n3. On Ethereum, fetch all DEXes and identify the one with the highest total pool count.\n4. For that DEX, retrieve its pools sorted by USD volume (descending) and select the top pool.\n5. Get detailed information for that top pool, including the two constituent token addresses.\n6. For each token in the pool, fetch full token details (symbol, decimals).\n7. Pull the pool’s OHLCV history for the past 30 days with 24h intervals.\n8. On OKX Exchange, determine the appropriate instrument symbol by combining the two token symbols (e.g., TOKENA-TOKENB).\n9. Fetch 1-day interval candlesticks for that instrument over the past 30 days.\n10. Compute the Pearson correlation coefficient between the pool’s closing price (from OHLCV) and OKX’s closing price series.\n11. Identify any days where the price divergence (absolute difference) exceeded 2% of the OKX closing price.\n12. Retrieve the latest 10 transactions for the pool and summarize the volume and transaction types per day.\n\nProduce a JSON report containing:\n- ecosystemStats: result of step 1\n- chosenNetwork: network ID used\n- chosenDex: DEX ID and name with highest pool count\n- topPool: address, volume_usd, token0, token1\n- tokenDetails: array of both token detail objects\n- poolOhlcv: full 30-day OHLCV array\n- okxCandles: full 30-day candlestick array\n- priceCorrelation: correlation coefficient\n- divergenceDays: array of dates with >2% divergence and percent difference\n- recentTransactions: array of the 10 transaction objects grouped by date with totals",
+          "fuzzy_description": "Hey, I’ve been digging into DeFi for a project and I’m trying to figure out if a major liquidity pool on Ethereum really moves in step with the same pair on OKX. I’d love to get a feel for the overall DEX scene (make sure Ethereum’s in there), see which Ethereum exchange has the most pools, and then home in on that single biggest pool by dollar volume. Once we’ve got that, I want the token pair info, plus a daily on-chain price series for the past month, alongside OKX’s daily candles for the same pair. From there I’m hoping to crunch a correlation coefficient and call out any days where the on-chain price was off by more than 2%. And as a final touch, a quick rundown of the last ten swaps in that pool—volumes and types grouped by day—would really seal the deal. I need real numbers and dates so I can show my team something solid, not just gut feelings. Does that make sense?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "This task requires a strict sequential and cross-server workflow:\n\n• Step 1 → getStats: Establish baseline ecosystem metrics.\n• Step 2 → getNetworks: Must always run first to obtain valid network IDs; we verify “ethereum” exists.\n• Step 3 → getNetworkDexes: Consumes network=“ethereum”; paginates through pages to find which DEX has the highest pool count field (in output meta).\n• Step 4 → getDexPools: Feeds “ethereum” and chosen dex ID; sorted by volume_usd desc; select index 0.\n• Step 5 → getPoolDetails: Uses network and poolAddress from the top pool to fetch constituent token addresses.\n• Step 6 → getTokenDetails: Two parallel calls (one per tokenAddress) on the same network; results yield symbol and decimals for OKX instrument construction.\n• Step 7 → getPoolOHLCV: Uses network and poolAddress; start=\"past 30 days\", interval=\"24h\"; returns daily price series.\n• Steps 8–9 → OKX get_candlesticks: Cross-server dependency: derive instrument from Paprika token symbols (token0-symbol + “-” + token1-symbol); fetch 1D bars for past 30 days.\n• Step 10–11: Post-processing: correlate time-aligned close prices; compute Pearson coefficient; detect absolute divergence >2% per day.\n• Step 12 → getPoolTransactions: Final sequential call using network and poolAddress; limit=10; summarizes volumes and types by date.\n\nCritical decision points:\n- Choosing the DEX with the largest pool count from getNetworkDexes output.\n- Selecting the top pool by descending volume from getDexPools.\n- Instrument string formation for OKX based directly on Paprika token symbols.\n\nParallel vs sequential:\n- Token detail fetches can run in parallel once poolDetails returns.\n- All other steps form a strict chain.\n\nCross-server dependency:\n- Paprika token metadata drives OKX instrument queries.\n- Paprika OHLCV and OKX candlesticks are cross-validated via correlation and divergence analysis.",
+          "distraction_servers": [
+            "BioMCP",
+            "Car Price Evaluator",
+            "Math MCP",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "NASA Data",
+            "NixOS",
+            "Reddit",
+            "Unit Converter",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "DEX Paprika",
+        "OKX Exchange"
+      ],
+      "combination_name": "Crypto Trading",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Metropolitan Museum+Wikipedia",
+      "tasks": [
+        {
+          "task_id": "metropolitan_museum_wikipedia_000",
+          "task_description": "Investigate all Claude Monet paintings tagged “Impressionism” in the European Paintings department at the Metropolitan Museum. First, list departments and identify the departmentId for “European Paintings.” Then search for objects with q=\"Impressionism\", departmentId=<found id>, hasImages=true. Retrieve each object’s metadata and image, filter to those where artistDisplayName is “Claude Monet.” For each Monet painting, search Wikipedia for the painting title (fallback to \"painting title + Claude Monet\" if no direct match). For the matched article, get a general summary, a summary focused on “Impressionism,” and a summary of the “Composition” section. Extract the top 3 key facts about composition techniques. Cross-validate the objectDate and medium from the museum metadata against information in the Wikipedia summaries. Produce a report listing for each painting: title, objectDate, medium, image availability, matched Wikipedia article title, general summary, Impressionism-focused summary, composition section summary, 3 key composition facts, and a validation flag indicating whether date and medium match between sources.",
+          "fuzzy_description": "I’ve been putting together a little talk on Monet’s Impressionist works and I’m really curious about what the Met has in its European Paintings section. I’m not even sure how many of his pieces there are tagged as “Impressionism” and have images you can actually look at, so could you dig into that catalog for me? Then, for each Monet painting you find, I’d love if you could hunt down the matching Wikipedia entry (and if the title alone doesn’t link, try “painting title + Claude Monet”), grab a quick overview of the work, anything the article says specifically about its Impressionist style, and whatever it says under “Composition.” From that last bit, could you pull out the top three compositional techniques Monet used? Oh, and one more thing—please double-check that the date and medium the Met lists match what’s on Wikipedia. I need solid, sourced details for my presentation—no guessing, just real metadata and Wikipedia citations, okay?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "1. list-departments → identify departmentId for “European Paintings.” 2. search-museum-objects(q=\"Impressionism\", departmentId, hasImages=true) → objectIds. 3. For each objectId: get-museum-object → metadata (artistDisplayName, title, objectDate, medium, image). Decision point: filter metadata for artistDisplayName==\"Claude Monet\"; non-Monet paintings are dropped. 4. For each Monet painting: Wikipedia:search_wikipedia(query=objectTitle, limit=5) → candidate article titles. Decision: if no exact title match, fallback to search with \"objectTitle + Claude Monet.\" 5. For selected article: Wikipedia:get_summary(title) for overall context. 6. Wikipedia:summarize_article_for_query(title, query=\"Impressionism\") → focused summary. 7. Wikipedia:get_sections(title) → list sections; decision: locate \"Composition\" or similar section. 8. Wikipedia:summarize_article_section(title, section_title=\"Composition\") → composition summary. 9. Wikipedia:extract_key_facts(title, topic_within_article=\"Composition techniques\", count=3) → key composition facts. 10. Cross-server validation: compare museum metadata (objectDate, medium) with facts in Wikipedia summaries; flag matches or discrepancies. Sequential chain: departments → search objects → fetch objects → per-object Wikipedia fetches → per-article summaries and fact extraction → final report. Cross-server dependency: museum metadata drives Wikipedia query parameters and cross-validates factual consistency. Parallelism: steps 4–9 can run independently for each Monet painting after initial filtering.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "BioMCP",
+            "Context7",
+            "DEX Paprika",
+            "FruityVice",
+            "Game Trends",
+            "Huge Icons",
+            "Hugging Face",
+            "NASA Data",
+            "OKX Exchange"
+          ]
+        }
+      ],
+      "servers": [
+        "Metropolitan Museum",
+        "Wikipedia"
+      ],
+      "combination_name": "Cultural Knowledge",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Metropolitan Museum+Wikipedia",
+      "tasks": [
+        {
+          "task_id": "metropolitan_museum_wikipedia_001",
+          "task_description": "Evaluate the representation and historical context of New Kingdom Egyptian chairs in the Metropolitan Museum of Art and compare their materials and design features against scholarly descriptions from Wikipedia.\n\nSteps:\n1. List all Met Museum departments to find the ID for “Egyptian, Classical, Ancient Near Eastern Art.”\n2. Search that department for objects with query “chair” and images.\n3. Retrieve details for the first three matching chairs and extract their “Period” and “Materials.”\n4. Filter those chairs by “New Kingdom” in their period. If fewer than two qualify, repeat search in the same department for “stool” and “footrest” with images, and gather until two New Kingdom items are found.\n5. From the two New Kingdom chairs, select the one with the richest materials list as the representative artifact.\n6. Search Wikipedia for “Ancient Egyptian furniture” (limit 5) and select the article titled “Ancient Egyptian furniture.”\n7. Get the summary of that article.\n8. Extract the top five key facts focused on “New Kingdom” furniture.\n9. Retrieve the sections of the article and summarize the “Construction and materials” section (max_length 150).\n10. Get up to five related topics for further scholarly context.\n11. Compare the materials list of the Met chair against the Wikipedia key facts materials. Flag any materials present in the artifact but not mentioned in the Wikipedia facts as potential anomalies.\n\nProduce a structured report including:\n- Department name and ID\n- List of candidate chairs (ID, title, period, materials)\n- Selected representative chair (with image URL) and its metadata\n- Wikipedia summary\n- Extracted key facts on New Kingdom furniture\n- Summarized “Construction and materials” section\n- Related topics\n- Comparison table of materials with anomalies flagged",
+          "fuzzy_description": "I’m putting together a small art-history spotlight on seating in New Kingdom Egypt—specifically what’s on view at the Met—and I’m a bit stuck on how to pull everything together. My professor wants me to pick out an example piece from the Met’s Egyptian section, but I’m not even sure what they call that department or how to find chairs with pictures in their collection. Once I have a few candidates, I need to know their dates (make sure they’re really New Kingdom) and exactly what they’re made of. If there aren’t enough chairs, I might have to slip in a stool or footrest to hit at least two examples, and then choose the one with the most elaborate materials list as my main focus.\n\nAfter that, I have to see what Wikipedia says about Ancient Egyptian furniture—grab the article summary, pull out the top five insights specifically about New Kingdom pieces, and boil down the “Construction and materials” bit into a quick blurb. It’d also help to know a handful of related topics I could mention for extra context. Finally, I need to check if my chosen Met object uses any materials that don’t show up in those Wikipedia facts—those could be neat anomalies to point out.\n\nI really need actual Met IDs, image links, periods, materials lists, the Wikipedia summary, key New Kingdom facts, that short construction/materials paragraph, related topics, and a note on any unmatched materials. Can you help me track it all down? I can’t go to my professor with guesses—gotta have real data or solid sources.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Key tool chains and data flow:\n• Sequential chain: list-departments → obtain departmentId → search-museum-objects with departmentId → get-museum-object for metadata extraction → conditional filtering → optional repeated search-museum-objects → selection of representative object → get-museum-object (with returnImage) → Wikipedia:search_wikipedia → Wikipedia:get_summary → Wikipedia:extract_key_facts → Wikipedia:get_sections → Wikipedia:summarize_article_section → Wikipedia:get_related_topics.\n\nCritical decision points:\n• After initial chair search, filter by period “New Kingdom.” If fewer than two items, trigger a fallback search for “stool” and “footrest.”\n• Selection of the representative artifact based on the length of materials list.\n• Matching of materials against Wikipedia key facts to flag anomalies.\n\nParallel vs sequential requirements:\n• Parallel: Retrieving details for the first three chairs can happen in parallel to speed metadata extraction.\n• Sequential: Wikipedia calls must follow after selecting representative chair.\n\nCross-server dependencies:\n• Met Museum departmentId output feeds into Met Museum search.\n• Met Museum object metadata (period, materials) influences Wikipedia queries (focus on New Kingdom furniture).\n• Wikipedia key facts and section summaries are cross-validated against Met object materials to identify anomalies.\n\nThis workflow demands tight dependencies across tools and conditional branching that cannot be completed without understanding each tool’s inputs and outputs.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Call for Papers",
+            "DEX Paprika",
+            "Game Trends",
+            "Hugging Face",
+            "Medical Calculator",
+            "Movie Recommender",
+            "OSINT Intelligence",
+            "Reddit",
+            "Unit Converter"
+          ]
+        }
+      ],
+      "servers": [
+        "Metropolitan Museum",
+        "Wikipedia"
+      ],
+      "combination_name": "Cultural Knowledge",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Scientific Computing+Math MCP",
+      "tasks": [
+        {
+          "task_id": "scientific_computing_math_mcp_000",
+          "task_description": "You are given a 3×3 covariance matrix for three financial assets and a 3×1 expected returns vector. Perform the following steps:\n1. Create the covariance matrix named “cov_matrix” with values [0.04, 0.006, 0.014, 0.006, 0.09, 0.02, 0.014, 0.02, 0.16].\n2. Create the expected returns vector named “exp_returns” with values [0.08, 0.12, 0.10].\n3. View “cov_matrix” to verify its contents.\n4. Compute the determinant of “cov_matrix”.\n   • If the determinant is zero, scale “cov_matrix” in place by a factor of 1.001 and recompute the determinant until it is non-zero.\n5. Compute eigenvalues and right eigenvectors of the (possibly scaled) “cov_matrix”.\n6. Identify the largest and smallest eigenvalues, then compute the condition number = (largest)/(smallest) using Math MCP division.\n   • If the condition number > 100, compute the SVD of “cov_matrix”, then assemble its pseudoinverse by computing 1/singular values (Math MCP division), forming a diagonal matrix, and multiplying V^T, diagonal, and U^T via multiply_matrices and transpose.\n   • Otherwise, compute the regular matrix inverse of “cov_matrix”.\n7. Multiply the inverse or pseudoinverse by “exp_returns” to compute the portfolio weight vector “weights”.\n8. Project “exp_returns” onto the principal eigenvector (the eigenvector corresponding to the largest eigenvalue) using vector_project, naming the result “proj_return”.\n9. Cross-validate that the weights sum to 1 by taking the dot product of “weights” with a ones vector [1,1,1] using vector_dot_product.\n\nProvide:\n- The nonzero determinant after any scaling.\n- The condition number.\n- Whether you used inverse or pseudoinverse.\n- The final inverse or pseudoinverse matrix.\n- The weight vector “weights”.\n- The projected return “proj_return”.\n- The dot-product sum of weights.",
+          "fuzzy_description": "I’m working on a mini portfolio analysis for a class project and could use some help untangling the math. I’ve got three assets with expected returns of 0.08, 0.12 and 0.10, and I estimated their covariance matrix as:\n\n[0.04 0.006 0.014  \n 0.006 0.09 0.02  \n 0.014 0.02 0.16]\n\nWhen I peeked at the determinant, I worried it might be zero or really small, so I thought I might gently bump the whole matrix by 0.1% until it’s safely nonzero. After that, I’d like to get its eigenvalues and eigenvectors, figure out the largest and smallest eigenvalue, and compute the condition number. If it turns out to be over 100, I’ll need to go the SVD route and build a pseudoinverse; otherwise a regular inverse should do. Once I’ve got whichever inverse is appropriate, I want to multiply it by the return vector [0.08, 0.12, 0.10] to see what portfolio weights pop out. I’m also curious to project the return vector onto the principal eigenvector (the one tied to the biggest eigenvalue) and then verify my weights sum to 1 by dotting them with [1,1,1].\n\nCould you walk me through all of that and give me the actual numbers? Specifically:  \n• The nonzero determinant after any tiny scaling  \n• The condition number  \n• Whether you ended up using an inverse or a pseudoinverse  \n• The full inverse (or pseudoinverse) matrix  \n• The final weight vector  \n• The projected return onto that top eigenvector  \n• And the dot‐product sum of the weights  \n\nI really need concrete figures—no hand-waving—because I have to show this to my professor and can’t just say “it works out.” Thanks!",
+          "dependency_analysis": "Inherent dependencies: create_tensor produces both the 3×3 covariance matrix and the 3×1 returns vector, which view_tensor reads. The determinant tool consumes the covariance tensor. The determinant output controls whether scale_matrix is called (if det=0). After scaling, determinant is recomputed on the updated tensor. compute_eigen reads the (possibly scaled) covariance matrix and yields eigenvalues and eigenvectors. Scenario-based branching: the eigenvalue array is processed by selecting max and min values and passed to Math MCP:division to compute the condition number. A decision point tests if condition number>100; if true, svd_decompose is invoked and its output (U, S, V^T) is used with transpose and multiply_matrices and Math MCP:division (for 1/S) to assemble the pseudoinverse. If false, matrix_inverse is invoked. The chosen inverse or pseudoinverse is then multiplied with the returns vector via multiply_matrices. vector_project projects the returns onto the principal eigenvector. Finally, vector_dot_product cross-validates the weight sum. Cross-server dependencies: Sci Computing eigenvalues feed into Math MCP division; the scalar condition number from Math MCP determines which Sci Computing matrix inversion workflow to follow. The entire workflow is sequential with a key decision branch at step 6, but includes iterative loops (re-scaling until det≠0) and cross-validation at the end.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Context7",
+            "FruityVice",
+            "Hugging Face",
+            "Movie Recommender",
+            "NASA Data",
+            "National Parks",
+            "OpenAPI Explorer",
+            "Reddit",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "Scientific Computing",
+        "Math MCP"
+      ],
+      "combination_name": "Science Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Scientific Computing+Math MCP",
+      "tasks": [
+        {
+          "task_id": "scientific_computing_math_mcp_001",
+          "task_description": "You are given two 3×3 matrices A and B and a 3-element vector v:\n\n• Matrix A: [[4, 2, 1], [0, 3, -1], [2, 0, 1]]\n• Matrix B: [[1, 0, 2], [0, 2, 0], [1, 0, 1]]\n• Vector v: [1, 2, 3]\n\nPerform the following steps, using the provided Scientific Computing and Math MCP tools in sequence:\n\n1. Create tensors A, B, and v in the tensor store.\n2. Compute C = A + B (element-wise addition).\n3. Compute D = C – A (element-wise subtraction).\n4. Compute the inverse of B, B_inv = B⁻¹.\n5. Compute E = D @ B_inv (matrix multiplication).\n6. Compute the eigenvalues and eigenvectors of E.\n7. Perform SVD on E to obtain its singular values.\n8. Compute the condition number κ(E) = (largest singular value)/(smallest singular value) using Math MCP division.\n9. If κ(E) > 5.0, scale E in place by factor α = 1/κ(E) (so the new condition number ≤ 1). Otherwise, leave E unchanged. Use Math MCP division to compute α and Scientific Computing scale_matrix to apply it.\n10. Rename or view the (possibly) scaled matrix as E_scaled. Perform a fresh SVD on E_scaled and recompute κ(E_scaled) to confirm κ(E_scaled) ≤ 5.0.\n11. Change the basis of E_scaled into its eigenvector basis (the Q from the eigen decomposition) using change_basis.\n12. Project the original vector v onto the first eigenvector of E using vector_project.\n13. Compute the dot product between that projection and the original v using vector_dot_product.\n14. Compute the rank and determinant of E_scaled.\n15. Aggregate and return a JSON object with:\n   • eigenvalues (list), eigenvectors (matrix)\n   • original κ(E) and new κ(E_scaled)\n   • whether scaling was applied and the scale factor α\n   • the new basis representation of E_scaled\n   • the projection vector and dot product result\n   • the rank and determinant of E_scaled\n\nThe task must be executed step-by-step, respecting each tool’s input/output dependencies and performing the conditional scaling branch exactly once based on the computed condition number.",
+          "fuzzy_description": "I’m working on a linear algebra exercise for my thesis advisor and could really use some hard numbers. I’ve got two 3×3 matrices—one is  \n[4, 2, 1; 0, 3, –1; 2, 0, 1]  \nand the other is  \n[1, 0, 2; 0, 2, 0; 1, 0, 1]—plus the vector [1, 2, 3].  \n\nWhat I’m trying to do is mix those matrices together, invert that second one, multiply it all out, and then dig into its eigenvalues, eigenvectors, and singular values so I can calculate the condition number. If that condition number comes out above 5.0, I need to scale the matrix by exactly 1 over that number to stabilize it, then check again to make sure it’s under 5. After that I want to switch into the eigenvector basis of the scaled matrix, project my [1, 2, 3] vector onto the top eigenvector, take the dot product with the original [1, 2, 3], and finish by finding the rank and determinant of the scaled matrix.  \n\nCould you walk me through all the key results—every intermediate matrix (sum, inverse, etc.), the eigen- and singular-value details, the original and (if needed) adjusted condition numbers with the exact scaling factor, the basis-transformed matrix, the projection vector, the dot product, plus the final rank and determinant—so I’ve got real data to back up my write-up?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent tool chains:\n- create_tensor → view_tensor/delete_tensor for managing stored matrices and vectors.\n- add_matrices & subtract_matrices require two existing tensor names.\n- matrix_inverse requires a square tensor to invert.\n- multiply_matrices takes two existing tensors for A @ B operations.\n- compute_eigen and svd_decompose both consume a stored square matrix and output decompositions.\n- scale_matrix can update an existing tensor in place or return a new tensor.\n- change_basis transforms a matrix given a set of basis vectors.\n- vector_project and vector_dot_product operate on stored vectors and require explicit vector inputs or other stored vectors.\n- rank and determinant analyze a square tensor’s properties.\n\nScenario-based dependencies:\n- C = A + B must follow create_tensor for A and B. D = C – A follows C’s creation.\n- B_inv = matrix_inverse(B) must wait until B exists.\n- E = multiply_matrices(D, B_inv) depends on both D and B_inv.\n- Eigen and SVD decompositions both consume E; the SVD output feeds into computing the condition number.\n- The computed largest and smallest singular values are extracted and passed to Math MCP:division to compute κ(E).\n- A decision point: if κ(E) > 5.0 (numeric comparison), then compute α = division(1.0, κ(E)) and call scale_matrix(name=E, scale_factor=α, in_place=true).\n- Following scaling, we re-decompose E_scaled with svd_decompose to verify κ(E_scaled) ≤ 5.0.\n- change_basis uses eigenvectors from compute_eigen; vector_project uses the first eigenvector and the stored vector v; vector_dot_product uses the projection output and v.\n- rank and determinant both analyze E_scaled and must follow its final state.\n\nCross-server dependencies:\n- Scientific Computing provides singular values; Math MCP:division is used to compute α = 1/κ(E) and to compute κ(E) itself as max_singular/min_singular.\n- The numeric result from Math MCP:division drives the conditional branch in Scientific Computing (scale_matrix).\n\nSequential vs. Parallel:\n- Most operations are strictly sequential (each step consuming the prior step’s outputs).\n- Eigen decomposition and SVD of E could theoretically run in parallel, but the SVD result is needed for the condition check, so they are sequenced.\n\nCritical decision points:\n- Determining whether κ(E) > 5.0.\n- Selecting whether to call scale_matrix or skip it.\n- Verifying post-scale condition number.\n\nThis task cannot be completed without understanding the chain: creation → basic algebra → inversion → multiplication → decomposition → cross-server arithmetic → conditional scaling → re-analysis → basis change → vector operations → final property extraction.",
+          "distraction_servers": [
+            "BioMCP",
+            "Car Price Evaluator",
+            "DEX Paprika",
+            "FruityVice",
+            "Game Trends",
+            "Google Maps",
+            "Metropolitan Museum",
+            "National Parks",
+            "Paper Search",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Scientific Computing",
+        "Math MCP"
+      ],
+      "combination_name": "Science Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Hugging Face+Paper Search",
+      "tasks": [
+        {
+          "task_id": "hugging_face_paper_search_001",
+          "task_description": "A natural language processing researcher needs to select a lightweight, open‐license transformer for named entity recognition (NER) and pair it with a well‐established NER dataset. Then they want to confirm the dataset’s popularity in recent publications and finally find an interactive Hugging Face Space for live benchmarking. Do the following:\n\n1. Use Hugging Face:search-models with query=\"ner\" and tags=\"token-classification\", limit=10 to retrieve up to 10 candidate NER models.\n2. For each returned model_id, call Hugging Face:get-model-info and filter to those with license exactly \"apache-2.0\" and weight_size (in bytes) less than 2_000_000_000 (≈2 GB).\n3. Use Hugging Face:search-datasets with query=\"ner\" and tags=\"token-classification\", limit=5 to retrieve up to 5 NER datasets.\n4. For each returned dataset_id, call Hugging Face:get-dataset-info and record its total number of examples (sum of all splits).\n5. Select the dataset with the highest total number of examples; call it SELECTED_DATASET.\n6. Cross-validate SELECTED_DATASET’s popularity:\n   a. Call Paper Search:search_arxiv with query=\"SELECTED_DATASET named entity recognition\" and max_results=5.  \n   b. For each returned paper, call Paper Search:read_arxiv_paper to extract text, count how many papers mention SELECTED_DATASET exactly by its dataset_id.  \n   c. If fewer than 3 papers mention SELECTED_DATASET, call Paper Search:search_pubmed with the same query and max_results=5 and count mentions there.  \n   d. Total publication mentions = arXiv_mentions + PubMed_mentions (if any).\n7. Using SELECTED_DATASET, call Hugging Face:search-spaces with query=\"ner-evaluation\" , sdk=\"gradio\" , limit=3 to find interactive demos.\n8. For the top returned space_id, call Hugging Face:get-space-info to retrieve its URL and description.\n\nProduce a final JSON report with keys:\n• selected_models: list of { model_id, license, weight_size }  \n• selected_dataset: { dataset_id, total_examples }  \n• publication_mentions: integer (total from arXiv and PubMed)  \n• interactive_space: { space_id, sdk, url }\n",
+          "fuzzy_description": "I’m knee-deep in a little side project on named entity recognition for my thesis and hitting a wall. I’d love to pick a really lightweight transformer—something under about 2 GB so it doesn’t swallow my laptop—and it has to be full open-license so I can share everything. Then I want to use a “classic” NER dataset with plenty of examples to give my results some weight. On top of that, I’m curious how many recent papers actually mention whichever dataset I choose—you know, to prove it’s still a popular benchmark. Finally, it’d be amazing to play around with a live demo in the browser so I can sanity-check my setup. \n\nCan you walk me through your top recommendations? I’m after the model name/ID, its license type and file size, the dataset name/ID with total example count, a ballpark of how often it’s been cited in the past few months, plus a link to an interactive demo. Really need real numbers and solid sources—I can’t bring vague guesses to my advisor!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies:\n• HF search-models → get-model-info: to filter by license and size.\n• HF search-datasets → get-dataset-info: to retrieve example counts.\n• HF search-spaces → get-space-info: to retrieve space details.\n• Paper Search search_arxiv → read_arxiv_paper: to extract text and count dataset mentions.\n\nScenario‐based dependencies:\n1. The shortlist of model_ids from search-models feeds get-model-info for filtering – a sequential chain.\n2. The dataset_id chosen from get-dataset-info sets the query parameter for search_arxiv and, conditionally, search_pubmed.\n3. arXiv mention count decides whether to invoke PubMed search – a decision branch (if mentions < 3 → fallback to search_pubmed).\n4. The final selected dataset_id also drives the HF search-spaces call (reusing SELECTED_DATASET in the query), linking dataset selection to interactive demo lookup.\n\nParallel vs Sequential:\n• Model filtering chain and dataset discovery chain are two parallel pipelines initially.\n• Cross-validation (search_arxiv, read_arxiv_paper, optional search_pubmed) is a conditional sequential pipeline triggered by dataset selection.\n\nCross-server dependencies:\n• HF dataset_id → Paper Search search_arxiv query.\n• Publication mention results from Paper Search drive a conditional re-query on another Paper Search server (PubMed).\n• HF spaces search uses the HF dataset selection – reinforcing the HF→Paper Search→HF flow.\n\nThis task cannot be completed without following these tool chains, decision points, and cross-server data flows.",
+          "distraction_servers": [
+            "DEX Paprika",
+            "FruityVice",
+            "Game Trends",
+            "Math MCP",
+            "Medical Calculator",
+            "NASA Data",
+            "NixOS",
+            "OpenAPI Explorer",
+            "Reddit",
+            "Unit Converter"
+          ]
+        }
+      ],
+      "servers": [
+        "Hugging Face",
+        "Paper Search"
+      ],
+      "combination_name": "AI Research",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Hugging Face+Paper Search",
+      "tasks": [
+        {
+          "task_id": "hugging_face_paper_search_002",
+          "task_description": "Develop a production-ready sentiment analysis pipeline for COVID-19 clinical trial reports using Hugging Face Hub resources and academic paper sources. Execute the following steps in order:\n\n1. Use Hugging Face search-models with {\"query\":\"sentiment-analysis\",\"author\":\"huggingface\",\"tags\":\"text-classification\",\"limit\":5} to find 5 candidate models.\n2. From the returned list, take the top 3 model_ids and call get-model-info on each to retrieve model_size (GB), inference_speed (examples/sec), and architecture details.\n3. Use Hugging Face search-datasets with {\"query\":\"clinical trial\",\"tags\":\"text-classification\",\"limit\":3} to find 3 candidate datasets.\n4. For the top 2 dataset_ids, call get-dataset-info to obtain num_examples and label_distribution.\n5. If either dataset has fewer than 1000 examples, re-run search-datasets with {\"query\":\"medical reports\",\"tags\":\"text-classification\",\"limit\":2} to find additional datasets, then call get-dataset-info on those until you have at least two datasets each ≥1000 examples.\n6. Merge the selected datasets and verify total num_examples ≥2000. If still below 2000, perform one more search-datasets with {\"query\":\"healthcare reports\",\"tags\":\"text-classification\",\"limit\":2} and repeat get-dataset-info.\n7. Use Hugging Face search-collections with {\"owner\":\"nvidia\",\"item\":\"datasets\",\"query\":\"covid19\",\"limit\":2} to find up to 2 collections. For each, call get-collection-info to extract included dataset_ids and example counts; if a collection offers ≥500 examples, add it to the merged dataset.\n8. Call get-daily-papers to retrieve today’s list of curated papers. Filter for titles containing “COVID-19” from the past 3 months. If fewer than 5 papers meet this criterion, call Paper Search search_pubmed with {\"query\":\"COVID-19 clinical trial\",\"max_results\":10} and Paper Search search_arxiv with {\"query\":\"COVID-19 clinical trial\",\"max_results\":10} to supplement the list.\n9. For each selected paper:\n   a. If it has an arXiv ID, call download_arxiv with that ID, then read_arxiv_paper to extract full text.\n   b. If it only has a PubMed ID, call download_pubmed (note: PDF download is unsupported) and skip text extraction.\n10. Preprocess all extracted paper texts into a unified corpus of at least 5 documents.\n11. For each of the 3 candidate models from step 2, compute a suitability score = inference_speed (examples/sec) ÷ model_size (GB). Rank models by this score and select the top-scoring model_id.\n12. Use Hugging Face search-spaces with {\"query\":\"covid-sentiment-demo\",\"sdk\":\"gradio\",\"limit\":2} to find existing demo spaces. For each, call get-space-info to identify missing interface features (e.g., batch upload, live metrics).\n13. Propose a new Space configuration. Specify:\n    • space_id: a new name “covid-sentiment-pipeline”\n    • selected_model_id\n    • merged_dataset_ids (list)\n    • corpus_size (number of extracted documents)\n    • inference_config (batch_size, max_length)\n    • gradio components (text_input, sentiment_output, example_selector)\n\nExpected output: A JSON object with keys: selected_model_id, total_dataset_examples, number_of_papers_processed, final_score_ranking (list of model_ids and scores), proposed_space_name, and space_components (listing each configured component).",
+          "fuzzy_description": "Hey, I’ve got to throw together a quick proof-of-concept sentiment tool for COVID-19 clinical trial reports by next week and I’m a bit stuck on the kickoff steps. Basically, I want to pick a few popular pre-trained sentiment models from the usual public hubs, compare how big they are on disk versus how many documents they can process per second, then pick the one that gives me the best speed-to-size trade-off.  \n\nNext, I need to pull together at least 2,000 trial-report texts from open datasets and supplement that with about five real COVID clinical-trial papers from the past three months—if the curated feeds don’t have enough, I’ll have to dive into preprint servers to top up. Once I’ve preprocessed everything into a mini-corpus, I want to spin up a simple web demo that can handle batch uploads and show live sentiment metrics.\n\nIn the end, I need a clear summary I can show my team:  \n• Which model I picked (with its size and throughput)  \n• Total number of data examples I’m working with  \n• How many papers made it into the corpus  \n• A ranking of the candidate models by their speed-to-size ratio  \n• A sketch of the demo’s key features/components  \n\nCould you help me pull together all those numbers and outline the final setup with real, evidence-backed figures? I really need concrete stats to convince everyone this has legs.",
+          "dependency_analysis": "Inherent dependencies:\n- HF: search-models → get-model-info for detailed model metadata.\n- HF: search-datasets → get-dataset-info for dataset statistics.\n- HF: search-collections → get-collection-info to augment datasets.\n- HF: get-daily-papers → identify paper IDs → Paper Search download_arxiv → read_arxiv_paper (text extraction); fallback to search_pubmed when arXiv yields insufficient results.\n- HF: search-spaces → get-space-info to inspect existing demos.\n\nScenario-based dependencies & data flow:\n- Model_info outputs (model_size, inference_speed) feed into a scoring function to rank and select the best model.\n- Dataset_info (num_examples) triggers conditional loops: if <1000 examples, re-search with alternate queries until thresholds (per-dataset ≥1000, total ≥2000) are met.\n- Collection_info outputs provide extra dataset_ids and example counts; adding collections is conditional (≥500 examples).\n- get-daily-papers results determine whether to use arXiv download/read or fallback to PubMed search for paper content.\n- Parallel processing of multiple paper downloads/readers merges into a single text corpus.\n- The corpus size and dataset sizes inform model suitability scoring.\n\nCritical decision points & branches:\n- Dataset size check (<1000) → conditional re-search.\n- Total dataset size check (<2000) → additional search iteration.\n- Paper count check (<5) → fallback searches on PubMed and arXiv.\n- Model scoring → selection of top-scoring model.\n\nCross-server interactions:\n- HF dataset_info thresholds drive additional Paper Search steps if content volume is low.\n- Paper Search content feeds back to HF pipeline for model evaluation.\n- HF Space search validates demo features before proposing a new Space.\n\nThis workflow demands strict sequencing, conditional loops, parallel downloads, cross-validation, and deep chaining across both Hugging Face and Paper Search servers.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Car Price Evaluator",
+            "DEX Paprika",
+            "FruityVice",
+            "Google Maps",
+            "NASA Data",
+            "OKX Exchange",
+            "OSINT Intelligence",
+            "Reddit",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "Hugging Face",
+        "Paper Search"
+      ],
+      "combination_name": "AI Research",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "National Parks+Weather Data",
+      "tasks": [
+        {
+          "task_id": "national_parks_weather_data_000",
+          "task_description": "Using the National Parks and Weather Data tools, plan a 3-day hiking and camping trip within the next 7 days at national parks in California (CA) and Oregon (OR) that offer both hiking and camping. Execute the following sequence:\n1. Search for parks in CA and OR with activities \"hiking,camping\" (limit to 5 parks).\n2. For each park returned:\n   a. Get detailed park information to extract the nearest city name.\n   b. Retrieve current alerts to detect any closures or hazards.\n   c. List available campgrounds to confirm at least one campsite.\n   d. Find upcoming events scheduled within the next 7 days.\n   e. Obtain a 7-day weather forecast for the park’s nearest city.\n3. Exclude any park if it has active closure alerts, no campgrounds, or any forecast day with precipitation chance over 50%.\n4. For remaining parks, compute each park’s average daily high temperature over the forecast period and rank parks from coolest to warmest.\n5. Produce a final JSON itinerary of the top 3 parks, including: parkCode, park name, selected campground name(s), one highlighted event (if any), the forecast day with lowest precipitation chance (day of week and precip %), and the average high temperature.",
+          "fuzzy_description": "I’m trying to plan a quick three-day hiking and camping getaway sometime in the next week, and I can’t decide between parks in Northern California or down in Oregon. Ideally I’d like places that for sure have both trails and campsites open, zero closure alerts or hazards, and generally cool, dry weather—not something that turns into a mudfest or bakes me alive. It’d also be cool if there’s a ranger talk or small event going on, just to mix up the evenings. \n\nCould you help me narrow it down to the top three parks that meet all that? For each spot, I need to know what campground options are actually available, any active alerts to watch out for, the 7-day forecast in the closest town (so I can see which day is driest), and the average daytime high so I can rank them from coolest to warmest. I really need concrete numbers and facts—no guesses—so I can pick the best one with confidence.",
+          "dependency_analysis": "Inherent tool chains:\n- findParks → returns parkCodes → serves as input for getParkDetails, getAlerts, getCampgrounds, getEvents.\n- getParkDetails → yields nearest city name → input for get_weather_forecast_tool.\n- getAlerts, getCampgrounds, getEvents → provide safety, availability, and activity data to filter parks.\n- get_weather_forecast_tool → yields daily high temps and precipitation chance → drives exclusion and ranking logic.\n\nScenario-based dependencies:\n1. The initial findParks call determines which parkCodes to process.\n2. For each parkCode:\n   • getAlerts output triggers a decision: exclude park if any alert status indicates closure.\n   • getCampgrounds output triggers a decision: exclude park if zero campgrounds.\n   • get_weather_forecast_tool output triggers a decision: exclude park if any day’s precipitation chance >50%.\n3. getEvents output is optional but used to highlight one recommended event if available.\n4. Remaining parks feed into a ranking step based on average daily high temperature from forecast tool.\n\nParallel vs. sequential:\n- After findParks, each park’s detail, alerts, campgrounds, events, and forecast calls can run in parallel but results are aggregated for decision branching.\n- Exclusion rules are applied sequentially per park.\n- Final ranking requires combining forecast outputs across parks.\n\nCross-server dependencies:\n- National Parks:getParkDetails provides city context for Weather Data:get_weather_forecast_tool.\n- Weather data informs exclusion and ranking of National Parks candidates.\n\nCritical decision points:\n- Exclude on any closure alert (getAlerts).\n- Exclude if no campgrounds (getCampgrounds).\n- Exclude if forecast precipitation chance >50% on any day (get_weather_forecast_tool).\n- Highlight an event only if getEvents returns one within the next 7 days.\n\nThis chain ensures the task cannot be completed without correctly sequencing and combining National Parks and Weather Data tool calls.",
+          "distraction_servers": [
+            "DEX Paprika",
+            "FruityVice",
+            "Google Maps",
+            "Hugging Face",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "NixOS",
+            "OpenAPI Explorer",
+            "Reddit",
+            "Scientific Computing"
+          ]
+        }
+      ],
+      "servers": [
+        "National Parks",
+        "Weather Data"
+      ],
+      "combination_name": "Travel Weather",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "National Parks+Weather Data",
+      "tasks": [
+        {
+          "task_id": "national_parks_weather_data_001",
+          "task_description": "You are planning a 3-day hiking and camping trip to the top 3 national parks in Utah that offer both hiking and camping. For each park you must: 1) identify the park via `findParks` using stateCode=\"UT\" and activities=\"hiking,camping\" (limit=3); 2) get detailed information with `getParkDetails`; 3) retrieve current alerts with `getAlerts`; 4) list available campgrounds via `getCampgrounds`; 5) find upcoming events over the next 7 days with `getEvents` (dateStart=\"today\", dateEnd=\"in 7 days\"); 6) fetch visitor center details via `getVisitorCenters`; 7) extract the primary park city from the park details, normalize the city name using `search_locations_tool`, then obtain the current weather (`get_current_weather_tool` and validate temperature with `get_live_temp`) and a 7-day forecast (`get_weather_forecast_tool` with days=7) for that city. Finally, for each park, if any day in the 7-day forecast shows a precipitation probability >50%, identify indoor visitor centers by re-querying `getVisitorCenters` with q=\"indoor\"; otherwise recommend the best 3 hiking events (from the events list) that coincide with days forecasted as dry. Produce a consolidated JSON report listing for each park: park name, code, summary of alerts, top 2 campgrounds, 3-day weather outlook, recommended hiking days/events or indoor visitor center alternatives, and visitor center hours.",
+          "fuzzy_description": "Hey, I’m planning a three-day hiking and camping trip through Utah’s three biggest parks that let you both sleep under the stars and hit some great trails. For each one, I’d love to know:\n\n• Any alerts or advisories I should watch out for  \n• Which campgrounds are really worth booking (top two, ideally)  \n• What events or ranger programs are happening in the next week  \n• The visitor center hours and whether they’ve got indoor exhibits—just in case it pours  \n• A simple three-day weather snapshot for the nearest town so I can pick my dry-day hikes  \n\nAt the end, I’d like a quick recommendation: if it looks like rain, point me to indoor visitor center options; if it’s clear, suggest the three best hiking events to join. Oh, and please give me each park’s official name and code so I can double-check details when I book. I really need solid numbers and dates—can’t just go on gut feelings here. Thanks!\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent & Scenario-Based Dependencies:\n\n1. Sequential Search → Detail Chain (National Parks server):\n   • Use `findParks` (stateCode=\"UT\", activities=\"hiking,camping\", limit=3) to select the top 3 parks.  \n   • For each returned parkCode:\n     – Call `getParkDetails` to retrieve name, location (including primary city).  \n     – Call `getAlerts` (parkCode) to capture closures or hazards.  \n     – Call `getCampgrounds` (parkCode) to list campsite options.  \n     – Call `getEvents` (parkCode, dateStart=\"today\", dateEnd=\"in 7 days\") for upcoming programs.  \n     – Call `getVisitorCenters` (parkCode) to list facilities and hours.\n\n2. Cross-Server Location → Weather Chain:\n   • Extract the primary city field from each `getParkDetails` response.  \n   • Normalize/validate city name with `search_locations_tool` (query = extracted city).  \n   • Use normalized city for:\n     – `get_current_weather_tool` (city) for current conditions.  \n     – `get_live_temp` (city) to cross-validate legacy temperature data.  \n     – `get_weather_forecast_tool` (city, days=7) for a 7-day outlook.\n\n3. Conditional & Iterative Decision Points:\n   • Analyze forecast output: if any day has precipitation probability >50%, branch to find indoor activities:\n     – Re-call `getVisitorCenters` (parkCode, q=\"indoor\") to identify centers with indoor exhibits.  \n   • Else, branch to recommend hiking events:\n     – Filter the original `getEvents` list for events occurring on days with no rain forecast and pick the top 3 by attendance or popularity.\n\n4. Parallel vs. Sequential:\n   • Park-specific data calls (`getAlerts`, `getCampgrounds`, `getEvents`, `getVisitorCenters`) can run in parallel per parkCode.  \n   • Weather calls depend on normalized city from `search_locations_tool`, which itself depends on `getParkDetails` output.\n\n5. Cross-Validation & Fallbacks:\n   • Cross-validate current temperature from `get_current_weather_tool` against `get_live_temp`. If discrepancy >3 °C, log a warning.  \n   • Use relative dates (\"today\", \"in 7 days\") and fixed days parameter (7) to keep the task self-contained and executable without external input.",
+          "distraction_servers": [
+            "DEX Paprika",
+            "FruityVice",
+            "Google Maps",
+            "NixOS",
+            "OSINT Intelligence",
+            "OpenAPI Explorer",
+            "Paper Search",
+            "Reddit",
+            "Scientific Computing",
+            "Unit Converter"
+          ]
+        }
+      ],
+      "servers": [
+        "National Parks",
+        "Weather Data"
+      ],
+      "combination_name": "Travel Weather",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Unit Converter+Math MCP",
+      "tasks": [
+        {
+          "task_id": "unit_converter_math_mcp_000",
+          "task_description": "An HVAC engineer needs to calculate the total weekly heating and cooling energy required to maintain an interior set point of 22 °C inside a building with wall area 500 m² and overall heat transfer coefficient U = 0.35 W/(m²·K) for the next 7 days (starting tomorrow). The outside temperature forecast for the next 7 days is: 68 °F, 70 °F, 75 °F, 80 °F, 85 °F, 75 °F, 65 °F. Assuming the HVAC system runs 24 hours each day, perform the following steps in sequence using the available tools:\n\n1. Confirm supported units for temperature conversions and energy conversions.\n2. Convert all 7 forecasted outside temperatures from Fahrenheit to Celsius in a single batch.\n3. For each day, compute the temperature difference ΔT = |22 °C − outside °C| using Math MCP operations (subtract and, if needed, multiply negative results by −1 to get absolute values).\n4. Calculate the instantaneous heat transfer rate Q̇ (in watts) for each day using Q̇ = U × A × ΔT (use Math MCP multiplications: first U×A, then result×ΔT).\n5. Convert each Q̇ from watts to kilowatts.\n6. Compute daily energy consumption in kilowatt‐hours: daily_kWh = Q̇(kW) × 24 h.\n7. Sum the seven daily_kWh values to get total weekly energy consumption (kWh) and then compute the average daily consumption (kWh/day).\n8. Convert the total weekly energy consumption from kilowatt‐hours to megajoules and also to Btu.\n9. Compute the total weekly operating cost at a rate of USD 0.12 per kWh (use Math MCP multiplication).\n10. Provide a table listing for each day: day number (1–7), outside temperature in °C, ΔT in °C, Q̇ in kW, daily consumption in kWh. Then provide a summary of: total weekly consumption (kWh), average daily consumption (kWh/day), total in megajoules, total in Btu, and total cost in USD.\n\nNo external data is needed beyond the provided forecast and building parameters. All calculations must use the specified Unit Converter and Math MCP tools in the order defined above.",
+          "fuzzy_description": "I’m trying to forecast the heating and cooling load for my office next week—my boss wants hard numbers. We keep the inside at 22 °C, the exterior wall area is 500 m² with a U-value of 0.35 W/(m²·K), and the seven-day temperature outlook (starting tomorrow) is 68 °F, 70 °F, 75 °F, 80 °F, 85 °F, 75 °F and 65 °F. I’m not sure how to turn those Fahrenheit readings into Celsius, figure out the daily temperature differences, calculate the heat flow in kW, then get the kWh for a full 24 hours each day, and finally sum it up for the week, find the average per day, convert that total into megajoules and Btu, and even estimate the cost at US $0.12 per kWh. Could you walk me through all that and give me a day-by-day breakdown (outside °C, ΔT, Q̇ in kW, daily kWh) plus a weekly summary of total kWh, average daily kWh, total in MJ, total in Btu, and total cost? I really need solid figures to show my manager—no guesswork, just concrete numbers.",
+          "dependency_analysis": "We need a tightly chained cross‐server workflow:  \n\n1. Unit Converter:list_supported_units is called twice—first with unit_type=\"temperature\" and then with unit_type=\"energy\"—to confirm the correct source/target unit strings before any conversions.  \n\n2. Unit Converter:convert_batch (temperature) takes the list of 7 Fahrenheit values and returns their Celsius equivalents in one call. This parallel conversion output feeds directly into the Math MCP phase.  \n\n3. For each of the 7 converted Celsius values, we compute ΔT_i = 22 − T_i using Math MCP:subtract.  \n   • Decision point: if the subtract result is negative (T_i > 22 °C), we call Math MCP:multiply with secondNumber = −1 to get |ΔT_i|. Otherwise we take the positive result.  \n\n4. Compute the constant U×A (0.35 W/m²K × 500 m²) using Math MCP:multiply.  \n   • Sequential chain: first multiply 0.35 × 500 → UA_value.  \n\n5. For each day i, compute instantaneous heat rate Q̇_i (W) = UA_value × ΔT_i with Math MCP:multiply.  \n\n6. Convert each Q̇_i from watts to kilowatts via Unit Converter:convert_power (from_unit=\"watt\", to_unit=\"kilowatt\").  \n\n7. Compute daily energy consumption daily_kWh_i = Q̇_i(kW) × 24 using Math MCP:multiply.  \n\n8. Use Math MCP:sum on the array [daily_kWh_1 … daily_kWh_7] to get total_weekly_kWh.  \n\n9. Compute average_daily_kWh = total_weekly_kWh ÷ 7 using Math MCP:division.  \n\n10. Convert total_weekly_kWh from kilowatt‐hour to megajoule using Unit Converter:convert_energy (from_unit=\"kilowatt hour\", to_unit=\"megajoule\") and to Btu (from_unit=\"kilowatt hour\", to_unit=\"Btu\").  \n\n11. Compute total_cost_USD = total_weekly_kWh × 0.12 via Math MCP:multiply.  \n\nCross‐server dependencies: Unit Converter outputs (temperatures, power, energy conversions) are repeatedly fed into Math MCP operations. Decision branches (sign of ΔT) trigger conditional Math MCP calls to enforce absolute values. The workflow mixes batch conversions, sequential arithmetic chains, and summations—without which the complete weekly HVAC energy and cost analysis cannot be performed.",
+          "distraction_servers": [
+            "Context7",
+            "DEX Paprika",
+            "Game Trends",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "NASA Data",
+            "National Parks",
+            "OSINT Intelligence",
+            "Scientific Computing",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Unit Converter",
+        "Math MCP"
+      ],
+      "combination_name": "Conversion Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Unit Converter+Math MCP",
+      "tasks": [
+        {
+          "task_id": "unit_converter_math_mcp_001",
+          "task_description": "You are an engineer designing a hot-water pumping and heating system. The system must heat water from 50°F inlet temperature to 120°F outlet temperature under three design flow scenarios: 150 gallon (US) per minute, 200 gallon (US) per minute, and 250 gallon (US) per minute. Perform the following steps:\n\n1. Use a single batch conversion request to convert:\n   - 50 °F → °C (inlet temperature)\n   - 120 °F → °C (outlet temperature)\n   - 150 gallon (US) → cubic meter\n   - 200 gallon (US) → cubic meter\n   - 250 gallon (US) → cubic meter\n   - 1 gram per cubic centimeter → kilograms per cubic meter (water density)\n\n2. Compute the temperature rise ΔT (°C) as outlet_C − inlet_C.\n\n3. For each flow scenario (i = 150, 200, 250 gpm):\n   a. Convert volumetric flow (m³ per minute) to m³ per second by dividing by 60.\n   b. Compute mass flow rate (kg/s) = volumetric_flow_m³/s × density_kg/m³.\n   c. Use specific heat capacity Cp = 4.186 kJ/(kg·K) to compute heat duty Q̇_i (kW) = mass_flow_kg/s × Cp_kJ/(kg·K) × ΔT_K.\n   d. Convert Q̇_i from kilowatt to horsepower.\n\n4. With the three horsepower results:\n   a. Calculate the arithmetic mean horsepower.\n   b. Calculate the median horsepower.\n   c. Determine the maximum horsepower.\n\n5. Decision: if the maximum horsepower exceeds 2 HP, specify that two identical pumps should operate in parallel; otherwise, one pump suffices.\n\n6. For each scenario, compute daily energy consumption: daily_kWh_i = Q̇_i (kW) × 24 hours. Then compute monthly energy cost over the next 30 days at $0.10 per kWh: monthly_cost_i = daily_kWh_i × 30 × 0.10.\n\n7. Compute the average monthly energy cost across the three scenarios.\n\n8. Cross-validate consumption of the 200 gpm scenario by converting its monthly_kWh from kilowatt-hour to Btu.\n\nProvide a structured report listing all intermediate values (temperature conversions, ΔT, volumetric flows, mass flows, heat duties, horsepower values, mean/median/max horsepower, pump count decision, daily_kWh, monthly_cost_i, average monthly cost, and cross-converted Btu result) and the final pump selection recommendation.",
+          "fuzzy_description": "Hey, I’m working on a hot-water pumping system and my boss is breathing down my neck for all the numbers. We’ve got water coming in at 50 °F and it needs to leave at 120 °F, and we’re looking at flow rates of 150, 200, and 250 gallons per minute. I need to see those temperatures in °C, convert the gpm figures into cubic meters per second, and turn the water density (1 g/cm³) into kg/m³. From there, I want to calculate the mass flow, use Cp = 4.186 kJ/(kg·K) to get the heat duty in kW, then convert that to horsepower. Once we have the three horsepower numbers, I’d like the average, median, and maximum so I can decide whether one pump will do or if I really need two in parallel (anything above 2 HP means two). After that, I need the daily energy use in kWh for each case, the cost over 30 days at $0.10 per kWh, and the average monthly cost across all three. And just to be sure, could you cross-check the 200 gpm scenario by converting its monthly kWh figure into BTU? I really need every intermediate value—temperature conversions, ΔT, volumetric and mass flows, heat duties, horsepower, energy use, costs, plus the pump recommendation—so I can back it all up with solid data.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "We define a deep chain of dependencies across Unit Converter and Math MCP servers, plus a cross-server validation step:  \n\n• Step 1 (parallel conversions via Unit Converter:convert_batch): batch-convert two temperatures, three volumes, and one density value.  \n  - This shows parallel tool usage where multiple results are produced simultaneously.  \n\n• Step 2 (Math MCP:subtract): compute ΔT from the two temperature conversions.  \n\n• Step 3 (for each of three volumes):  \n  – Math MCP:division to turn m³/min into m³/s (volume conversion output feeds into division).  \n  – Math MCP:multiply to compute mass flow (uses volumetric flow × density from batch).  \n  – Math MCP:multiply twice to compute Q̇ (mass flow × Cp, then × ΔT).  \n  – Unit Converter:convert_power to convert Q̇ (kW → horsepower).  \n\n  These show a sequential chain per scenario with branching (three parallel branches).  \n\n• Step 4 (Math MCP:mean, median, max): combine the three horsepower results to find central tendency and extremes.  \n\n• Step 5 (decision point): a conditional branch—if max HP > 2 HP → two pumps, else one pump.  \n\n• Step 6 (per scenario cost calculation):  \n  – Math MCP:multiply to get daily kWh (Q̇_kW × 24).  \n  – Math MCP:multiply for monthly consumption (daily kWh × 30).  \n  – Math MCP:multiply to get cost (monthly kWh × 0.10).  \n\n• Step 7 (Math MCP:mean): average the three monthly costs.  \n\n• Step 8 (Unit Converter:convert_energy): cross-validation by converting the 200 gpm scenario’s monthly consumption from kWh → Btu.  \n\nCross-server dependencies: Unit Converter outputs drive Math MCP operations (e.g., volume → math division; density → math multiplication). The final cost and horsepower values loop back into Unit Converter for energy conversion verification. This end-to-end workflow cannot run without orchestrating these tool calls in the specified order and combining parallel branches into global metrics and decisions.",
+          "distraction_servers": [
+            "Context7",
+            "FruityVice",
+            "Google Maps",
+            "Huge Icons",
+            "Hugging Face",
+            "Movie Recommender",
+            "NixOS",
+            "OpenAPI Explorer",
+            "Paper Search",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Unit Converter",
+        "Math MCP"
+      ],
+      "combination_name": "Conversion Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Game Trends+Reddit",
+      "tasks": [
+        {
+          "task_id": "game_trends_reddit_000",
+          "task_description": "Generate a cross-platform Weekly Gaming Trend & Community Sentiment Report for the upcoming week. The agent must:\n1. Verify the Game Trends API is healthy.\n2. In parallel, fetch Steam’s current trending games, top sellers, and most-played titles; also fetch Epic Games Store’s current trending games and currently free or upcoming free titles.\n3. From Steam data, compute a combined score for each title: 40% weight to trending rank, 30% to sales rank, and 30% to player count rank. Select the top five scored Steam titles.\n4. From Epic data, mark which of those five titles appear in Epic’s trending list and which of those are currently free or upcoming free.\n5. Identify the three titles that are (a) among Steam’s top five by score and (b) present in Epic’s trending list. If fewer than three satisfy both, include the next highest-scored Steam title that is in Epic’s free or upcoming free lists.\n6. Cross-validate these three titles against the unified list from get_all_trending_games. If any title is missing, flag a data inconsistency for that title.\n7. For each of the three selected games:\n   a. Attempt to fetch up to 10 hot Reddit threads from the game’s subreddit (subreddit name exactly matching the game title).  \n   b. If fewer than five threads are returned, fallback to fetching the top five threads from r/gaming.  \n   c. For each thread ID retrieved, fetch the full post content with up to three top-level comments and comment depth of two.\n8. Summarize for each game: Steam rank metrics, Epic status (trending/free), inconsistency flags, and a brief sentiment overview derived from the Reddit post titles and comments.\n\nOutput the report as a JSON array of three objects, each with fields: {\"game_name\",\"steam_trending_rank\",\"steam_sales_rank\",\"steam_played_rank\",\"epic_status\",\"inconsistency_flag\",\"reddit_threads\": [{\"post_id\",\"title\",\"top_comments\": [\"comment1\",\"comment2\",…]}],\"sentiment_summary\"}.",
+          "fuzzy_description": "Hey, I’m prepping our next gaming newsletter and the boss wants a quick but solid rundown of which titles are going to crush it over the coming week on both Steam and the Epic store—bonus points if any are currently free or about to be. Could you dig into Steam’s hot trends, top sellers, and player counts, figure out the handful of games that really stand out when you weight those metrics, and then see which of those also show up as trending or freebies on Epic? I’d love to land on three final picks that bridge both platforms—or if we come up short, swap in the next best one that’s free on Epic. Also, it’d be great to cross-check against a general trending feed just to catch any odd gaps. Once we’ve got our trio, can you pull the top threads from each game’s subreddit (or fallback to r/gaming if they’re quiet), grab a few key comments, and give me a quick sentiment snapshot for each? I need it in a neat format I can drop straight into our tool—and it really has to be backed by real numbers and actual chatter, since I’ll need to show my editor the proof. Thanks!",
+          "dependency_analysis": "1. Sequential health check: get_api_health must succeed before any data retrieval.  \n2. Parallel data pulls: Steam calls (get_steam_trending_games, get_steam_top_sellers, get_steam_most_played) run concurrently; Epic calls (get_epic_trending_games, get_epic_free_games) run concurrently.  \n3. Data fusion: Steam outputs feed directly into a scoring algorithm that weights trending, sales, and play data.  \n4. Branching decision: intersect top five scored Steam titles with Epic trending; if intersection < 3, extend with free-or-upcoming titles.  \n5. Cross-server validation: the final three titles are checked against get_all_trending_games; mismatches are flagged.  \n6. Reddit dependency chain: for each title, fetch_reddit_hot_threads(subreddit=title); if thread count < 5, fallback to fetch_reddit_hot_threads(subreddit=\"gaming\").  \n7. Iterative refinement: each thread ID feeds into fetch_reddit_post_content to retrieve comments.  \n8. Aggregation: sentiment_summary is derived from the collected Reddit post titles and comments.  \nCritical decision points include fallback to r/gaming and selection adjustment when Steam–Epic intersection is insufficient. Cross-server dependencies ensure consistency between Game Trends (all servers) and Reddit data for community sentiment.",
+          "distraction_servers": [
+            "Context7",
+            "DEX Paprika",
+            "Math MCP",
+            "Medical Calculator",
+            "Movie Recommender",
+            "National Parks",
+            "NixOS",
+            "OSINT Intelligence",
+            "OpenAPI Explorer",
+            "Paper Search"
+          ]
+        }
+      ],
+      "servers": [
+        "Game Trends",
+        "Reddit"
+      ],
+      "combination_name": "Entertainment Social",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Game Trends+Reddit",
+      "tasks": [
+        {
+          "task_id": "game_trends_reddit_001",
+          "task_description": "Perform a cross‐platform, cross‐server analysis to identify and investigate games with the largest gap between social interest and actual engagement metrics over the past week. Steps:\n1. Call Game Trends:get_api_health to check API status.\n   • If status is OK, call Game Trends:get_all_trending_games to retrieve a combined list of trending titles across Steam and Epic.\n   • If status is not OK, call Game Trends:get_steam_trending_games and Game Trends:get_epic_trending_games separately, then merge their results into one trending list.\n2. Call Game Trends:get_epic_free_games to retrieve all current and upcoming free titles on Epic Games Store, and tag any of those in the merged trending list with Free=Yes.\n3. In parallel, call Game Trends:get_steam_top_sellers and Game Trends:get_steam_most_played to get Steam’s current top‐selling and most‐played lists.\n4. For each game in the merged trending list:\n   a. If it appears in Steam top sellers, record its sales rank; otherwise mark SalesRank=None.\n   b. If it appears in Steam most played, record its player count rank; otherwise mark PlayerRank=None.\n   c. Compute a ‘difference_score’ = |TrendingRank – SalesRank| + |TrendingRank – PlayerRank| (treat None as a large penalty).\n5. Sort all trending games by descending difference_score and select the top 3 titles for deeper analysis.\n6. Call Reddit:fetch_reddit_hot_threads with subreddit=\"gaming\" and limit=50 to retrieve hot posts. For each of the top 3 games, scan the thread titles for mentions of the exact game name and count how many posts mention it.\n7. Identify which of the three has the highest reddit_mentions_count. For that single game, pick the highest‐scoring thread ID and call Reddit:fetch_reddit_post_content with comment_limit=20 and comment_depth=3 to retrieve detailed discussion.\n8. Produce a JSON report listing, for each of the three games: name, platform source(s), trending rank, sales rank, player rank, difference_score, Free tag (Yes/No), reddit_mentions_count; and for the game with the highest buzz, include the reddit_top_post_id and full reddit_comments output.",
+          "fuzzy_description": "Hey, I’m working on a little side project to spot games that are huge on social hype but aren’t really selling or being played nearly as much—and I want to focus on the past week. You know how some titles suddenly shoot up the trending list on the big PC storefronts but then their sales rank or concurrent player count barely budges? I’d love to pull together all those trending picks, check their actual sales rank and player-count rank to come up with a simple “hype-vs-real” gap score, and tag any that happen to be free deals. Then, I want to zero in on the top three biggest mismatches and see how often each one pops up in the main gaming discussion community—counting how many hot threads mention them. For the single game that gets the most chatter, could you grab the most popular thread ID and pull about 20 comments (going down a few reply levels) so I can see what folks are saying? In the end, I need a clear breakdown for each of the three—name, where it trended, hype rank, sales rank, player rank, gap score, free-yes/no, mention count—and for that buzziest title include the top thread ID plus its comment snippet. I really need solid numbers and actual sources from the last seven days—no vague guesses—so I can back this up.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies:\n- get_api_health decides whether to call get_all_trending_games or fallback to get_steam_trending_games + get_epic_trending_games.\n- get_all_trending_games (or merged per‐platform trending) produces the master trending list used by all downstream steps.\n- get_epic_free_games output is cross‐referenced against the trending list to tag free titles.\n- get_steam_top_sellers and get_steam_most_played provide metrics that feed into difference_score computations.\n- fetch_reddit_hot_threads output is filtered by game names from the trending list to measure community buzz.\n- fetch_reddit_post_content is triggered by the hottest thread ID found in the filtered Reddit data.\n\nScenario‐based dependencies:\n- Decision point after API health: branch into unified vs. separate trending calls.\n- Merged trending list then drives tagging, metric lookups, and score calculations in sequence.\n- Parallel calls for sales and player metrics reduce latency and converge into the same data structure for scoring.\n- After scoring and selecting the top 3 games, Reddit calls depend on that selection to query community data.\n- A second decision point chooses which of the top 3 games has the highest reddit_mentions_count and triggers a deeper fetch_reddit_post_content.\n\nParallel vs sequential:\n- Initial health check → sequential trending calls.\n- Epic free games tagging waits for merged trending list → sequential.\n- Steam top sellers and most played can run in parallel → join for scoring.\n- Reddit hot threads fetch is one call → filter and decision → conditional post content fetch.\n\nCross‐server dependencies:\n- Game Trends outputs (trending, sales, play stats, free games) determine parameters and filtering logic for Reddit queries.\n- Reddit community buzz data validates and contextualizes platform metrics, highlighting discrepancies.\n- Branching logic ensures robustness if Game Trends API health is degraded, falling back to per‐platform calls without external inputs.",
+          "distraction_servers": [
+            "Context7",
+            "FruityVice",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "Movie Recommender",
+            "NASA Data",
+            "National Parks",
+            "Paper Search",
+            "Scientific Computing",
+            "Wikipedia"
+          ]
+        }
+      ],
+      "servers": [
+        "Game Trends",
+        "Reddit"
+      ],
+      "combination_name": "Entertainment Social",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Scientific Computing+Unit Converter",
+      "tasks": [
+        {
+          "task_id": "scientific_computing_unit_converter_000",
+          "task_description": "You are designing a coordinate transformation pipeline for a two-joint robotic arm segment. Joint 1 has an angle of 45° and link length of 12 inches; Joint 2 has an angle of –30° and link length of 8 inches. Perform the following steps in order:\n\n1. Convert joint angles from degrees to radians.\n2. Convert link lengths from inches to meters.\n3. Create two 3×3 rotation matrices R1 and R2 for rotations about the Z-axis by the converted angles.\n4. Multiply R1 and R2 to obtain the composite rotation R12.\n5. Construct the full 4×4 homogeneous transform T12:\n     [ R12   t; 0  1 ], where t = [0.3048+0.7071*0.2032, 0+0.7071*0.2032, 0].\n6. Verify orthonormality of R12 by:\n     a. Computing R12ᵀ @ R12.\n     b. Subtracting the 3×3 identity matrix to get an orthonormality error matrix.\n     c. Reporting the error matrix.\n7. Compute the determinant of R12 to ensure no reflection occurs.\n8. If the maximum absolute element in the orthonormality error exceeds 1e-6, perform QR decomposition on R12 and let R12_corr = Q; otherwise set R12_corr = R12.\n9. Find an orthonormal basis for the column space of R12_corr.\n10. Create and store an external force vector F = [5, –3, 2] N and a gravity vector G = [0, 0, –9.81] m/s².\n11. Project F onto the first orthonormal basis vector to obtain F_proj.\n12. Compute the dot product between F_proj and F.\n13. Compute the cross product between F_proj and G.\n14. Compute the directional derivative of the gravitational potential energy U = m·g·z with m=5 kg, g=9.81 m/s² along the direction of F_proj.\n\nDeliverables (all numeric arrays as stored tensor names and scalar results):\n- R1, R2, R12, T12\n- Orthonormality error matrix\n- Determinant of R12\n- Q and R if QR decomposition was applied\n- Orthonormal basis vectors\n- F_proj vector\n- Dot product scalar\n- Cross product vector\n- Directional derivative expression",
+          "fuzzy_description": "I’m working on a little two-joint robot arm for my project and honestly I’m getting stuck on all the math. The first hinge sits at exactly 45° with a 12-inch link, and the second swings to –30° on an 8-inch link. I know I have to switch those angles into radians and turn the inches into meters, then build two Z-axis rotation matrices, multiply them together, and pack everything into a 4×4 homogeneous transform. For my offset I’m using t = [0.3048 + 0.7071 * 0.2032, 0 + 0.7071 * 0.2032, 0]. After that I’d like to check RᵀR against the identity and see if any entry exceeds 1e-6—if it does I’ve heard a QR tweak might fix it. Beyond that I need to pull an orthonormal basis from the corrected rotation, shoot an external force F = [5, –3, 2] N onto the first basis vector, find the dot with the original F, cross it with gravity G = [0, 0, –9.81], and even get the directional derivative of U = m·g·z (with m=5 kg and g=9.81 m/s²) along that projection. I really need all the actual numbers—R1, R2, R12, the full T12, the tiny error matrix, the determinant, Q/R if you do the QR, the basis vectors, F_proj, the dot and cross results, plus the derivative—because I’ve got to present this with solid data next week, not hand-wavy estimates.\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "This scenario requires both Unit Converter and Scientific Computing tools in a tightly coupled workflow:\n\n1. Cross-Server Conversion → Matrix Construction:\n   - convert_angle maps given angles (45°, –30°) → radians. These radian values feed directly into create_tensor for R1 and R2.\n   - convert_length maps link lengths (12 in, 8 in) → meters. These metric lengths determine translation vector components in T12.\n\n2. Sequential Matrix Pipeline:\n   - create_tensor(R1), create_tensor(R2) → multiply_matrices → R12.\n   - create_tensor(T12) uses R12 and pre-computed translation t.\n\n3. Orthonormality Validation Branch:\n   - transpose(R12) + multiply_matrices → R12ᵀ @ R12.\n   - create_tensor(I3) + subtract_matrices → error matrix.\n   - determinant(R12) for reflection check.\n   - Decision point: if max(error) >1e-6 → qr_decompose(R12) → Q (use Q as corrected rotation); else skip.\n\n4. Basis and Force Analysis Chain:\n   - find_orthonormal_basis on R12_corr → orthonormal columns.\n   - create_tensor(F), create_tensor(G).\n   - vector_project(F onto first basis vector) → F_proj.\n   - create_tensor(F_proj) to persist result for further operations.\n   - vector_dot_product(F_proj, F) and vector_cross_product(F_proj, G).\n\n5. Symbolic Directional Derivative:\n   - directional_deriv of f_str=\"5*9.81*z\" along u=F_proj (unit normalization) → expression.\n\nCritical decision: the orthonormality error matrix determines whether to invoke QR decomposition. The pipeline is strictly sequential, with cross-server conversions at the start feeding into scientific computations. Each tool’s output is the direct input to the next, forming a deep dependency chain that cannot be bypassed.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Call for Papers",
+            "Context7",
+            "DEX Paprika",
+            "Google Maps",
+            "Movie Recommender",
+            "NASA Data",
+            "National Parks",
+            "NixOS",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Scientific Computing",
+        "Unit Converter"
+      ],
+      "combination_name": "Research Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Scientific Computing+Unit Converter",
+      "tasks": [
+        {
+          "task_id": "scientific_computing_unit_converter_001",
+          "task_description": "Simulate and analyze a 4×4 homogeneous transformation matrix for a rocket nozzle segment using physical parameters with mixed units, then perform a full linear-algebraic and symbolic analysis, including conditional scaling and vector operations, and finally visualize a related vector field.\n\nSteps:\n1. Convert the stagnation temperature 518°F to Kelvin.\n2. Convert the nozzle throat diameter 16 inches to meters.\n3. Convert the flow deflection angle 45° to radians.\n4. Convert the total energy input 5000 Btu to kilojoules.\n5. Using those converted values (T_K, d_m, θ_rad, E_kJ), create two 4×4 tensors:\n   • M1 (homogeneous transform):\n     [[cos(θ_rad), -sin(θ_rad), 0, d_m/2],\n      [sin(θ_rad),  cos(θ_rad), 0,     0],\n      [         0,           0, 1,     0],\n      [         0,           0, 0,     1]]\n   • M2 (diagonal physical scaling): diag([T_K, E_kJ, 1, 1])\n6. Compute M = M1 @ M2 (matrix multiplication).\n7. Compute det(M). If |det(M) − 1| < 1e-6, record “volume-preserving”; otherwise, compute scale_factor = det(M)**(−1/4), apply in-place scaling to M to enforce det=1, and record the new determinant.\n8. Compute M⁻¹, the eigenvalues and eigenvectors of M, its SVD (U, S, Vᵀ), its column-space orthonormal basis, the representation of M in that basis (change_basis), and its rank.\n9. Create two 3-component vectors v1 = [T_K, E_kJ, 0] and v2 = [E_kJ, T_K, 0]. Compute their dot product, cross product, and the projection of v1 onto v2.\n10. Symbolically compute the gradient of f(x,y,z)=x*y*z; compute the directional derivative of f along u=[1,1,1] (unitized); compute the curl of F=[x*y, y*z, z*x] and its divergence at point [1,2,3]; compute the Laplacian of f(x,y,z).\n11. Plot the 3D vector field F_plot=[z, -y, x] over bounds x,y,z∈[−1,1] with resolution n=8.\n\nProduce a structured report containing: all converted scalar values; the tensors M1, M2, M (before and after any scaling); det(M) (before and after); scale_factor if applied; M⁻¹; eigenvalues and eigenvectors; U, S, Vᵀ; orthonormal basis vectors; changed-basis matrix; rank; v1⋅v2; v1×v2; projection vector; symbolic gradient; directional derivative; curl and divergence results; Laplacian; and display the vector-field plot.",
+          "fuzzy_description": "Hey, I’m racing against the clock on a little rocket‐nozzle simulation and the units just aren’t playing nice. I logged the stagnation temperature at 518 °F, the throat diameter reads 16 inches, the flow deflection is 45°, and I’ve got about 5 000 Btu of total energy input—my code only wants SI, so I need those in Kelvin, meters, radians and kilojoules. \n\nOnce I’ve got those, I’d like to build a 4×4 transform that rotates by that angle and shifts by half the diameter, then apply a physical scaling on the temperature and energy axes. After multiplying them, I need to check if the determinant is unity (volume-preserving); if it isn’t, figure out the fourth-root scale factor to force det=1 and show me the before/after. Then I want to dig into the linear algebra: the inverse of that final matrix, its eigenvalues/eigenvectors, the full SVD (U, S, Vᵀ), an orthonormal basis for its column space, how the matrix looks in that new basis, and its rank.\n\nOn top of that, I have two 3-component vectors built from those converted scalars—v₁ = [T_K, E_kJ, 0] and v₂ = [E_kJ, T_K, 0]—and I’d like their dot product, cross product, and the projection of v₁ onto v₂. Then, for some symbolic crunching, consider f(x,y,z)=x·y·z: give me ∇f and the directional derivative along the unit vector [1,1,1]. Also take F=[x y, y z, z x], compute its curl and divergence at the point [1,2,3], and give me the Laplacian of f(x,y,z). \n\nFinally, I need a quick 3D plot of the field F_plot=[z, –y, x] over x,y,z in [–1,1] with an 8×8×8 grid so I can stick it in my slides. Could you run through all of that and give me the exact converted numbers, the raw and any scaled matrices, det values (before/after) plus the scale factor if applied, the inverse, eigen stuff, U/S/Vᵀ, basis vectors, change-of-basis form, rank, the vector-operation results, the symbolic derivatives, and the plot? I really need hard numbers and visuals—no vague descriptions—so I can show my team real data. Thanks!",
+          "dependency_analysis": "This task spans both Scientific Computing and Unit Converter servers and leverages deep tool dependencies:\n\nCross-Server Data Flow:\n- Unit Converter (TEMPERATURE, LENGTH, ANGLE, ENERGY) ➔ Scientific COMPUTING:create_tensor: the converted scalars (T_K, d_m, θ_rad, E_kJ) drive tensor creation.\n\nSequential Linear-Algebra Chain:\n1. create_tensor(M1) and create_tensor(M2) produce base matrices.\n2. multiply_matrices uses M1 and M2 to yield M.\n3. determinant inspects M; decision point: if |det−1| ≥ 1e-6 then scale_matrix in_place to enforce volume preservation.\n4. matrix_inverse, compute_eigen, svd_decompose, find_orthonormal_basis, change_basis, and rank all consume the scaled or original M in sequence to build deeper analyses.\n\nConditional Branch:\n- Based on determinant check, scale_matrix is invoked only when volume preservation fails, then determinant is rechecked.\n\nParallel Vector Operations:\n- Two independent create_tensor calls for v1 and v2, feeding into vector_dot_product, vector_cross_product, and vector_project. Their results are combined in the final report.\n\nSymbolic Calculus Chain:\n- gradient ➔ directional_deriv; curl and divergence operate on the same vector field f_str at a point; laplacian reuses f_str.\n\nVisualization:\n- plot_vector_field runs last, using no numeric outputs beyond constants to render the 3D quiver plot.\n\nCritical Decision Points:\n- Determinant-based branching triggers scale_matrix.\n- The order of eigen, SVD, and basis-change ensures correct matrix state.\n\nData Dependencies:\n- Unit conversions feed numeric parameters into matrix definitions.\n- create_tensor outputs are reused by multiple analysis tools (multiply, det, inv, eig, SVD, rank, basis).\n- Symbolic tools share f_str and point coordinates.\n\nThis chain cannot be executed without understanding how outputs flow from Unit Converter tools into Scientific Computing:create_tensor, and through the sequential and conditional calls of matrix_analysis and vector/symbolic tools.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "DEX Paprika",
+            "Google Maps",
+            "Hugging Face",
+            "Math MCP",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "NixOS",
+            "Paper Search",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Scientific Computing",
+        "Unit Converter"
+      ],
+      "combination_name": "Research Tools",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Wikipedia+Paper Search",
+      "tasks": [
+        {
+          "task_id": "wikipedia_paper_search_001",
+          "task_description": "Investigate the current state of knowledge on CRISPR-Cas9 off-target effects and assess whether the Wikipedia entry needs updating. Steps:\n1. Use Wikipedia:search_wikipedia with query \"CRISPR-Cas9\" and limit 5 to find the main article title.\n2. Retrieve the full article using Wikipedia:get_article.\n3. Extract the list of sections using Wikipedia:get_sections to identify if an \"Off-target effects\" section exists.\n4. Obtain a tailored summary of off-target effects within the article using Wikipedia:summarize_article_for_query with query \"off-target effects\" and max_length 250.\n5. Extract the top 5 key facts on off-target effects using Wikipedia:extract_key_facts with topic_within_article \"off-target effects\" and count 5.\n6. Formulate the query \"CRISPR-Cas9 off-target effects\" and, in parallel, search for at least 5 papers in each of these sources:\n   • Paper Search:search_arxiv (max_results 5)\n   • Paper Search:search_pubmed (max_results 5)\n   • Paper Search:search_biorxiv (max_results 5)\n   • Paper Search:search_medrxiv (max_results 5)\n   • Paper Search:search_google_scholar (max_results 5)\n7. If any source returns fewer than 5 results, supplement from Google Scholar results to reach 5 unique papers total.\n8. From arXiv, bioRxiv, and medRxiv results take the top 2 paper IDs each, download PDFs with the respective download tool, and then read and extract the full text using the corresponding read tool.\n9. From each PDF, summarize in about 150 words the specific methods used to detect or mitigate off-target effects.\n10. Compare the 5 key facts extracted from Wikipedia with the method summaries from the downloaded papers to identify three novel detection or mitigation methods not currently reflected in the Wikipedia article.\n11. Produce a final JSON report containing:\n   • wikipedia_summary: the tailored summary of off-target effects\n   • wikipedia_key_facts: list of 5 key facts\n   • paper_metadata: object with arrays of returned metadata for each source\n   • methods_summaries: array of six 150-word summaries (two per server)\n   • novel_methods: list of three novel approaches from the papers\n   • update_recommendations: text describing how to update the Wikipedia entry to include the novel methods.",
+          "fuzzy_description": "Hey, I’m gearing up for a talk on CRISPR and its off-target editing issues, and I’m not convinced the main Wikipedia page is completely up to date. Could you peek at the off-target section there and let me know what it currently says? Then dive into the latest research—say a handful of recent papers from major preprint servers and journals over the past few months—and pull together about five key takeaways from the wiki plus roughly five papers per source. For the top two preprints, grab their PDFs and write up about 150 words each on how they detect or prevent off-target cuts. After that, compare those methods to what the wiki lists and flag three genuinely new techniques that aren’t mentioned yet. Finally, wrap it all into a single report that shows:\n\n- the current wiki summary  \n- five main facts it covers  \n- the list of papers you found  \n- the six 150-word method summaries  \n- the three novel approaches  \n- and your suggestions for updating the article\n\nI really need concrete data and solid evidence—no vague opinions—so I can confidently revise that entry.",
+          "dependency_analysis": "Inherent tool chains: search_wikipedia → get_article → get_sections → summarize_article_for_query and extract_key_facts. Scenario-based: use Wikipedia extract_key_facts topic to tailor the paper search query. Parallel vs sequential: after completing sequential Wikipedia steps, trigger parallel paper searches across arXiv, PubMed, bioRxiv, medRxiv, and Google Scholar. Decision points: if any source yields fewer than 5 papers, merge Google Scholar results to meet the minimum. Cross-server dependencies: Wikipedia output defines the query for Paper Search tools; Paper Search outputs feed into download_x → read_x for servers that support PDF. The downloaded text is then analyzed to produce method summaries. Finally, cross-validation compares Wikipedia key facts with paper findings to generate update_recommendations. This chain enforces strict sequencing and data flow, requiring each tool’s output as input for the next phases and invoking fallback logic for insufficient paper counts.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "BioMCP",
+            "FruityVice",
+            "NixOS",
+            "OKX Exchange",
+            "OSINT Intelligence",
+            "OpenAPI Explorer",
+            "Reddit",
+            "Unit Converter",
+            "Weather Data"
+          ]
+        }
+      ],
+      "servers": [
+        "Wikipedia",
+        "Paper Search"
+      ],
+      "combination_name": "Knowledge Base",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Wikipedia+Paper Search",
+      "tasks": [
+        {
+          "task_id": "wikipedia_paper_search_003",
+          "task_description": "Compile a comprehensive report on CRISPR-Cas9 gene editing by combining foundational knowledge from Wikipedia with the latest experimental and clinical research.  \n\n1. Use the Wikipedia:search_wikipedia tool to look up “CRISPR-Cas9” (limit=1). Retrieve the article title.  \n2. Using that title, call Wikipedia:get_sections to list all section titles.  \n3. Call Wikipedia:extract_key_facts with count=5 to pull out the top five key facts from the entire article.  \n4. Check whether the sections list includes a section titled “Clinical applications”.  \n   • If “Clinical applications” is present:  \n     a. In parallel, use Paper Search:search_pubmed and Paper Search:search_medrxiv with query=\"CRISPR-Cas9 clinical trial\" and max_results=5 each.  \n   • If “Clinical applications” is not present:  \n     a. In parallel, use Paper Search:search_arxiv and Paper Search:search_biorxiv with query=\"CRISPR-Cas9 structural analysis\" and max_results=5 each.  \n5. For each of the two paper search results sets:  \n   a. Filter papers to those published in the past 6 months.  \n   b. Select the top 2 most recent papers (if fewer than 2 meet the date filter, select the 2 most recent regardless).  \n6. For each selected paper:  \n   • If from arXiv: call Paper Search:download_arxiv then Paper Search:read_arxiv_paper.  \n   • If from bioRxiv or medRxiv: call Paper Search:download_biorxiv or download_medrxiv then read_biorxiv_paper or read_medrxiv_paper.  \n   • If from PubMed: record metadata only (download_pubmed/read_pubmed_paper return unsupported messages).  \n7. From each paper’s text (or metadata for PubMed), produce a 200-word summary of methodology, sample size, key outcomes, and limitations.  \n8. Cross-validate: compare the five Wikipedia key facts against the combined paper summaries. Identify at least three points where the literature confirms, extends, or contradicts Wikipedia’s facts.  \n9. Synthesize a final JSON report with four fields:  \n   • \"foundation_summary\": a 150-word summary of CRISPR-Cas9 basics from Wikipedia.  \n   • \"latest_research_insights\": a consolidated summary of methods and outcomes from all eight papers.  \n   • \"cross_validation\": a list of at least three matched or mismatched points between Wikipedia and literature.  \n   • \"recommendations\": three concrete next-step research questions or papers to follow up on.",
+          "fuzzy_description": "I’m prepping a big briefing on CRISPR-Cas9 for my lab and my advisor keeps asking for more than just the usual Wikipedia overview. Here’s what I’m hoping you can help me with:\n\nI’d like a concise, roughly 150-word plain-English primer on how CRISPR-Cas9 works—just the five or so most essential facts someone needs to know. Then, depending on whether that basic page even mentions “clinical applications,” I want you to dig into what’s been popping up in the last six months. If there is a clinical section, focus on recent trials; if not, pivot to structural or mechanistic studies. Aim for about eight papers total—two or so from each source—summarizing for each one: what they did, sample size, core results, any glaring limitations, and actual dates so I know it’s fresh. \n\nAfter that, please line up at least three clear spots where the new studies either back up, extend, or flat-out contradict those five key wiki facts. And to wrap it all up, give me three concrete next-step questions or leads for further reading. Really need hard data and solid dates—can’t walk into my advisor’s office with just vague claims. Does that make sense?",
+          "dependency_analysis": "Inherent data flows:  \n• search_wikipedia → get_sections + extract_key_facts (Wikipedia chain)  \n• extract_key_facts output drives decision logic.  \n• search_{pubmed,medrxiv,arxiv,biorxiv} → download_{source} → read_{source} (Paper Search chain).  \n\nKey scenario dependencies:  \n• Presence/absence of 'Clinical applications' section (from get_sections) determines WHICH paper search tools to invoke (PubMed & medRxiv vs arXiv & bioRxiv).  \n• Paper metadata (search results) must be filtered by publication date, then top-2 selection drives downstream download/read calls.  \n• Only arXiv, bioRxiv, medRxiv support PDF download & reading; PubMed returns metadata only, so processing branches accordingly.  \n\nDecision points and control flow:  \n1. Branch on existence of Clinical applications section.  \n2. Parallel searches across two servers per branch.  \n3. Within each result set, an iterative loop filters by date, selects top 2, then for each paper calls different download/read tools.  \n4. Summaries from each paper are aggregated and then cross-validated against Wikipedia key facts.  \n\nSequential vs parallel:  \n• Wikipedia steps are strictly sequential (search → sections → extract facts → decision).  \n• Paper searches within each branch are parallel, but each result set undergoes its own sequential download/read pipeline.  \n\nCross-server interplay:  \n• Wikipedia informs the choice of which Paper Search servers/tools to call (server A → server B).  \n• Results from multiple paper servers are merged and compared back to Wikipedia findings for cross-validation.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Context7",
+            "DEX Paprika",
+            "FruityVice",
+            "Game Trends",
+            "Hugging Face",
+            "Movie Recommender",
+            "National Parks",
+            "OpenAPI Explorer",
+            "Reddit"
+          ]
+        }
+      ],
+      "servers": [
+        "Wikipedia",
+        "Paper Search"
+      ],
+      "combination_name": "Knowledge Base",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Reddit+DEX Paprika",
+      "tasks": [
+        {
+          "task_id": "reddit_dex_paprika_000",
+          "task_description": "You are a crypto research analyst. Perform an on-chain vs social signal correlation study for the Ethereum token and its top liquidity pools on the Ethereum network. Execute the following without asking for more information:  \n\n1. Call DEX Paprika:getNetworks to retrieve all supported networks and confirm “ethereum” is available.  \n2. Call DEX Paprika:search with query=\"Ethereum\" to identify the official Ethereum tokenAddress and its network.  \n3. Call DEX Paprika:getTokenDetails with network=\"ethereum\" and the discovered tokenAddress to fetch token metadata.  \n4. Call DEX Paprika:getTokenPools with network=\"ethereum\", tokenAddress from step 2, limit=10, orderBy=\"volume_usd\", sort=\"desc\" to list top pools trading Ethereum.  \n5. From the returned token pools, select the top 3 pools by USD volume.  For each of those 3 pools:  \n   a. Call DEX Paprika:getPoolDetails with network=\"ethereum\" and poolAddress to fetch pool composition and current metrics.  \n   b. Call DEX Paprika:getPoolOHLCV with network=\"ethereum\", poolAddress, start=\"7 days ago\", end=\"now\", limit=7, interval=\"24h\", inversed=false to retrieve daily OHLCV for the past 7 days.  \n   c. Call DEX Paprika:getPoolTransactions with network=\"ethereum\", poolAddress, page=0, limit=50 to retrieve the 50 most recent swap/add/remove events.  \n6. In parallel, fetch social signals:  \n   a. Call Reddit:fetch_reddit_hot_threads for subreddit=\"ethereum\", limit=5.  \n   b. Call Reddit:fetch_reddit_hot_threads for subreddit=\"cryptocurrency\", limit=5.  \n7. From each subreddit’s result, take the 3 hottest post IDs and call Reddit:fetch_reddit_post_content with post_id, comment_limit=10, comment_depth=2 to retrieve full thread content.  \n8. Analyze and cross-validate:  \n   • Correlate daily OHLCV and transaction spikes in each pool (step 5b/5c) with the timing and volume of Reddit discussions (step 7).  \n   • Identify any mentions of “ETH”, “Ethereum”, or the specific poolAddress strings in post titles or comments.  \n9. Produce a JSON report with three sections:  \n   • on_chain_metrics: token metadata, for each of the 3 pools include pool composition, 7-day OHLCV table, transaction count summary;  \n   • social_signals: list of fetched Reddit threads (subreddit, post title, URL, total comments) and a flag if the pool or token is mentioned;  \n   • correlation_insights: for each pool, note days where volume or transaction count spiked alongside elevated Reddit discussion (count of posts/comments that day), and whether mention overlap suggests social-driven movement.",
+          "fuzzy_description": "I’m putting together a quick deep-dive on ETH and how its biggest liquidity spots are behaving versus what people are buzzing about online. First, I want to make sure I’m looking at the official Ethereum token on mainnet. Then could you find the three ETH pools moving the most USD volume right now and pull their daily 24-hour price/volume figures over the past week, plus roughly fifty of the latest swap/add/remove events for each? At the same time, grab the five hottest threads from r/ethereum and r/cryptocurrency, then dive into the three most engaging posts in each (with a handful of comments). Finally, line up any days when those pool volumes or transaction counts spike with peaks in Reddit chatter. I really need hard numbers and a clear breakdown of on-chain metrics, social buzz, and any patterns that suggest the two are linked—can you help me nail that down?\n\nPlease ensure all findings are supported by concrete data and verifiable sources. I need specific numbers and evidence, not generalizations.",
+          "dependency_analysis": "Inherent dependencies:  \n- All Dex Paprika network-specific calls require an initial getNetworks.  \n- The search→getTokenDetails→getTokenPools chain drives pool selection: search yields tokenAddress for getTokenDetails and getTokenPools; getTokenPools yields poolAddresses for getPoolDetails, getPoolOHLCV, getPoolTransactions.  \n- Reddit:fetch_reddit_hot_threads returns post IDs which feed Reddit:fetch_reddit_post_content.  \n  \nScenario-based dependencies:  \n1. Use getNetworks to confirm the target network (‘ethereum’) before any other network calls.  \n2. Use search output (tokenAddress) to parameterize getTokenDetails and getTokenPools.  \n3. Parse getTokenPools to select the top 3 pools by USD volume – this decision point determines which poolAddresses drive the next three Dex calls (details, OHLCV, transactions).  \n4. Parallel execution: while on-chain data is collected for each pool, simultaneously fetch hot Reddit threads from two subreddits.  \n5. From each subreddit’s hot threads, select the 3 hottest posts (decision point) and fetch detailed comments.  \n6. Cross-server dependency: token symbols and poolAddresses from on-chain data are used to detect mentions in Reddit content – enabling correlation.  \n7. Data flow pattern: sequential chain from search→getTokenPools→per-pool analytics, parallel branch for social data, then a final merge step for correlation analysis.  \n8. Critical decision points: top token pools selection; top posts selection; mention detection for correlation.  \n9. This task cannot be executed without understanding and sequencing these tool dependencies across both Reddit and Dex Paprika servers.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Context7",
+            "FruityVice",
+            "Huge Icons",
+            "Hugging Face",
+            "Metropolitan Museum",
+            "National Parks",
+            "NixOS",
+            "OKX Exchange",
+            "Scientific Computing"
+          ]
+        }
+      ],
+      "servers": [
+        "Reddit",
+        "DEX Paprika"
+      ],
+      "combination_name": "Social Markets",
+      "combination_type": "two_server_combinations"
+    },
+    {
+      "server_name": "Reddit+DEX Paprika",
+      "tasks": [
+        {
+          "task_id": "reddit_dex_paprika_001",
+          "task_description": "You are an on-chain data analyst tasked with validating and profiling DeFi liquidity pools that are currently trending on Reddit. Execute the following steps in order, without any additional input:\n1. Call DEX Paprika:getStats to retrieve high-level statistics about the DexPaprika ecosystem.\n2. Call DEX Paprika:getNetworks to list all supported blockchain networks.\n3. Call Reddit:fetch_reddit_hot_threads with subreddit=\"cryptocurrency\" and limit=20. From the returned hot threads, identify any thread titles or URLs that contain a DEX Paprika pool page link (pattern “/pool/”). Extract up to 3 unique pool addresses from those links and record the corresponding post_id for each.\n4. For each extracted poolAddress:\n   a. Call DEX Paprika:search with query equal to the poolAddress. If the top result has type=\"pool\", record its network ID; otherwise skip this address.\n   b. Verify that the network ID appears in the list from step 2.\n   c. Call DEX Paprika:getPoolDetails with the verified network and poolAddress.\n   d. Call DEX Paprika:getPoolOHLCV with network, poolAddress, start=\"30 days ago\", limit=30, interval=\"24h\" to fetch daily price history over the past month.\n   e. Call DEX Paprika:getPoolTransactions with network, poolAddress, limit=10 to fetch the ten most recent swaps/adds/removes.\n   f. Call DEX Paprika:getNetworkPools with network, limit=5, sort=\"desc\", orderBy=\"volume_usd\" to retrieve the top five pools by volume on that network.\n   g. Call Reddit:fetch_reddit_post_content with the saved post_id, comment_limit=3, comment_depth=2 to fetch the top 3 comments on the original Reddit thread.\n5. Compile and output a comparative report for each poolAddress containing:\n   • network ID\n   • total volume_usd and liquidity from getPoolDetails\n   • average daily volume over the past 30 days (computed from OHLCV)\n   • count of the 10 most recent transactions\n   • rank of the pool by volume_usd among the network’s top 5 pools\n   • summary of the top 3 Reddit comments (text plus author)\n\nFormat your final output as a JSON array of objects, one per poolAddress, each with keys: network, poolAddress, volume_usd, liquidity_usd, avg_daily_volume_usd, recent_tx_count, rank_among_top5, reddit_comments_summary.",
+          "fuzzy_description": "I’m putting together a DeFi briefing for my trading desk and they’ve been fixated on a few liquidity pools everyone keeps linking in r/cryptocurrency. What I’d love is:\n\nSome high-level health stats on the DEX ecosystem and a quick list of which blockchains it covers, then a scan of the current top 20 hot threads on r/cryptocurrency to spot up to three unique pool page URLs. For each pool address found, can you:\n\n- Double-check it really maps to a live pool on one of the supported chains  \n- Pull its latest total volume and liquidity figures  \n- Fetch its daily price history for the past 30 days and compute the average daily volume  \n- Grab the ten most recent swap/add/remove events  \n- See how it ranks by volume against the top five pools on that same network  \n- And even bring back the first three comments from the original Reddit post for context  \n\nIdeally I’d get back a tidy JSON array where each entry has: network ID, pool address, volume_usd, liquidity_usd, avg_daily_volume_usd, recent_tx_count, rank_among_top5, plus a short summary of those top comments. I really need solid numbers here—no guesswork—so I can show the team hard data in our next meeting.",
+          "dependency_analysis": "1. Initial cross-server validation: getStats and getNetworks (DEX Paprika) establish the universe of networks.  \n2. Reddit to DEX Paprika chain: fetch_reddit_hot_threads yields threads containing pool URLs → extract poolAddress and post_id → input these into DEX Paprika:search.  \n3. Decision point: only proceed with search results whose type==\"pool\"; skip non-pool results.  \n4. Network validation: ensure search result.network matches one of the networks from getNetworks.  \n5. Sequential tool chains per poolAddress: search → getPoolDetails → getPoolOHLCV → getPoolTransactions → getNetworkPools.  \n6. Parallelism: steps 4a–4f can be executed in parallel for each poolAddress, but within each address the order is strict.  \n7. Cross-server parallel fetch: while DEX Paprika profile tools run, separately call fetch_reddit_post_content to enrich on-chain data with Reddit sentiment.  \n8. Data flow dependencies: OHLCV output feeds average-volume calculation; getNetworkPools output enables rank calculation; Reddit content provides qualitative validation.  \n9. The compiled report cross-validates on-chain metrics against social sentiment, leveraging both Reddit and DEX Paprika tools in a unified workflow.",
+          "distraction_servers": [
+            "Bibliomantic",
+            "Call for Papers",
+            "FruityVice",
+            "Huge Icons",
+            "Math MCP",
+            "Medical Calculator",
+            "Metropolitan Museum",
+            "Movie Recommender",
+            "NixOS",
+            "OpenAPI Explorer"
+          ]
+        }
+      ],
+      "servers": [
+        "Reddit",
+        "DEX Paprika"
+      ],
+      "combination_name": "Social Markets",
+      "combination_type": "two_server_combinations"
+    }
+  ],
+  "total_tasks": 0
+}

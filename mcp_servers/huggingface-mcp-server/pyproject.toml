@@ -1,0 +1,17 @@
+[project]
+name = "huggingface"
+version = "0.1.0"
+description = "Hugging Face MCP Server"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["huggingface-hub>=0.29.3", "mcp>=1.4.1"]
+[[project.authors]]
+name = "Shreyas Karnik"
+email = "karnik.shreyas@gmail.com"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+huggingface = "huggingface:main"

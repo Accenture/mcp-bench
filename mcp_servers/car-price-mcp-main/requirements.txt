@@ -1,0 +1,4 @@
+requests>=2.28.0
+mcp
+requests-cache
+retry-requests

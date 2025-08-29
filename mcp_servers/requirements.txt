@@ -1,0 +1,56 @@
+# MCP Catalog Requirements
+# Package managers (install separately)
+
+# Core MCP dependencies
+mcp[cli]>=1.9.0
+mcp>=1.0.0
+
+# HTTP and API clients
+httpx>=0.28.1
+requests>=2.28.0
+requests-cache
+aiohttp==3.12.15
+
+# Web frameworks
+fastapi>=0.95.0
+uvicorn>=0.21.0
+
+# Data processing and parsing
+pydantic>=2.10.6
+beautifulsoup4>=4.11.0
+
+# Utility libraries
+python-dotenv>=1.0.0
+rich>=14.0.0
+typer>=0.15.2
+certifi
+diskcache
+platformdirs
+psutil
+
+# Scientific computing
+numpy
+scipy
+matplotlib
+sympy
+
+# Testing
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+
+# Code quality
+black>=23.11.0
+isort>=5.12.0
+mypy>=1.7.1
+
+# FastMCP for some servers
+fastmcp
+
+# Server-specific dependencies
+huggingface-hub>=0.29.3
+wikipedia
+feedparser
+PyPDF2>=3.0.0
+lxml>=4.9.0
+praw
+redditwarp

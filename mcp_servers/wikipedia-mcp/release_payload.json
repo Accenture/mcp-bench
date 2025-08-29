@@ -1,0 +1,8 @@
+{
+  "tag_name": "v1.0.2",
+  "target_commitish": "main",
+  "name": "Wikipedia MCP v1.0.2",
+  "body": "## Wikipedia MCP v1.0.2\n\n### Added\n- GitHub Actions workflows for automated testing and releases\n- Comprehensive release documentation\n- Testing documentation\n- Example script for MCP client interaction\n\n### Fixed\n- Fixed MCP transport issues in server implementation\n- Corrected documentation for MCP protocol usage\n- Updated README with accurate MCP protocol information\n\n### Changed\n- Improved error handling in Wikipedia client\n- Enhanced documentation on using the MCP server with Claude Desktop\n- Updated project metadata",
+  "draft": false,
+  "prerelease": false
+} 

@@ -1,0 +1,49 @@
+{
+  "dxt_version": "0.1",
+  "name": "metmuseum-mcp",
+  "version": "0.9.5",
+  "description": "A Model Context Protocol (MCP) server that provides access to the Metropolitan Museum of Art Collection through natural language interactions. This server allows AI models to search The Met's art collection and have art works available as a Resource.",
+  "author": {
+    "name": "Mike Chao",
+    "email": "mike.chao.one@gmail.com",
+    "url": "https://github.com/mikechao"
+  },
+  "homepage": "https://github.com/mikechao/metmuseum-mcp",
+  "documentation": "https://github.com/mikechao/metmuseum-mcp/blob/main/README.md",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "list-departments",
+      "description": "Lists all the valid departments at The Met"
+    },
+    {
+      "name": "search-museum-objects",
+      "description": "Search for various objects in The Met based on the inputs."
+    },
+    {
+      "name": "get-museum-object",
+      "description": "Get a specific object from The Met containing all open access data about that object, including its image (if the image is available under Open Access)"
+    }
+  ],
+  "keywords": [
+    "The-Met",
+    "Metropoltian-Museum-Of-Art",
+    "art",
+    "museum"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikechao/metmuseum-mcp.git"
+  }
+}

@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bibliomantic-mcp-server"
+version = "1.0.0"
+description = "A Model Context Protocol server integrating I Ching divination with AI responses, exploring Philip K. Dick's bibliomantic approach"
+authors = [{name = "Daniel Shields"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]>=1.9.0",
+]
+keywords = ["mcp", "model-context-protocol", "iching", "divination", "philip-k-dick", "bibliomancy", "ai", "claude"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications",
+    "Topic :: Education",
+    "Topic :: Philosophy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/dshields/bibliomantic-mcp-server"
+Repository = "https://github.com/dshields/bibliomantic-mcp-server"
+Issues = "https://github.com/dshields/bibliomantic-mcp-server/issues"
+Documentation = "https://github.com/dshields/bibliomantic-mcp-server/blob/main/README.md"
+
+[project.scripts]
+bibliomantic-server = "bibliomantic_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+exclude = ["tests*", "docs*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "*.txt", "*.json"]

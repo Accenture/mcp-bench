@@ -1,0 +1,36 @@
+{
+  "name": "dexpaprika-mcp",
+  "version": "1.1.0",
+  "description": "A Model Context Protocol server for DexPaprika cryptocurrency data with network-specific pool queries",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "dexpaprika-mcp": "./dist/bin.js"
+  },
+  "scripts": {
+    "build": "mkdir -p dist && cp -r src/* dist/ && chmod +x dist/bin.js",
+    "start": "node src/index.js",
+    "watch": "nodemon --watch src --exec npm start",
+    "test": "node src/test.js",
+    "test:api": "node src/test_methods.js",
+    "test:mcp": "node src/test_mcp_client.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "dexpaprika",
+    "cryptocurrency",
+    "defi",
+    "dex",
+    "decentralized-exchange",
+    "blockchain",
+    "liquidity-pools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.4.1",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.24.2"
+  }
+}

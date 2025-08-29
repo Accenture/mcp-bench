@@ -1,0 +1,84 @@
+[submodule "mcp_servers/mcp-server-nationalparks"]
+	path = mcp_servers/mcp-server-nationalparks
+	url = https://github.com/KyrieTangSheng/mcp-server-nationalparks
+[submodule "mcp_servers/dexpaprika-mcp"]
+	path = mcp_servers/dexpaprika-mcp
+	url = https://github.com/coinpaprika/dexpaprika-mcp
+[submodule "mcp_servers/okx-mcp"]
+	path = mcp_servers/okx-mcp
+	url = https://github.com/esshka/okx-mcp
+[submodule "mcp_servers/math-mcp"]
+	path = mcp_servers/math-mcp
+	url = https://github.com/EthanHenrickson/math-mcp
+[submodule "mcp_servers/nasa-mcp"]
+	path = mcp_servers/nasa-mcp
+	url = https://github.com/AnCode666/nasa-mcp
+[submodule "mcp_servers/context7-mcp"]
+	path = mcp_servers/context7-mcp
+	url = https://github.com/upstash/context7
+[submodule "mcp_servers/huggingface-mcp-server"]
+	path = mcp_servers/huggingface-mcp-server
+	url = https://github.com/shreyaskarnik/huggingface-mcp-server
+[submodule "mcp_servers/mcp-osint-server"]
+	path = mcp_servers/mcp-osint-server
+	url = https://github.com/himanshusanecha/mcp-osint-server
+[submodule "mcp_servers/bibliomantic-mcp-server"]
+	path = mcp_servers/bibliomantic-mcp-server
+	url = https://github.com/d4nshields/bibliomantic-mcp-server
+[submodule "mcp_servers/paper-search-mcp"]
+	path = mcp_servers/paper-search-mcp
+	url = https://github.com/openags/paper-search-mcp
+[submodule "mcp_servers/hugeicons-mcp-server"]
+	path = mcp_servers/hugeicons-mcp-server
+	url = https://github.com/hugeicons/mcp-server
+[submodule "mcp_servers/mcp-nixos"]
+	path = mcp_servers/mcp-nixos
+	url = https://github.com/utensils/mcp-nixos
+[submodule "mcp_servers/biomcp"]
+	path = mcp_servers/biomcp
+	url = https://github.com/genomoncology/biomcp
+[submodule "mcp_servers/metmuseum-mcp"]
+	path = mcp_servers/metmuseum-mcp
+	url = https://github.com/mikechao/metmuseum-mcp
+[submodule "mcp_servers/medcalc"]
+	path = mcp_servers/medcalc
+	url = https://github.com/vitaldb/medcalc
+[submodule "mcp_servers/scientific_computation_mcp"]
+	path = mcp_servers/scientific_computation_mcp
+	url = https://github.com/Aman-Amith-Shastry/scientific_computation_mcp
+[submodule "mcp_servers/movie-recommender-mcp"]
+	path = mcp_servers/movie-recommender-mcp
+	url = https://github.com/iremert/movie-recommender-mcp
+[submodule "mcp_servers/car-price-mcp-main"]
+	path = mcp_servers/car-price-mcp-main
+	url = https://github.com/yusaaztrk/car-price-mcp-main
+[submodule "mcp_servers/weather_mcp"]
+	path = mcp_servers/weather_mcp
+	url = https://github.com/HarunGuclu/weather_mcp
+[submodule "mcp_servers/game-trends-mcp"]
+	path = mcp_servers/game-trends-mcp
+	url = https://github.com/halismertkir/game-trends-mcp
+[submodule "mcp_servers/call-for-papers-mcp"]
+	path = mcp_servers/call-for-papers-mcp
+	url = https://github.com/iremert/call-for-papers-mcp
+[submodule "mcp_servers/mcp-reddit"]
+	path = mcp_servers/mcp-reddit
+	url = https://github.com/dumyCq/mcp-reddit.git
+[submodule "mcp_servers/wikipedia-mcp"]
+	path = mcp_servers/wikipedia-mcp
+	url = https://github.com/Rudra-ravi/wikipedia-mcp
+[submodule "mcp_servers/fruityvice-mcp"]
+	path = mcp_servers/fruityvice-mcp
+	url = https://github.com/CelalKhalilov/fruityvice-mcp
+[submodule "mcp_servers/mcp-google-map"]
+	path = mcp_servers/mcp-google-map
+	url = https://github.com/cablate/mcp-google-map.git
+[submodule "mcp_servers/time-mcp"]
+	path = mcp_servers/time-mcp
+	url = https://github.com/dumyCq/time-mcp.git
+[submodule "mcp_servers/openapi-mcp-server"]
+	path = mcp_servers/openapi-mcp-server
+	url = https://github.com/janwilmake/openapi-mcp-server.git
+[submodule "mcp_servers/unit-converter-mcp"]
+	path = mcp_servers/unit-converter-mcp
+	url = https://github.com/zazencodes/unit-converter-mcp.git

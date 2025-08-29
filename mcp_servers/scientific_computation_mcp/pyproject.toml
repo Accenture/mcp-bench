@@ -1,0 +1,19 @@
+[project]
+name = "numpy-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "mcp[cli]>=1.9.2",
+    "numpy>=2.2.6",
+    "sympy>=1.14.0",
+    "typing",
+    "pydantic"
+]
+
+[tool.uv.workspace]
+members = [
+    "Aman Shastry",
+]

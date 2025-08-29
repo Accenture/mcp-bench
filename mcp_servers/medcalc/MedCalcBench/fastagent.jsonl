@@ -1,0 +1,1 @@
+{"level":"ERROR","timestamp":"2025-04-30T10:51:15.782859","namespace":"mcp_agent.llm.providers.augmented_llm_openai.default","message":"Error: Error code: 400 - {'error': {'message': \"Unsupported value: 'messages[0].role' does not support 'system' with this model.\", 'type': 'invalid_request_error', 'param': 'messages[0].role', 'code': 'unsupported_value'}}"}

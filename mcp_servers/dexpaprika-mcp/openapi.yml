@@ -1,0 +1,2047 @@
+openapi: 3.1.0
+security: []
+info:
+  title: DexPaprika API
+  version: 1.0.2
+  description: >
+    # Introduction
+      Welcome to the DexPaprika API! This product is developed by [CoinPaprika](https://coinpaprika.com).
+
+      Our API enables developers to query token, pool, and DEX data across multiple blockchain networks. Feel free to explore our endpoints below.
+
+
+      ---
+    # Getting Started
+
+    ## Testing the API - Code Snippets
+
+    The snippets below show how to quickly make a **GET** request. Since this is
+    a **public API** (no API key needed), you can simply call the endpoints
+    directly.
+
+
+    > **Note**: If you see CORS issues in a browser, you may need to call these
+    endpoints from a backend server to avoid local browser restrictions.
+
+
+    ### 1. cURL
+
+
+    ```bash
+
+    curl -X GET "https://api.dexpaprika.com/networks/ethereum/pools" | jq
+
+    ```
+
+    ### 2. Node.js (JavaScript)
+
+    ```js
+
+    const https = require('https');
+
+
+    const options = {
+      hostname: 'api.dexpaprika.com',
+      path: '/networks/ethereum/pools',
+      method: 'GET',
+    };
+
+
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => { console.log(JSON.parse(data)); });
+    });
+
+
+    req.on('error', error => { console.error(error); });
+
+    req.end();
+
+    ```
+
+
+    ### 3. Python
+
+    ```python
+
+    import requests
+
+
+    url = "https://api.dexpaprika.com/networks/ethereum/pools"
+
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print(f"Error: {response.status_code} -> {response.text}")
+    ```
+
+    ### 4. PHP
+
+    ```php
+
+    <?php
+
+    $curl = curl_init();
+
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://api.dexpaprika.com/networks/ethereum/pools",
+      CURLOPT_RETURNTRANSFER => true
+    ));
+
+
+    $response = curl_exec($curl);
+
+
+    if(curl_errno($curl)) {
+      echo "Error: " . curl_error($curl);
+    } else {
+      echo $response;
+    }
+
+
+    curl_close($curl);
+
+    ?>
+
+    ```
+
+
+    ### 5. Java
+
+    ```java
+
+    import java.io.*;
+
+    import java.net.HttpURLConnection;
+
+    import java.net.URL;
+
+
+    public class DexPaprikaExample {
+        public static void main(String[] args) {
+            try {
+                URL url = new URL("https://api.dexpaprika.com/networks/ethereum/pools");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                int responseCode = con.getResponseCode();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                    String inputLine;
+                    StringBuilder content = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    if (responseCode == 200) {
+                        System.out.println(content.toString());
+                    } else {
+                        System.out.println("Error: " + responseCode);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ```
+
+
+    ### 6. Go
+
+    ```go
+
+    package main
+
+
+    import (
+        "fmt"
+        "io/ioutil"
+        "log"
+        "net/http"
+    )
+
+
+    func main() {
+        client := &http.Client{}
+        req, err := http.NewRequest("GET", "https://api.dexpaprika.com/networks/ethereum/pools", nil)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        resp, err := client.Do(req)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer resp.Body.Close()
+
+        body, err := ioutil.ReadAll(resp.Body)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        if resp.StatusCode == http.StatusOK {
+            fmt.Println(string(body))
+        } else {
+            fmt.Printf("Error: %d -> %s\n", resp.StatusCode, body)
+        }
+    }
+
+    ```
+
+
+    ### 7. C#
+
+    ```csharp
+
+    using System;
+
+    using System.Net.Http;
+
+    using System.Threading.Tasks;
+
+
+    class Program
+
+    {
+        static async Task Main()
+        {
+            using var client = new HttpClient();
+            var url = "https://api.dexpaprika.com/networks/ethereum/pools";
+            
+            var response = await client.GetAsync(url);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(content);
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode}");
+            }
+        }
+    }
+
+    ```
+
+
+    ## Feedback & Next Steps
+
+    1. **Test** any of the snippets above.  
+
+    2. **Explore** our other endpoints in this documentation.   
+
+    3. **Share** your feedback with us at
+    [support@coinpaprika.com](mailto:support@coinpaprika.com).
+
+    4. If you want implement our API into your project or simply discuss
+    possible collaboration, please reach out to msroka@coinpaprika.com.
+
+    ---
+  contact:
+    name: CoinPaprika Support
+    email: support@coinpaprika.com
+    url: https://coinpaprika.com
+  license:
+    name: Proprietary
+    url: https://dexpaprika.com/terms
+tags:
+  - name: Networks
+    description: Endpoints for retrieving information about supported blockchain networks
+  - name: DEXes
+    description: Endpoints for retrieving information about decentralized exchanges
+  - name: Pools
+    description: Endpoints for retrieving information about liquidity pools
+  - name: Tokens
+    description: Endpoints for retrieving information about tokens
+  - name: Search
+    description: Endpoints for searching across tokens, pools, and DEXes
+  - name: Utils
+    description: Utility endpoints for system metadata
+servers:
+  - url: "https://api.dexpaprika.com"
+    description: Production server
+paths:
+  /networks:
+    get:
+      operationId: getNetworks
+      tags:
+        - Networks
+      summary: Get a list of available blockchain networks.
+      description: |
+        Retrieve a list of all supported blockchain networks, including metadata
+        like display names and associated details. Ideal for building dropdowns 
+        or querying supported networks for your application.
+      responses:
+        "200":
+          description: A list of available blockchain networks.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: List of blockchain networks.
+                items:
+                  $ref: "#/components/schemas/Network"
+              example:
+                - id: "ethereum"
+                  display_name: "Ethereum"
+                - id: "fantom"
+                  display_name: "Fantom"
+                - id: "solana"
+                  display_name: "Solana"
+        "400":
+          description: Bad request. Invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid request parameters.
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unexpected server error. Please try again later.
+  "/networks/{network}/dexes":
+    get:
+      operationId: getNetworkDexes
+      tags:
+        - DEXes
+      summary: Get a list of available dexes on a network.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - in: query
+          name: order_by
+          schema:
+            type: string
+            enum:
+              - pool
+          description: How to order the returned data.
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayOfDexes"
+        "400":
+          description: The specified network is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid network.
+        "404":
+          description: Network not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Network not found.
+  /pools:
+    get:
+      operationId: getTopPools
+      tags:
+        - Pools
+      summary: Get top X pools. (DEPRECATED)
+      description: |
+        **THIS ENDPOINT HAS BEEN DEPRECATED AND WILL BE REMOVED.**
+        It now returns a 410 Gone status. Please refer to our API documentation for alternatives.
+
+        ---
+        *Original Description (for historical reference):*
+        Retrieves a paginated list of top pools from all (or specific) networks.
+        Allows sorting and ordering, providing aggregated volume, price data,
+        and token details for each pool.
+      deprecated: true
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "410":
+          description: Endpoint Removed. This endpoint has been permanently removed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Endpoint Removed
+                  message:
+                    type: string
+                    example: This endpoint has been permanently removed. Please refer to our API documentation for alternatives.
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pools:
+                    type: array
+                    description: An array of pool objects with their associated price data.
+                    items:
+                      $ref: "#/components/schemas/PoolWithPrices"
+                  page_info:
+                    type: object
+                    description: Details about the current page of results.
+                    properties:
+                      limit:
+                        type: integer
+                        description: The maximum number of items returned per page.
+                      page:
+                        type: integer
+                        description: The current page number.
+                      total_items:
+                        type: integer
+                        description: The total number of items matching the query.
+                      total_pages:
+                        type: integer
+                        description: The total number of pages available.
+              example:
+                pools:
+                  - id: 8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj
+                    dex_id: CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK
+                    dex_name: Raydium CLMM
+                    chain: solana
+                    volume_usd: 829807420.5052161
+                    created_at: "2023-11-26T20:25:08.000Z"
+                    created_at_block_number: 232424998
+                    transactions: 273978
+                    price_usd: 228.70162563938777
+                    last_price_change_usd_5m: 0.05658913344914529
+                    last_price_change_usd_1h: -2.2971851257064313
+                    last_price_change_usd_24h: -10.883264918629346
+                    fee: 0
+                    tokens:
+                      - id: So11111111111111111111111111111111111111112
+                        name: Wrapped SOL
+                        symbol: SOL
+                        chain: solana
+                        decimals: 9
+                        added_at: "2024-10-04T08:30:05.000Z"
+                      - id: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+                        name: USD Coin
+                        symbol: USDC
+                        chain: solana
+                        decimals: 6
+                        added_at: "2024-10-04T08:30:05.000Z"
+                page_info:
+                  limit: 100
+                  page: 1
+                  total_items: 121650
+                  total_pages: 1217
+        "400":
+          description: The specified network is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid network.
+        "404":
+          description: Network not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Network not found.
+  "/networks/{network}/pools":
+    get:
+      operationId: getNetworkPools
+      tags:
+        - Pools
+      summary: Get top X pools on a network.
+      description: |
+        Retrieves a paginated list of top pools on a specific network. 
+        Supports sorting and ordering by different parameters. The response 
+        includes volume, price data, and token details for each pool.
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pools:
+                    type: array
+                    description: >-
+                      A list of pools for the given network, including pricing
+                      data.
+                    items:
+                      $ref: "#/components/schemas/PoolWithPrices"
+                  page_info:
+                    type: object
+                    description: Details about the current page of results.
+                    properties:
+                      limit:
+                        type: integer
+                        description: The maximum number of items returned per page.
+                      page:
+                        type: integer
+                        description: The current page number.
+                      total_items:
+                        type: integer
+                        description: The total number of items matching the query.
+                      total_pages:
+                        type: integer
+                        description: The total number of pages available.
+              example:
+                pools:
+                  - id: 8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj
+                    dex_id: CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK
+                    dex_name: Raydium CLMM
+                    chain: solana
+                    volume_usd: 829807420.5052161
+                    created_at: "2023-11-26T20:25:08.000Z"
+                    created_at_block_number: 232424998
+                    transactions: 273978
+                    price_usd: 228.70162563938777
+                    last_price_change_usd_5m: 0.05658913344914529
+                    last_price_change_usd_1h: -2.2971851257064313
+                    last_price_change_usd_24h: -10.883264918629346
+                    fee: 0
+                    tokens:
+                      - id: So11111111111111111111111111111111111111112
+                        name: Wrapped SOL
+                        symbol: SOL
+                        chain: solana
+                        decimals: 9
+                        added_at: "2024-10-04T08:30:05.000Z"
+                      - id: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+                        name: USD Coin
+                        symbol: USDC
+                        chain: solana
+                        decimals: 6
+                        added_at: "2024-10-04T08:30:05.000Z"
+                page_info:
+                  limit: 100
+                  page: 1
+                  total_items: 121650
+                  total_pages: 1217
+        "400":
+          description: The specified network is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid network.
+        "404":
+          description: Network not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Network not found.
+  "/networks/{network}/dexes/{dex}/pools":
+    get:
+      operationId: getDexPools
+      tags:
+        - Pools
+      summary: Get top X pools on a network's DEX.
+      description: >
+        Retrieves a paginated list of top pools on a specific network's DEX.
+
+        Supports sorting and ordering, returning essential price data and token
+        details.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/dexParam"
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pools:
+                    type: array
+                    description: >-
+                      List of pools for the specified DEX, including volume and
+                      price data.
+                    items:
+                      $ref: "#/components/schemas/PoolWithPrices"
+                  page_info:
+                    type: object
+                    description: Details about the current page of results.
+                    properties:
+                      limit:
+                        type: integer
+                        description: The maximum number of items returned per page.
+                      page:
+                        type: integer
+                        description: The current page number.
+                      total_items:
+                        type: integer
+                        description: The total number of items matching the query.
+                      total_pages:
+                        type: integer
+                        description: The total number of pages available.
+              example:
+                pools:
+                  - id: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+                    dex_id: "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+                    dex_name: Uniswap V3
+                    chain: ethereum
+                    volume_usd: 584196007.0865604
+                    created_at: "2021-05-05T21:42:11.000Z"
+                    created_at_block_number: 12376729
+                    transactions: 8808
+                    price_usd: 1.000038420407992
+                    last_price_change_usd_5m: 0.2817344833094529
+                    last_price_change_usd_1h: -0.11886943575265935
+                    last_price_change_usd_24h: 0.06894442872697064
+                    fee: 0
+                    tokens:
+                      - id: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                        name: USD Coin
+                        symbol: USDC
+                        chain: ethereum
+                        decimals: 6
+                        added_at: "2024-12-02T13:00:16.000Z"
+                      - id: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                        name: Wrapped Ether
+                        symbol: WETH
+                        chain: ethereum
+                        decimals: 18
+                        added_at: "2024-12-02T13:00:16.000Z"
+                page_info:
+                  limit: 10
+                  page: 1
+                  total_items: 880
+                  total_pages: 88
+        "400":
+          description: The specified network or dex is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid network or DEX.
+        "404":
+          description: Network or DEX not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: DEX not found on this network.
+  "/networks/{network}/pools/{pool_address}":
+    get:
+      operationId: getPoolDetails
+      tags:
+        - Pools
+      summary: Get a pool on a network.
+      description: |
+        Retrieve detailed information about a specific on-chain pool, 
+        including token pairs, current price data, and volume metrics.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/poolAddressParam"
+        - $ref: "#/components/parameters/poolInvertedPriceParam"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  created_at_block_number:
+                    type: number
+                  chain:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  factory_id:
+                    type: string
+                  dex_id:
+                    type: string
+                  dex_name:
+                    type: string
+                  tokens:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Token"
+                        - type: object
+                          properties:
+                            fdv:
+                              type: number
+                              description: Fully diluted valuation of token.
+                  last_price:
+                    type: number
+                  last_price_usd:
+                    type: number
+                  fee:
+                    type: number
+                  price_time:
+                    type: string
+                  24h:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                  6h:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                  1h:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                  30m:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                  15m:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                  5m:
+                    type: object
+                    properties:
+                      last_price_usd_change:
+                        type: number
+                      volume_usd:
+                        type: number
+                      buy_usd:
+                        type: number
+                      sell_usd:
+                        type: number
+                      sells:
+                        type: integer
+                      buys:
+                        type: integer
+                      txns:
+                        type: integer
+                example:
+                  id: 8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj
+                  chain: solana
+                  factory_id: CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK
+                  dex_id: raydium_clmm
+                  dex_name: Raydium CLMM
+                  created_at_block_number: 232424998
+                  fee: 0
+                  created_at: "2023-11-26T20:25:08.000Z"
+                  tokens:
+                    - id: So11111111111111111111111111111111111111112
+                      name: Wrapped SOL
+                      symbol: SOL
+                      chain: solana
+                      decimals: 9
+                      added_at: "2024-10-04T08:30:05.000Z"
+                      fdv: 94441873213
+                    - id: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+                      name: USD Coin
+                      symbol: USDC
+                      chain: solana
+                      decimals: 6
+                      added_at: "2024-10-04T08:30:05.000Z"
+                      fdv: 7700000000
+                  last_price: 233.8201620378884
+                  last_price_usd: 234.1327298484414
+                  price_time: "2025-01-27T16:12:16.000Z"
+                  24h:
+                    last_price_usd_change: -7.991645970375927
+                    volume_usd: 808169281.4395584
+                    sell_usd: 404084640.7197792
+                    buy_usd: 404084640.7197792
+                    sells: 130647
+                    buys: 138125
+                    txns: 268772
+                  6h:
+                    last_price_usd_change: 3.678167601422392
+                    volume_usd: 239714337.5522164
+                    sell_usd: 119857168.7761082
+                    buy_usd: 119857168.7761082
+                    sells: 37349
+                    buys: 37942
+                    txns: 75291
+                  1h:
+                    last_price_usd_change: 0.21468385213358251
+                    volume_usd: 38581519.09849599
+                    sell_usd: 19290759.549247995
+                    buy_usd: 19290759.549247995
+                    sells: 5855
+                    buys: 6280
+                    txns: 12135
+                  30m:
+                    last_price_usd_change: -0.6596647484596703
+                    volume_usd: 17156573.023071297
+                    sell_usd: 8578286.5115356485
+                    buy_usd: 8578286.5115356485
+                    sells: 2573
+                    buys: 2989
+                    txns: 5562
+                  15m:
+                    last_price_usd_change: 0.10278852417240747
+                    volume_usd: 8712008.133446362
+                    sell_usd: 4356004.066723181
+                    buy_usd: 4356004.066723181
+                    sells: 1231
+                    buys: 1464
+                    txns: 2695
+                  5m:
+                    last_price_usd_change: 0.01045314121300838
+                    volume_usd: 3102185.350890263
+                    sell_usd: 1551092.6754451315
+                    buy_usd: 1551092.6754451315
+                    sells: 479
+                    buys: 474
+                    txns: 953
+        "400":
+          description: The specified network or pool address is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid request parameters.
+        "404":
+          description: Network or pool not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Pool not found.
+  "/networks/{network}/pools/{pool_address}/ohlcv":
+    get:
+      operationId: getPoolOHLCV
+      tags:
+        - Pools
+      summary: Get OHLCV data for a pool pair.
+      description: >
+        Retrieves Open-High-Low-Close-Volume (OHLCV) data for a specific pool, 
+
+        potentially over a specified time range.  
+
+        - **start** is **required** to set the beginning of the data window.  
+
+        - **end** is optional; if omitted, data is returned for the "start" date
+        only.  
+
+        - **limit** can control how many data points to retrieve (e.g., maximum
+        of 100).  
+
+        - **interval** defines the granularity (e.g., 1h, 4h, 1d).  
+
+        - **inverted_price** indicates whether to invert the main price ratio.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/poolAddressParam"
+        - $ref: "#/components/parameters/ohlcvStartParam"
+        - $ref: "#/components/parameters/ohlcvEndParam"
+        - $ref: "#/components/parameters/ohlcvLimitParam"
+        - $ref: "#/components/parameters/ohlcvIntervalParam"
+        - $ref: "#/components/parameters/ohlcvInvertedPriceParam"
+      responses:
+        "200":
+          description: A list of OHLCV records successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: An array of OHLCV records (candlesticks) matching the query criteria.
+                items:
+                  $ref: "#/components/schemas/OHLCVRecord"
+              example:
+                - time_open: "2025-03-10T00:00:00Z"
+                  time_close: "2025-03-11T00:00:00Z"
+                  open: 126.43817748776037
+                  high: 131.48201077049822
+                  low: 115.52148830221141
+                  close: 118.20275113239272
+                  volume: 262402654
+        "400":
+          description: The specified network or pool address (or token) is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid network, pool address, or token address."
+        "404":
+          description: Network not found or pool not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Pool not found on this network.
+  "/networks/{network}/pools/{pool_address}/transactions":
+    get:
+      operationId: getPoolTransactions
+      tags:
+        - Pools
+      summary: >-
+        Get transactions of a pool on a network. Paging can be used up to 100
+        pages.
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/poolAddressParam"
+        - in: query
+          name: cursor
+          description: >-
+            Cursor is a transaction ID used for pagination. If empty, the first
+            set of results is returned.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: Response for a request with page-based pagination.
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Transaction"
+                      page_info:
+                        type: object
+                        properties:
+                          limit:
+                            type: integer
+                          page:
+                            type: integer
+                          total_items:
+                            type: integer
+                          total_pages:
+                            type: integer
+                  - type: object
+                    description: Response for a request with cursor-based pagination.
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Transaction"
+                      page_info:
+                        type: object
+                        properties:
+                          next_cursor:
+                            type: string
+                          limit:
+                            type: integer
+        "400":
+          description: The specified network or pool address is invalid.
+        "404":
+          description: Network not found or pool not found.
+  "/networks/{network}/tokens/{token_address}":
+    get:
+      operationId: getTokenDetails
+      tags:
+        - Tokens
+      summary: Get a token's latest data on a network.
+      description: >
+        Retrieves detailed information about a specific token on the given
+        network, 
+
+        including latest price, metadata, status, and recent summary metrics
+        such as price changes 
+
+        and volumes over multiple timeframes.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/tokenAddressParam"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+              example:
+                id: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+                name: Jupiter
+                symbol: JUP
+                chain: solana
+                decimals: 6
+                total_supply: 9999979509174084
+                description: ""
+                website: ""
+                explorer: ""
+                added_at: "2024-09-11T04:37:20Z"
+                summary:
+                  price_usd: 0.6692687725734983
+                  fdv: 6692674011.865073
+                  liquidity_usd: 25796064.003077608
+                  24h:
+                    volume: 122851769.74866481
+                    volume_usd: 84119865.87252772
+                    buy_usd: 42059932.93626386
+                    sell_usd: 42059932.93626386
+                    sells: 147309
+                    buys: 77615
+                    txns: 224924
+                  6h:
+                    volume: 30490167.650738973
+                    volume_usd: 20100302.93373614
+                    buy_usd: 10050151.46686807
+                    sell_usd: 10050151.46686807
+                    sells: 38908
+                    buys: 21561
+                    txns: 60469
+                  1h:
+                    volume: 2339429.714102
+                    volume_usd: 1569385.0617313772
+                    buy_usd: 784692.5308656886
+                    sell_usd: 784692.5308656886
+                    sells: 4476
+                    buys: 2202
+                    txns: 6678
+                  30m:
+                    volume: 1053011.5253609999
+                    volume_usd: 705252.1467858246
+                    buy_usd: 352626.0733929123
+                    sell_usd: 352626.0733929123
+                    sells: 1893
+                    buys: 944
+                    txns: 2837
+                  15m:
+                    volume: 420812.23249900003
+                    volume_usd: 281063.0592944985
+                    buy_usd: 140531.52964724925
+                    sell_usd: 140531.52964724925
+                    sells: 864
+                    buys: 442
+                    txns: 1306
+                  5m:
+                    volume: 75084.709753
+                    volume_usd: 50179.69475522313
+                    buy_usd: 25089.847377611565
+                    sell_usd: 25089.847377611565
+                    sells: 238
+                    buys: 88
+                    txns: 326
+                last_updated: "2025-02-25T13:44:45.699686371Z"
+        "400":
+          description: The specified network or token address is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid token address.
+        "404":
+          description: Network not found or token_address not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Token not found on this network.
+  "/networks/{network}/tokens/{token_address}/pools":
+    get:
+      operationId: getTokenPools
+      tags:
+        - Tokens
+      summary: Get top X pools for a token.
+      description: >
+        Retrieves a paginated list of liquidity pools that involve the specified
+        token,
+
+        including details like current price, volume in USD, and tokens present
+        in each pool.
+
+        Useful for analytics, DEX front-ends, or portfolio tracking.
+      parameters:
+        - $ref: "#/components/parameters/networkParam"
+        - $ref: "#/components/parameters/tokenAddressParam"
+        - $ref: "#/components/parameters/sortParam"
+        - $ref: "#/components/parameters/orderParam"
+        - name: reorder
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: If true, reorders the pool so that the token provided in `tokenAddressParam` becomes the primary token for all metrics and calculations. Useful when the provided token is not the first token in the pool.
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter pools that contain this additional token address.
+          example: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pools:
+                    type: array
+                    description: A list of pool objects where the queried token is found.
+                    items:
+                      $ref: "#/components/schemas/PoolWithPrices"
+                  page_info:
+                    type: object
+                    description: Details about the current page of results.
+                    properties:
+                      limit:
+                        type: integer
+                        description: Number of items returned per page.
+                      page:
+                        type: integer
+                        description: The current page index.
+                      total_items:
+                        type: integer
+                        description: Total number of pools matching the token query.
+                      total_pages:
+                        type: integer
+                        description: Total number of pages available.
+              example:
+                pools:
+                  - id: C1MgLojNLWBKADvu9BHdtgzz1oZX4dZ5zGdGcgvvW8Wz
+                    dex_id: whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc
+                    dex_name: Orca
+                    chain: solana
+                    volume_usd: 105911239.86515124
+                    created_at: "2024-01-31T04:35:25.000Z"
+                    created_at_block_number: 245197261
+                    transactions: 86702
+                    price_usd: 1.0210156606745167
+                    last_price_change_usd_5m: -0.35550231159026024
+                    last_price_change_usd_1h: -0.46553223706307906
+                    last_price_change_usd_24h: -14.938708407216472
+                    fee: 0
+                    tokens:
+                      - id: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+                        name: Jupiter
+                        symbol: JUP
+                        chain: solana
+                        decimals: 6
+                        added_at: "2024-09-11T04:37:20.000Z"
+                      - id: So11111111111111111111111111111111111111112
+                        name: Wrapped SOL
+                        symbol: SOL
+                        chain: solana
+                        decimals: 9
+                        added_at: "2024-10-04T08:30:05.000Z"
+                page_info:
+                  limit: 100
+                  page: 1
+                  total_items: 251
+                  total_pages: 3
+        "400":
+          description: The specified network or token address is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid network or token address.
+        "404":
+          description: Network not found or token not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Token not found or no pools found for this token.
+  /search:
+    get:
+      operationId: search
+      tags:
+        - Search
+      summary: "Search for tokens, pools, and DEXes"
+      description: >
+        Allows users to search across multiple entities (tokens, pools, and
+        DEXes) 
+
+        in a single query. Useful for quickly finding resources by name, symbol,
+        or ID.
+      parameters:
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: >
+            The search term to match against tokens, pools, or DEX identifiers.
+
+            For example: "`uniswap`", "`usd coin`", or
+            "`6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN`" (for Solana).
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    description: An array of matching tokens.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        symbol:
+                          type: string
+                        chain:
+                          type: string
+                        type:
+                          type: string
+                        status:
+                          type: string
+                        decimals:
+                          type: number
+                        total_supply:
+                          type: number
+                        description:
+                          type: string
+                        website:
+                          type: string
+                        explorer:
+                          type: string
+                        fdv:
+                          type: number
+                          description: Fully diluted valuation of the token.
+                        price_usd:
+                          type: number
+                        liquidity_usd:
+                          type: number
+                        volume_usd:
+                          type: number
+                        price_usd_change:
+                          type: number
+                  pools:
+                    type: array
+                    description: An array of matching pools.
+                    items:
+                      $ref: "#/components/schemas/PoolWithPrices"
+                  dexes:
+                    type: array
+                    description: An array of matching DEXes.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        dex_id:
+                          type: string
+                        dex_name:
+                          type: string
+                        chain:
+                          type: string
+                        volume_usd_24h:
+                          type: number
+                        txns_24h:
+                          type: number
+                        pools_count:
+                          type: number
+                        protocol:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+              example:
+                tokens:
+                  - id: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+                    name: OFFICIAL TRUMP
+                    symbol: TRUMP
+                    chain: solana
+                    decimals: 6
+                    total_supply: 1000000000000000
+                    fdv: 1000000000000000000
+                    description: ""
+                    website: ""
+                    explorer: ""
+                pools:
+                  - id: A8nPhpCJqtqHdqUk35Uj9Hy2YsGXFkCZGuNwvkD3k7VC
+                    dex_id: LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo
+                    dex_name: Meteora
+                    chain: solana
+                    created_at_block_number: 314590039
+                    created_at: "2025-01-17T14:19:03.000Z"
+                    volume_usd: 104433720.13085766
+                    transactions: 17585
+                    price_usd: 26.60780176027208
+                    last_price_change_usd_5m: 0
+                    last_price_change_usd_1h: -1.3047021633422
+                    last_price_change_usd_24h: -8.886488130608807
+                    tokens:
+                      - id: 6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN
+                        name: OFFICIAL TRUMP
+                        symbol: TRUMP
+                        chain: solana
+                        decimals: 6
+                        total_supply: 1000000000000000
+                        description: ""
+                        website: ""
+                        explorer: ""
+                        added_at: "2025-01-17T23:26:21.000Z"
+                      - id: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+                        name: USD Coin
+                        symbol: USDC
+                        chain: solana
+                        decimals: 6
+                        total_supply: 0
+                        description: ""
+                        website: ""
+                        explorer: ""
+                        added_at: "2024-10-04T08:30:05.000Z"
+                dexes: []
+        "400":
+          description: Missing or invalid query parameter.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing query parameter.
+  /stats:
+    get:
+      operationId: getStats
+      tags:
+        - Utils
+      summary: Retrieve high-level asset statistics
+      description: |
+        Provides a snapshot of the total number of chains, factories, pools, 
+        and tokens tracked by this API. Ideal for overview dashboards or 
+        quick system capacity checks.
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chains:
+                    type: integer
+                    description: Count of blockchain networks supported.
+                  factories:
+                    type: integer
+                    description: Count of DEX factories or protocols recognized.
+                  pools:
+                    type: integer
+                    description: Count of liquidity pools available.
+                  tokens:
+                    type: integer
+                    description: Count of tokens recognized across all networks.
+              example:
+                chains: 12
+                factories: 54
+                pools: 23456
+                tokens: 8920
+        "400":
+          description: Bad request. Invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid request parameters.
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unexpected server error. Please try again later.
+components:
+  schemas:
+    ArrayOfDexes:
+      type: object
+      description: A paginated response containing a list of DEX objects.
+      properties:
+        dexes:
+          type: array
+          description: An array of decentralized exchanges.
+          items:
+            type: object
+            properties:
+              dex_name:
+                type: string
+                description: Internal or human-readable name of the DEX.
+              chain:
+                type: string
+                description: The blockchain network this DEX resides on.
+              protocol:
+                type: string
+                description: Protocol or underlying technology of the DEX.
+            example:
+              dex_name: curve
+              chain: ethereum
+              protocol: curve
+        page_info:
+          type: object
+          description: Information about the current page in a paginated result set.
+          properties:
+            limit:
+              type: integer
+              description: Number of items returned per page.
+            page:
+              type: integer
+              description: Current page index.
+            total_items:
+              type: integer
+              description: Total number of items matching the query.
+            total_pages:
+              type: integer
+              description: Total number of pages available.
+      example:
+        dexes:
+          - id: uniswap_v2
+            name: Uniswap V2
+        page_info:
+          limit: 100
+          page: 1
+          total_items: 30
+          total_pages: 1
+    Token:
+      type: object
+      description: "Essential information for a token, including metadata and status."
+      properties:
+        id:
+          type: string
+          description: 'Internal or canonical ID for the token (e.g., "usdc-usd-coin").'
+        name:
+          type: string
+          description: 'Human-readable name of the token (e.g., "USD Coin").'
+        symbol:
+          type: string
+          description: 'Ticker symbol of the token (e.g., "USDC").'
+        chain:
+          type: string
+          description: 'Blockchain network where the token exists (e.g., "ethereum", "solana").'
+        decimals:
+          type: number
+          description: "Decimal precision of the token (e.g., 6 for USDC)."
+        total_supply:
+          type: number
+          description: "Total supply of the token."
+        description:
+          type: string
+          description: >-
+            A detailed overview of the token's purpose, use cases, or
+            background.
+        website:
+          type: string
+          description: Official website URL for the token/project.
+        explorer:
+          type: string
+          description: Link to a block explorer or analytics page for this token.
+        added_at:
+          type: string
+          format: date-time
+          description: When the token was added to the system.
+        fdv:
+          type: number
+          description: Fully diluted valuation of the token.
+        last_updated:
+          type: string
+          format: date-time
+          description: When the token data was last updated.
+        summary:
+          $ref: "#/components/schemas/TokenSummary"
+      example:
+        id: usdc-usd-coin
+        name: USD Coin
+        symbol: USDC
+        type: token
+        status: Working product.
+        decimals: 6
+        description: >-
+          True financial interoperability requires a price stable means of value
+          exchange...
+        website: "https://www.centre.io/usdc"
+        explorer: "https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    TokenSummary:
+      type: object
+      description: >
+        A comprehensive summary of token-related metrics, including price,
+        liquidity, and transaction volumes across various time intervals.
+      properties:
+        price_usd:
+          type: number
+          description: Current price of the token in USD.
+        fdv:
+          type: number
+          description: Fully diluted valuation of token.
+        liquidity_usd:
+          type: number
+          description: Total liquidity (in USD) across all pools for this token.
+        pools:
+          type: number
+          description: Total number of pools that include the given token.
+        24h:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        6h:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        1h:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        30m:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        15m:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        5m:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+        1m:
+          $ref: "#/components/schemas/TimeIntervalMetrics"
+      example:
+        price_usd: 125.67
+        fdv: 12567
+        liquidity_usd: 5000000
+        pools: 5
+        24h:
+          volume: 100000
+          volume_usd: 102000
+          buy_usd: 50000
+          sell_usd: 52000
+          sells: 150
+          buys: 180
+          txns: 330
+          last_price_usd_change: 50.0
+        6h:
+          volume: 25000
+          volume_usd: 25500
+          sells: 45
+          buys: 50
+          buy_usd: 12500
+          sell_usd: 13000
+          txns: 95
+          last_price_usd_change: 10.0
+        1h:
+          volume: 5000
+          volume_usd: 5100
+          buy_usd: 2500
+          sell_usd: 2600
+          sells: 10
+          buys: 15
+          txns: 25
+          last_price_usd_change: 2.0
+        30m:
+          volume: 2500
+          volume_usd: 2550
+          buy_usd: 1250
+          sell_usd: 1300
+          sells: 5
+          buys: 8
+          txns: 13
+          last_price_usd_change: 1.0
+        15m:
+          volume: 1250
+          volume_usd: 1275
+          buy_usd: 675
+          sell_usd: 700
+          sells: 2
+          buys: 4
+          txns: 6
+          last_price_usd_change: 0.5
+        5m:
+          volume: 500
+          volume_usd: 510
+          buy_usd: 250
+          sell_usd: 260
+          sells: 1
+          buys: 1
+          txns: 2
+          last_price_usd_change: -0.5
+        1m:
+          volume: 100
+          volume_usd: 102
+          buy_usd: 50
+          sell_usd: 52
+          sells: 1
+          buys: 0
+          txns: 1
+          last_price_usd_change: 0.0
+    TimeIntervalMetrics:
+      type: object
+      description: >
+        Transaction and volume metrics for a specific time interval (e.g., 24h,
+        1h, 15m).
+      properties:
+        volume:
+          type: number
+          description: >-
+            Total trading volume in the token's native currency for the
+            interval.
+        volume_usd:
+          type: number
+          description: Total trading volume in USD for the interval.
+        buy_usd:
+          type: number
+          description: Total USD value of buy transactions during the interval.
+        sell_usd:
+          type: number
+          description: Total USD value of sell transactions during the interval.
+        sells:
+          type: integer
+          description: Number of sell transactions during the interval.
+        buys:
+          type: integer
+          description: Number of buy transactions during the interval.
+        txns:
+          type: integer
+          description: Total number of transactions during the interval.
+        last_price_usd_change:
+          type: number
+          description: The percentage change between the current price and the price from the given interval.
+
+    OHLCVRecord:
+      type: object
+      description: Represents a single Open-High-Low-Close-Volume (OHLCV) data point for a specific time interval.
+      properties:
+        time_open:
+          type: string
+          format: date-time
+          description: The opening timestamp of the OHLCV period.
+          example: "2023-10-27T10:00:00Z"
+        time_close:
+          type: string
+          format: date-time
+          description: The closing timestamp of the OHLCV period.
+          example: "2023-10-27T11:00:00Z"
+        open:
+          type: number
+          format: double
+          description: The opening price for the period.
+          example: 1500.50
+        high:
+          type: number
+          format: double
+          description: The highest price reached during the period.
+          example: 1525.75
+        low:
+          type: number
+          format: double
+          description: The lowest price reached during the period.
+          example: 1495.25
+        close:
+          type: number
+          format: double
+          description: The closing price for the period.
+          example: 1510.00
+        volume:
+          type: integer
+          format: int64
+          description: The total volume traded during the period.
+          example: 1234567890123
+      required:
+        - time_open
+        - time_close
+        - open
+        - high
+        - low
+        - close
+        - volume
+
+    Transaction:
+      type: object
+      description: >
+        Information about a transaction, including addresses, amounts, and block
+        reference.
+      properties:
+        id:
+          type: string
+          description: Unique identifier/hash for the transaction event.
+        log_index:
+          type: number
+          description: The log index within the block for this transaction event.
+        transaction_index:
+          type: number
+          description: Position of the transaction in the block.
+        pool_id:
+          type: string
+          description: The liquidity pool address or ID involved in this transaction.
+        sender:
+          type: string
+          description: Address of the sender.
+        recipient:
+          type: number
+          description: Address (or numeric ID) of the recipient.
+        token_0:
+          type: string
+          description: The primary token's address (or symbol) for this transaction.
+        token_1:
+          type: string
+          description: The secondary token's address (or symbol) for this transaction.
+        amount_0:
+          type: string
+          description: Amount of token_0 transferred/swapped.
+        amount_1:
+          type: string
+          description: Amount of token_1 transferred/swapped.
+        created_at_block_number:
+          type: number
+          description: The block number at which this transaction was recorded.
+    Network:
+      type: object
+      description: Metadata about a blockchain network.
+      properties:
+        id:
+          type: string
+          description: 'String identifier for the network (e.g., "ethereum", "solana").'
+        display_name:
+          type: string
+          description: 'Human-readable display name for the network (e.g., "Ethereum").'
+      example:
+        id: "ethereum"
+        display_name: "Ethereum"
+    PoolWithPrices:
+      type: object
+      description: >-
+        Information about a specific liquidity pool, including price and volume
+        data.
+      properties:
+        id:
+          type: string
+          description: Unique identifier or address of the pool.
+        dex_id:
+          type: string
+          description: Identifier of the DEX where this pool resides.
+        dex_name:
+          type: string
+          description: 'Human-readable DEX name (e.g., "Uniswap V3").'
+        chain:
+          type: string
+          description: The blockchain network this pool resides on (e.g., "ethereum", "solana").
+        created_at_block_number:
+          type: number
+          description: Block number at which this pool was created.
+        created_at:
+          type: string
+          format: date-time
+          description: >-
+            Timestamp (ISO-8601) indicating when the pool was created or
+            recorded.
+        volume_usd:
+          type: number
+          description: >-
+            The total USD volume in this pool over a certain period
+            (context-specific).
+        transactions:
+          type: number
+          description: The total number of transactions involving this pool.
+        price_usd:
+          type: number
+          description: >-
+            Current price in USD (often representing a ratio of two tokens in
+            the pool).
+        last_price_change_usd_5m:
+          type: number
+          description: >-
+            USD price change over the last 5 minutes as a percentage.
+        last_price_change_usd_1h:
+          type: number
+          description: >-
+            USD price change over the last 1 hour as a percentage.
+        last_price_change_usd_24h:
+          type: number
+          description: >-
+            USD price change over the last 24 hours as a percentage.
+        fee:
+          type: [number, "null"]
+          description: "Trading fee (e.g., 0.3 for 0.3%) associated with this pool. Null indicates fee information is not collected."
+        tokens:
+          type: array
+          description: The tokens participating in this liquidity pool.
+          items:
+            items:
+              allOf:
+                - $ref: "#/components/schemas/Token"
+                - type: object
+                  properties:
+                    fdv:
+                      type: number
+                      description: Fully diluted valuation of token.
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+      description: Zero-based page index for paginated results.
+    limitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 100
+      description: Number of items to return per page (max 100).
+    sortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+      description: Sort order for the requested data (ascending or descending).
+    orderParam:
+      name: order_by
+      in: query
+      schema:
+        type: string
+        enum:
+          - volume_usd
+          - price_usd
+          - transactions
+          - last_price_change_usd_24h
+          - created_at
+      description: Field by which to order the returned data.
+    networkParam:
+      name: network
+      in: path
+      required: true
+      schema:
+        type: string
+      description: >-
+        Network slug or ID (e.g., 'solana'). You can find the list of supported
+        networks with their IDs here: [/networks](/api-reference/networks).
+      example: solana
+    dexParam:
+      name: dex
+      in: path
+      required: true
+      schema:
+        type: string
+      description: >-
+        DEX identifier or name (e.g., 'uniswap_v2'). You can find the list of
+        supported DEXes with their IDs here:
+        [/networks/{network}/dexes](/api-reference/dexes).
+      example: uniswap_v2
+    poolAddressParam:
+      name: pool_address
+      in: path
+      required: true
+      schema:
+        type: string
+      description: >-
+        Unique pool address or identifier. Such as
+        `0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b` for WETH / USDT on
+        `ethereum`.
+      example: "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
+    tokenAddressParam:
+      name: token_address
+      in: path
+      required: true
+      schema:
+        type: string
+      description: >-
+        Token contract address. Such as
+        `JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN` for Jupiter on Solana.
+      example: JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
+    poolInvertedPriceParam:
+      name: inversed
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: Whether to invert the main price ratio in pool calculations.
+    ohlcvStartParam:
+      name: start
+      in: query
+      required: true
+      schema:
+        type: string
+        description: |
+          Start time for the OHLCV data.
+          Accepted formats:
+          - Unix timestamp
+          - RFC3339 timestamp (e.g., "2023-10-27T08:07:20Z")
+          - Date (e.g., "2023-10-27", interpreted as 00:00:00 UTC)
+        example: "1741507640"
+    ohlcvEndParam:
+      name: end
+      in: query
+      required: false
+      schema:
+        type: string
+        description: |
+          Start time for the OHLCV data.
+          Accepted formats:
+          - Unix timestamp
+          - RFC3339 timestamp (e.g., "2023-10-27T10:00:00Z")
+          - Date (e.g., "2023-10-27", interpreted as 00:00:00 UTC)
+        example: "1741508640"
+    ohlcvLimitParam:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+        maximum: 366
+      description: Maximum number of OHLCV records to return.
+    ohlcvIntervalParam:
+      name: interval
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: ["1m", "5m", "10m", "15m", "30m", "1h", "6h", "12h", "24h"]
+        default: "24h"
+      description: The time interval for each OHLCV record (candle).
+    ohlcvInvertedPriceParam:
+      name: inversed
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: >
+        Whether to invert the price ratio in OHLCV calculations (e.g., quote
+        token vs. base token).

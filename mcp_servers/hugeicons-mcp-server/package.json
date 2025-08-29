@@ -1,0 +1,38 @@
+{
+  "name": "@hugeicons/mcp-server",
+  "version": "0.1.2",
+  "description": "MCP server for Hugeicons search and usage documentation",
+  "type": "module",
+  "bin": {
+    "hugeicons-mcp": "build/index.js"
+  },
+  "files": [
+    "build",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "axios": "^1.8.4",
+    "fuse.js": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/node": "^20.17.30",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "hugeicons",
+    "mcp",
+    "icons",
+    "model-context-protocol"
+  ],
+  "author": "Mohamed Tawfik (https://hugeicons.com)",
+  "homepage": "https://hugeicons.com",
+  "license": "MIT"
+}

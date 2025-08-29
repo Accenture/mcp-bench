@@ -1,0 +1,27 @@
+# Smithery yapılandırma dosyası: https://smithery.ai/docs/build/project-config
+
+startCommand:
+  type: stdio
+  configSchema:
+    # Bu MCP için kullanıcı tarafından sağlanacak yapılandırma seçenekleri.
+    # Mevcut durumda, bu proje kullanıcıdan özel bir yapılandırma almamaktadır.
+    type: object
+    properties: {} # Kullanıcı tarafından yapılandırılabilir özellik yok.
+    additionalProperties: false # Başka özelliklere izin verme.
+  commandFunction: |
+    (config) => ({
+      command: 'python',
+      args: ['server.py'], // Projenizdeki server.py dosyasını çalıştırır.
+      env: {
+        PYTHONUNBUFFERED: "1" // Python için arabelleksiz çıktıyı etkinleştirir.
+        // Gelecekte başka sabit ortam değişkenleri gerekirse buraya eklenebilir.
+      }
+    })
+  exampleConfig: {} # configSchema boş olduğu için örnek yapılandırma da boştur.
+
+# Projenizin geri kalan Smithery yapılandırması (resources, timeout vb.)
+# bu formatta nasıl belirtiliyorsa, buraya eklenebilir.
+# Örneğin, eski smithery.yaml dosyanızdaki timeout ve resources gibi alanlar
+# bu yeni formata uygun şekilde buraya taşınabilir.
+# Ancak, sağladığınız örnek sadece startCommand'ı kapsadığı için
+# sadece o kısmı uyarladım.

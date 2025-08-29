@@ -1,0 +1,149 @@
+name: weather-api-mcp
+description: WeatherAPI MCP Server - Get current weather and forecasts for any city
+version: 1.0.0
+author: Weather MCP Team
+license: MIT
+
+# MCP Server Configuration
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      weather_api_key:
+        type: string
+        title: WeatherAPI Key
+        description: Your WeatherAPI.com API key
+        secret: true
+      api_language:
+        type: string
+        title: API Language
+        description: Language for weather descriptions
+        default: "tr"
+        enum: ["tr", "en", "es", "fr", "de", "it", "pt", "ru", "zh", "ja"]
+      api_timeout:
+        type: integer
+        title: API Timeout
+        description: Request timeout in seconds
+        default: 10
+        minimum: 5
+        maximum: 30
+    required:
+      - weather_api_key
+  commandFunction: |
+    (config) => {
+      const env = {
+        WEATHER_API_KEY: config.weather_api_key,
+        API_LANGUAGE: config.api_language || 'tr',
+        API_TIMEOUT: config.api_timeout || 10
+      };
+      return {
+        command: 'python',
+        args: ['server.py'],
+        env: env
+      };
+    }
+  exampleConfig:
+    weather_api_key: "your_weatherapi_key_here"
+    api_language: "tr"
+    api_timeout: 10
+
+# Tools provided by this MCP
+tools:
+  - name: get_current_weather_tool
+    description: Get current weather information for a specific city
+    inputSchema:
+      type: object
+      properties:
+        city:
+          type: string
+          description: Name of the city to get weather for
+      required: [city]
+    
+  - name: get_weather_forecast_tool
+    description: Get weather forecast for a specific city
+    inputSchema:
+      type: object
+      properties:
+        city:
+          type: string
+          description: Name of the city to get forecast for
+        days:
+          type: integer
+          description: Number of days to forecast (1-10)
+          default: 3
+          minimum: 1
+          maximum: 10
+      required: [city]
+    
+  - name: search_locations_tool
+    description: Search for locations by name
+    inputSchema:
+      type: object
+      properties:
+        query:
+          type: string
+          description: Location name or partial name to search for
+      required: [query]
+
+# Metadata
+tags:
+  - weather
+  - api
+  - forecast
+  - location
+  - climate
+
+categories:
+  - data-retrieval
+  - external-api
+
+# Documentation
+readme: |
+  # WeatherAPI MCP Server
+  
+  This MCP server provides access to current weather data and forecasts using WeatherAPI.com.
+  
+  ## Features
+  - Current weather conditions for any city
+  - Weather forecasts up to 10 days
+  - Location search functionality
+  - Support for multiple languages
+  - Detailed weather information (temperature, humidity, wind, pressure, UV index)
+  
+  ## Setup
+  1. Get a free API key from https://www.weatherapi.com/
+  2. Configure the MCP with your API key
+  3. Start using the weather tools
+  
+  ## Supported Languages
+  - Turkish (tr) - Default
+  - English (en)
+  - Spanish (es)
+  - French (fr)
+  - German (de)
+  - Italian (it)
+  - Portuguese (pt)
+  - Russian (ru)
+  - Chinese (zh)
+  - Japanese (ja)
+  
+  ## Example Usage
+  ```
+  get_current_weather_tool(city="Istanbul")
+  get_weather_forecast_tool(city="London", days=5)
+  search_locations_tool(query="New York")
+  ```
+
+# Repository information
+repository:
+  type: git
+  url: https://github.com/your-username/weather-mcp
+
+# Dependencies
+dependencies:
+  python: ">=3.8"
+  packages:
+    - fastmcp>=2.5.0
+    - requests>=2.28.0
+    - python-dotenv>=1.0.0

@@ -1,0 +1,52 @@
+{
+  "name": "weather-api-mcp",
+  "version": "1.0.0",
+  "description": "WeatherAPI MCP Server for current weather and forecasts",
+  "main": "server.py",
+  "scripts": {
+    "start": "python server.py",
+    "test": "python test_mcp.py",
+    "deploy": "python deploy.py"
+  },
+  "keywords": [
+    "mcp",
+    "weather",
+    "api",
+    "forecast",
+    "smithery",
+    "climate"
+  ],
+  "author": "Weather MCP Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/weather-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/weather-mcp/issues"
+  },
+  "homepage": "https://github.com/your-username/weather-mcp#readme",
+  "engines": {
+    "python": ">=3.8"
+  },
+  "mcp": {
+    "name": "weather-api-mcp",
+    "description": "Get current weather and forecasts for any city worldwide",
+    "version": "1.0.0",
+    "tools": [
+      "get_current_weather_tool",
+      "get_weather_forecast_tool",
+      "search_locations_tool"
+    ],
+    "categories": [
+      "data-retrieval",
+      "external-api"
+    ],
+    "tags": [
+      "weather",
+      "forecast",
+      "location",
+      "climate"
+    ]
+  }
+}

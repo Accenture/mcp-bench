@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌤️ Hava Durumu Uygulaması</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            color: #2d3436;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #74b9ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .weather-result {
+            display: none;
+            background: linear-gradient(135deg, #a8e6cf, #88d8a3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            color: #2d3436;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        .weather-temp {
+            font-size: 3em;
+            font-weight: 300;
+            margin: 0 15px;
+        }
+
+        .weather-location {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .weather-condition {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .weather-detail {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .error {
+            display: none;
+            background: linear-gradient(135deg, #ff7675, #e84393);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .forecast {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .forecast-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .forecast-day {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .forecast-date {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .forecast-temps {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .forecast-condition {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .weather-temp {
+                font-size: 2.5em;
+            }
+            
+            .weather-main {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🌤️ Hava Durumu</h1>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="cityInput" placeholder="Şehir adını girin (örn: Istanbul, Ankara, İzmir)" />
+            <button class="search-btn" id="searchBtn" onclick="getWeather()">🔍 Hava Durumunu Getir</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Hava durumu bilgileri getiriliyor...</p>
+        </div>
+
+        <div class="weather-result" id="weatherResult">
+            <div class="weather-location" id="weatherLocation"></div>
+            <div class="weather-condition" id="weatherCondition"></div>
+            
+            <div class="weather-main">
+                <div class="weather-icon" id="weatherIcon">🌤️</div>
+                <div class="weather-temp" id="weatherTemp"></div>
+            </div>
+
+            <div class="weather-details">
+                <div class="weather-detail">
+                    <div class="detail-label">Hissedilen</div>
+                    <div class="detail-value" id="feelsLike"></div>
+                </div>
+                <div class="weather-detail">
+                    <div class="detail-label">Nem</div>
+                    <div class="detail-value" id="humidity"></div>
+                </div>
+                <div class="weather-detail">
+                    <div class="detail-label">Rüzgar</div>
+                    <div class="detail-value" id="windSpeed"></div>
+                </div>
+                <div class="weather-detail">
+                    <div class="detail-label">Basınç</div>
+                    <div class="detail-value" id="pressure"></div>
+                </div>
+                <div class="weather-detail">
+                    <div class="detail-label">Görüş</div>
+                    <div class="detail-value" id="visibility"></div>
+                </div>
+                <div class="weather-detail">
+                    <div class="detail-label">UV İndeksi</div>
+                    <div class="detail-value" id="uvIndex"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="forecast" id="forecast">
+            <div class="forecast-title">📅 3 Günlük Tahmin</div>
+            <div class="forecast-days" id="forecastDays"></div>
+        </div>
+
+        <div class="error" id="error">
+            <h3>❌ Hata</h3>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        const MCP_SERVER_URL = 'http://localhost:8000';
+
+        // Enter tuşu ile arama
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) {
+                showError('Lütfen bir şehir adı girin.');
+                return;
+            }
+
+            showLoading(true);
+            hideResults();
+
+            try {
+                // Önce mevcut hava durumunu al
+                const currentWeather = await getCurrentWeather(city);
+                displayCurrentWeather(currentWeather);
+
+                // Sonra tahmin verilerini al
+                const forecast = await getForecast(city);
+                displayForecast(forecast);
+
+                showLoading(false);
+            } catch (error) {
+                showLoading(false);
+                showError(error.message);
+            }
+        }
+
+        async function getCurrentWeather(city) {
+            const response = await fetch(`${MCP_SERVER_URL}/tools/get_current_weather_tool/invoke`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    input: { city: city }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Sunucu hatası: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const weatherData = data.output;
+
+            if (weatherData.error) {
+                throw new Error(weatherData.error);
+            }
+
+            return weatherData;
+        }
+
+        async function getForecast(city) {
+            try {
+                const response = await fetch(`${MCP_SERVER_URL}/tools/get_weather_forecast_tool/invoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        input: { city: city, days: 3 }
+                    })
+                });
+
+                if (!response.ok) {
+                    console.warn('Tahmin verileri alınamadı');
+                    return null;
+                }
+
+                const data = await response.json();
+                return data.output;
+            } catch (error) {
+                console.warn('Tahmin verileri alınamadı:', error);
+                return null;
+            }
+        }
+
+        function displayCurrentWeather(weather) {
+            document.getElementById('weatherLocation').textContent = 
+                `${weather.city}${weather.country ? ', ' + weather.country : ''}`;
+            document.getElementById('weatherCondition').textContent = weather.weather || 'Bilinmiyor';
+            document.getElementById('weatherTemp').textContent = `${weather.temperature_c || 0}°C`;
+            document.getElementById('feelsLike').textContent = `${weather.feelslike_c || 0}°C`;
+            document.getElementById('humidity').textContent = `${weather.humidity || 0}%`;
+            document.getElementById('windSpeed').textContent = `${weather.wind_kph || 0} km/h`;
+            document.getElementById('pressure').textContent = `${weather.pressure_mb || 0} mb`;
+            document.getElementById('visibility').textContent = `${weather.visibility_km || 0} km`;
+            document.getElementById('uvIndex').textContent = weather.uv_index || 0;
+
+            // Hava durumu ikonunu güncelle
+            const iconElement = document.getElementById('weatherIcon');
+            iconElement.textContent = getWeatherEmoji(weather.weather);
+
+            document.getElementById('weatherResult').style.display = 'block';
+        }
+
+        function displayForecast(forecastData) {
+            if (!forecastData || !forecastData.forecast) {
+                return;
+            }
+
+            const forecastDays = document.getElementById('forecastDays');
+            forecastDays.innerHTML = '';
+
+            forecastData.forecast.slice(0, 3).forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'forecast-day';
+                
+                const date = new Date(day.date);
+                const dayName = date.toLocaleDateString('tr-TR', { weekday: 'short' });
+                
+                dayElement.innerHTML = `
+                    <div class="forecast-date">${dayName}</div>
+                    <div class="forecast-temps">
+                        <strong>${day.max_temp_c}°</strong> / ${day.min_temp_c}°
+                    </div>
+                    <div class="forecast-condition">${day.condition}</div>
+                `;
+                
+                forecastDays.appendChild(dayElement);
+            });
+
+            document.getElementById('forecast').style.display = 'block';
+        }
+
+        function getWeatherEmoji(condition) {
+            if (!condition) return '🌤️';
+            
+            const conditionLower = condition.toLowerCase();
+            if (conditionLower.includes('güneş') || conditionLower.includes('açık')) return '☀️';
+            if (conditionLower.includes('bulut')) return '☁️';
+            if (conditionLower.includes('yağmur')) return '🌧️';
+            if (conditionLower.includes('kar')) return '❄️';
+            if (conditionLower.includes('fırtına')) return '⛈️';
+            if (conditionLower.includes('sis')) return '🌫️';
+            return '🌤️';
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('searchBtn').disabled = show;
+        }
+
+        function hideResults() {
+            document.getElementById('weatherResult').style.display = 'none';
+            document.getElementById('forecast').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').style.display = 'block';
+        }
+
+        // Sayfa yüklendiğinde örnek şehir ile test et
+        window.addEventListener('load', function() {
+            document.getElementById('cityInput').value = 'Istanbul';
+        });
+    </script>
+</body>
+</html>

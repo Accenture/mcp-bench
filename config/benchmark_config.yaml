@@ -1,0 +1,205 @@
+# MCP-Bench Unified Configuration File
+# This file contains all magic numbers and adjustable parameters
+# Can be overridden via environment variables with format: BENCHMARK_SECTION_SUBSECTION_KEY=value
+
+# MCP server related configuration
+mcp:
+  connection:
+    # HTTP connection timeout (seconds)
+    http_timeout: 60
+    # Tool discovery timeout (seconds)
+    tool_discovery_timeout: 10
+    # Server startup timeout (seconds)
+    server_startup_timeout: 30
+    # Health check timeout (seconds)
+    health_check_timeout: 2
+    # Process wait timeout (seconds)
+    process_wait_timeout: 5
+    # Batch operation timeout (seconds)
+    batch_timeout: 60
+  
+  ports:
+    # Default MCP server port
+    default_port: 3001
+    # Port search attempt count
+    port_search_attempts: 100
+    # Random port range
+    random_port_min: 10000
+    random_port_max: 50000
+
+# Task execution related configuration
+execution:
+  # Single task execution timeout (seconds)
+  task_timeout: 3000
+  # Maximum task retry count
+  task_retry_max: 3
+  # Retry delay interval (seconds)
+  retry_delay: 5
+  # Note: Server count is now dynamically determined by LLM based on task requirements
+  # Information compression retry count
+  compression_retries: 2
+  # Maximum execution rounds
+  max_execution_rounds: 20
+  # Server concurrency semaphore limit
+  server_semaphore_limit: 20
+  # Sequential-only tools that cannot be called concurrently due to the limitations from server side
+  sequential_only_tools:
+    - "Google Maps:search_nearby"
+    - "Google Maps:get_place_details"
+    - "Google Maps:maps_geocode"
+    - "Google Maps:maps_reverse_geocode"
+    - "Google Maps:maps_distance_matrix"
+    - "Google Maps:maps_directions"
+    - "Google Maps:maps_elevation"
+  # Problematic tools that should be filtered out due to issues (rate limits, bugs, etc)
+  problematic_tools:
+    - "Paper Search:search_semantic"
+    - "Paper Search:download_semantic"
+    - "Paper Search:read_semantic_paper"
+    - "OSINT Intelligence:osint_overview"
+    # IACR related tools - Unicode encoding issues causing server crashes
+    - "Paper Search:search_iacr"
+    - "Paper Search:read_iacr_paper"
+    - "Paper Search:download_iacr"
+    # AlphaGenome predictor - requires API key that is not provided
+    - "BioMCP:alphagenome_predictor"
+  
+  # Content summary token threshold
+  content_summary_threshold: 1000
+  # Content truncation length
+  content_truncate_length: 4000
+  # Error message truncation length
+  error_truncate_length: 1000
+  # Error display prefix length
+  error_display_prefix: 200
+
+# Benchmark runtime configuration
+benchmark:
+  # Default distraction server count
+  distraction_servers_default: 10
+  # Resident server list (always available servers)
+  resident_servers:
+    - "Time MCP"
+  # Inter-task delay (seconds)
+  task_delay: 1
+  
+  # File paths configuration
+  # All task files for comprehensive benchmark (default runs all when no specific file is provided)
+  all_task_files:
+    - "./tasks/mcpbench_tasks_single_runner_format.json"
+    - "./tasks/mcpbench_tasks_multi_2server_runner_format.json"
+    - "./tasks/mcpbench_tasks_multi_3server_runner_format.json"
+  
+  # Default tasks file path (used when specific file is provided)
+  tasks_file: null  # Default to None in Python, will run all task files
+  
+  # Feature toggles (defaults match current runner.py behavior)
+  # Enable LLM judge stability testing (multiple evaluations with randomization)
+  enable_judge_stability: true
+  # Enable intelligent server preselection before planning
+  enable_server_preselection: false
+  # Filter out known problematic tools (rate-limited, buggy)
+  filter_problematic_tools: true
+  # Enable concurrent content summarization for performance
+  concurrent_summarization: true
+  # Use fuzzy task descriptions instead of detailed descriptions
+  use_fuzzy_descriptions: true
+  # Enable concrete description reference for evaluation (provide original task as reference when using fuzzy descriptions)
+  enable_concrete_description_ref_for_eval: true
+  # Enable dependency analysis reference for evaluation (provide tool dependency analysis as reference)
+  enable_dependency_analysis_ref_for_eval: true
+
+# Tool cache configuration
+cache:
+  # Enable tool call caching to reduce redundant API calls
+  enabled: true
+  # Cache directory path
+  cache_dir: "./cache"
+  # Cache time-to-live in hours (0 = permanent cache)
+  ttl_hours: 0
+  # Maximum cache size in MB (0 = unlimited)
+  max_size_mb: 1000
+  # Cache key generation strategy (hash, structured)
+  key_strategy: "hash"
+  # Enable cache statistics logging
+  log_stats: true
+  # Cache cleanup interval in hours (0 = no automatic cleanup)
+  cleanup_interval: 0  # No automatic cleanup
+  # Cache persistence between runs
+  persistent: true
+  # Server whitelist - only cache tools from these servers (empty list = cache all)
+  # Use exact server names as they appear in server configurations
+  server_whitelist: []  # Empty list means cache all servers
+
+# Evaluation related configuration
+evaluation:
+  # Judge stability test run count
+  judge_stability_runs: 5
+
+# LLM related configuration (excluding max_tokens as requested by user)
+llm:
+  # JSON extraction maximum group count
+  json_retry_groups: 20
+  # Token reduction factor sequence
+  token_reduction_factors:
+    - 0.9
+    - 0.8
+    - 0.7
+  # Minimum token count
+  min_tokens: 1000
+  # Token increment
+  token_increment: 1000
+  # Format conversion token limit
+  format_conversion_tokens: 8000
+  # Planning token limit
+  planning_tokens: 12000
+  # Summarization maximum tokens
+  summarization_max_tokens: 10000
+  # User prompt maximum length
+  user_prompt_max_length: 30000
+# Data collection configuration
+data_collection:
+  # Individual server test timeout (seconds)
+  individual_timeout: 30
+  # Batch connection timeout (seconds)
+  batch_timeout: 60
+  # Maximum retry count
+  max_retries: 5
+  # Base retry delay (seconds)
+  retry_delay_base: 3
+  # Retry delay multiplier
+  retry_delay_multiplier: 2
+  # Batch retry base delay (seconds)
+  batch_retry_delay_base: 5
+  # Batch retry delay multiplier
+  batch_retry_delay_multiplier: 3
+  # Default HTTP port
+  default_http_port: 3000
+  # Tool description truncation length
+  tool_description_truncate: 150
+
+# Task generation configuration
+task_generation:
+  # Default task count per server combination
+  tasks_per_combination: 1
+  # Maximum retry count for task generation
+  generation_max_retries: 3
+
+# Dependency extraction configuration
+dependency_extraction:
+  # Required support count for dependency extraction
+  required_support_count: 3
+  # Minimum support count (when threshold is 2)
+  min_support_count: 2
+
+# Server selection configuration
+server_selection:
+  # Server selection token limit
+  selection_tokens: 8000
+  # Tool sample count (for display)
+  tool_sample_count: 3
+
+# Azure OpenAI configuration
+azure:
+  # API version for Azure OpenAI
+  api_version: "2024-12-01-preview"

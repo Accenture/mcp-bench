@@ -1,0 +1,18 @@
+[project]
+name = "medcalc"
+version = "0.3.0"
+description = "MCP server for Medical Calculation"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+    {name = "Sungji Wang", email = "sungjiwang@snu.ac.kr"},
+    {name = "Hyung-Chul Lee", email = "vital@snu.ac.kr"}
+]
+dependencies = ["scipy","mcp"]
+
+[project.scripts]
+medcalc = "medcalc.__main__:main"
+
+[tool.setuptools]
+packages = ["medcalc"]

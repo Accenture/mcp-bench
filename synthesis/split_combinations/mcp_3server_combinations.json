@@ -1,0 +1,87 @@
+{
+  "mcp_server_combinations": {
+    "three_server_combinations": [
+      {
+        "name": "Travel Planning Suite",
+        "servers": [
+          "Google Maps",
+          "Weather Data",
+          "National Parks"
+        ],
+        "description": "Complete travel planning tools"
+      },
+      {
+        "name": "AI Research Hub",
+        "servers": [
+          "Hugging Face",
+          "Paper Search",
+          "Wikipedia"
+        ],
+        "description": "AI models with research and knowledge"
+      },
+      {
+        "name": "Academic Network",
+        "servers": [
+          "Paper Search",
+          "Call for Papers",
+          "Wikipedia"
+        ],
+        "description": "Academic research and conferences"
+      },
+      {
+        "name": "Health Platform",
+        "servers": [
+          "Medical Calculator",
+          "FruityVice",
+          "BioMCP"
+        ],
+        "description": "Health calculations and nutrition"
+      },
+      {
+        "name": "Creative Resources",
+        "servers": [
+          "Metropolitan Museum",
+          "Huge Icons",
+          "Wikipedia"
+        ],
+        "description": "Art, design and knowledge"
+      },
+      {
+        "name": "Research Computing",
+        "servers": [
+          "Scientific Computing",
+          "BioMCP",
+          "Math MCP"
+        ],
+        "description": "Research computation platform"
+      },
+      {
+        "name": "Health Advisor",
+        "servers": [
+          "Medical Calculator",
+          "Wikipedia",
+          "FruityVice"
+        ],
+        "description": "Health information and advice"
+      },
+      {
+        "name": "Space Exploration",
+        "servers": [
+          "NASA Data",
+          "Google Maps",
+          "Wikipedia"
+        ],
+        "description": "Space data with Earth locations and knowledge"
+      },
+      {
+        "name": "API Research Platform",
+        "servers": [
+          "OpenAPI Explorer",
+          "Paper Search",
+          "Hugging Face"
+        ],
+        "description": "API exploration with research papers and AI models"
+      }
+    ]
+  }
+}

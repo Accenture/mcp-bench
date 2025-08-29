@@ -1,0 +1,5 @@
+fastmcp>=0.2.0
+aiohttp==3.9.5
+beautifulsoup4==4.12.3
+lxml==5.1.0
+uvicorn==0.24.0

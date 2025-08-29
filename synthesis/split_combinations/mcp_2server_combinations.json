@@ -1,0 +1,126 @@
+{
+  "mcp_server_combinations": {
+    "two_server_combinations": [
+      {
+        "name": "Academic Research Duo",
+        "servers": [
+          "Paper Search",
+          "BioMCP"
+        ],
+        "description": "Academic literature with biomedical analysis"
+      },
+      {
+        "name": "Knowledge Explorer",
+        "servers": [
+          "Wikipedia",
+          "NASA Data"
+        ],
+        "description": "Encyclopedia with space science"
+      },
+      {
+        "name": "Travel Navigation",
+        "servers": [
+          "Google Maps",
+          "National Parks"
+        ],
+        "description": "Navigation with park attractions"
+      },
+      {
+        "name": "Dev Environment",
+        "servers": [
+          "NixOS",
+          "Context7"
+        ],
+        "description": "System management with documentation"
+      },
+      {
+        "name": "Location Services",
+        "servers": [
+          "Google Maps",
+          "Weather Data"
+        ],
+        "description": "Navigation with weather info"
+      },
+      {
+        "name": "Crypto Trading",
+        "servers": [
+          "DEX Paprika",
+          "OKX Exchange"
+        ],
+        "description": "DeFi data with exchange trading"
+      },
+      {
+        "name": "Cultural Knowledge",
+        "servers": [
+          "Metropolitan Museum",
+          "Wikipedia"
+        ],
+        "description": "Art history with encyclopedia"
+      },
+      {
+        "name": "Science Tools",
+        "servers": [
+          "Scientific Computing",
+          "Math MCP"
+        ],
+        "description": "Scientific and mathematical computing"
+      },
+      {
+        "name": "AI Research",
+        "servers": [
+          "Hugging Face",
+          "Paper Search"
+        ],
+        "description": "AI models with research papers"
+      },
+      {
+        "name": "Travel Weather",
+        "servers": [
+          "National Parks",
+          "Weather Data"
+        ],
+        "description": "Park visits with weather planning"
+      },
+      {
+        "name": "Conversion Tools",
+        "servers": [
+          "Unit Converter",
+          "Math MCP"
+        ],
+        "description": "Unit conversion with calculations"
+      },
+      {
+        "name": "Entertainment Social",
+        "servers": [
+          "Game Trends",
+          "Reddit"
+        ],
+        "description": "Gaming trends with discussions"
+      },
+      {
+        "name": "Research Tools",
+        "servers": [
+          "Scientific Computing",
+          "Unit Converter"
+        ],
+        "description": "Scientific computing with conversions"
+      },
+      {
+        "name": "Knowledge Base",
+        "servers": [
+          "Wikipedia",
+          "Paper Search"
+        ],
+        "description": "General knowledge with academic papers"
+      },
+      {
+        "name": "Social Markets",
+        "servers": [
+          "Reddit",
+          "DEX Paprika"
+        ],
+        "description": "Community sentiment with DeFi"
+      }
+    ]
+  }
+}

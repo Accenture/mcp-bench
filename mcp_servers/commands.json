@@ -1,0 +1,155 @@
+{
+  "OpenAPI Explorer": {
+    "cmd": "node index.js run",
+    "env": [],
+    "cwd": "../openapi-mcp-server"
+  },
+  "Unit Converter": {
+    "cmd": "python -m unit_converter_mcp.server",
+    "env": [],
+    "cwd": "../unit-converter-mcp"
+  },
+  "Wikipedia": {
+    "cmd": "uv run python -m wikipedia_mcp",
+    "env": [],
+    "cwd": "../wikipedia-mcp"
+  },
+  "Google Maps": {
+    "cmd": "node dist/cli.js --port 3001",
+    "env": [
+      "GOOGLE_MAPS_API_KEY"
+    ],
+    "cwd": "../mcp-google-map",
+    "transport": "http",
+    "port": 3001,
+    "endpoint": "/mcp"
+  },
+  "Bibliomantic": {
+    "cmd": "python bibliomantic_server.py",
+    "env": [],
+    "cwd": "../bibliomantic-mcp-server"
+  },
+  "BioMCP": {
+    "cmd": "uv run biomcp run",
+    "env": [
+      "NCI_API_KEY"
+    ],
+    "cwd": "../biomcp"
+  },
+  "Call for Papers": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../call-for-papers-mcp/call-for-papers-mcp-main"
+  },
+  "Car Price Evaluator": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../car-price-mcp-main"
+  },
+  "Context7": {
+    "cmd": "node dist/index.js",
+    "env": [],
+    "cwd": "../context7-mcp"
+  },
+  "DEX Paprika": {
+    "cmd": "node src/index.js",
+    "env": [],
+    "cwd": "../dexpaprika-mcp"
+  },
+  "FruityVice": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../fruityvice-mcp"
+  },
+  "Game Trends": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../game-trends-mcp"
+  },
+  "Huge Icons": {
+    "cmd": "node build/index.js",
+    "env": [],
+    "cwd": "../hugeicons-mcp-server"
+  },
+  "Hugging Face": {
+    "cmd": "python src/huggingface/server.py",
+    "env": [
+      "HF_TOKEN"
+    ],
+    "cwd": "../huggingface-mcp-server"
+  },
+  "Math MCP": {
+    "cmd": "node build/index.js",
+    "env": [],
+    "cwd": "../math-mcp"
+  },
+  "NixOS": {
+    "cmd": "python mcp_nixos/server.py",
+    "env": [],
+    "cwd": "../mcp-nixos"
+  },
+  "OSINT Intelligence": {
+    "cmd": "python mcp_osint_server/mcp_osint_server/main.py",
+    "env": [],
+    "cwd": "../mcp-osint-server"
+  },
+  "Reddit": {
+    "cmd": "uv run python -m mcp_reddit.reddit_fetcher",
+    "env": [],
+    "cwd": "../mcp-reddit"
+  },
+  "National Parks": {
+    "cmd": "node build/index.js",
+    "env": [
+      "NPS_API_KEY"
+    ],
+    "cwd": "../mcp-server-nationalparks"
+  },
+  "Medical Calculator": {
+    "cmd": "python medcalc/__main__.py",
+    "env": [],
+    "cwd": "../medcalc"
+  },
+  "Metropolitan Museum": {
+    "cmd": "node dist/index.js",
+    "env": [],
+    "cwd": "../metmuseum-mcp"
+  },
+  "Movie Recommender": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../movie-recommender-mcp/movie-reccomender-mcp"
+  },
+  "NASA Data": {
+    "cmd": "uv run python main.py",
+    "env": [
+      "NASA_API_KEY"
+    ],
+    "cwd": "../nasa-mcp"
+  },
+  "OKX Exchange": {
+    "cmd": "node build/index.js",
+    "env": [],
+    "cwd": "../okx-mcp"
+  },
+  "Paper Search": {
+    "cmd": "python -m paper_search_mcp.server",
+    "env": [],
+    "cwd": "../paper-search-mcp"
+  },
+  "Scientific Computing": {
+    "cmd": "python src/server.py",
+    "env": [],
+    "cwd": "../scientific_computation_mcp"
+  },
+  "Weather Data": {
+    "cmd": "python server.py",
+    "env": [],
+    "cwd": "../weather_mcp"
+  },
+  "Time MCP": {
+    "cmd": "python -m mcp_server_time",
+    "env": [],
+    "cwd": "../time-mcp"
+  }
+}

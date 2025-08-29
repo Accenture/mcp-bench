@@ -1,0 +1,7 @@
+# Smithery configuration file
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  command: python
+  args: ["-m", "mcp_nixos"]

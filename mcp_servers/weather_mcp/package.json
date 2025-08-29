@@ -1,0 +1,20 @@
+{
+  "name": "mcp",
+  "version": "1.0.0",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarunGuclu/weather_mcp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarunGuclu/weather_mcp/issues"
+  },
+  "homepage": "https://github.com/HarunGuclu/weather_mcp#readme",
+  "description": ""
+}

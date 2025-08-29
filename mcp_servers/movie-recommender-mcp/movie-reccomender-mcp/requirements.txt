@@ -1,0 +1,4 @@
+requests
+mcp
+requests-cache
+retry-requests

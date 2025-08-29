@@ -1,0 +1,345 @@
+name: Release Wikipedia MCP
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.5.7)'
+        required: true
+        default: '1.5.7'
+      prerelease:
+        description: 'Mark as prerelease'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: 'Create as draft release'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write  # Need write permissions for tagging and releases
+  id-token: write  # Required for trusted publishing to PyPI
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  validate-version:
+    name: Validate Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ github.event.inputs.version }}
+      is-prerelease: ${{ github.event.inputs.prerelease }}
+      is-draft: ${{ github.event.inputs.draft }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "Version must follow semantic versioning (e.g., 1.5.7, 1.5.7-alpha.1)"
+            exit 1
+          fi
+          echo "✅ Version format is valid: $VERSION"
+
+      - name: Check if tag already exists
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if git ls-remote --tags origin "v$VERSION" | grep -q "v$VERSION"; then
+            echo "❌ Tag v$VERSION already exists"
+            exit 1
+          fi
+          echo "✅ Tag v$VERSION does not exist"
+
+      - name: Validate current version
+        run: |
+          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          NEW_VERSION="${{ github.event.inputs.version }}"
+          echo "Current version: $CURRENT_VERSION"
+          echo "New version: $NEW_VERSION"
+          
+          # Simple version comparison (basic semantic versioning)
+          if [[ "$CURRENT_VERSION" == "$NEW_VERSION" ]]; then
+            echo "❌ Version is already set to $NEW_VERSION"
+            exit 1
+          fi
+          echo "✅ Version update is valid"
+
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    needs: validate-version
+    outputs:
+      version: ${{ needs.validate-version.outputs.version }}
+      is-prerelease: ${{ needs.validate-version.outputs.is-prerelease }}
+      is-draft: ${{ needs.validate-version.outputs.is-draft }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Update version in pyproject.toml
+        run: |
+          VERSION="${{ needs.validate-version.outputs.version }}"
+          sed -i "s/version = \"[0-9]*\\.[0-9]*\\.[0-9]*\"/version = \"$VERSION\"/g" pyproject.toml
+          echo "✅ Updated version to $VERSION"
+          cat pyproject.toml | grep version
+
+      - name: Update CHANGELOG.md
+        run: |
+          VERSION="${{ needs.validate-version.outputs.version }}"
+          DATE=$(date +'%Y-%m-%d')
+          
+          # Create changelog entry if it doesn't exist
+          if ! grep -q "## \[$VERSION\]" CHANGELOG.md; then
+            # Add new version entry after the first ## heading
+            sed -i "/^## \[/a\\
+          \\
+          ## [$VERSION] - $DATE\\
+          \\
+          ### Added\\
+          - Initial release for version $VERSION\\
+          \\
+          ### Changed\\
+          - \\
+          \\
+          ### Fixed\\
+          - \\
+          " CHANGELOG.md
+            echo "✅ Added changelog entry for version $VERSION"
+          else
+            echo "ℹ️ Changelog entry for version $VERSION already exists"
+          fi
+
+      - name: Commit version update
+        run: |
+          VERSION="${{ needs.validate-version.outputs.version }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add pyproject.toml CHANGELOG.md
+          git commit -m "Bump version to $VERSION" || exit 0
+          git push origin HEAD:main
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ needs.validate-version.outputs.version }}"
+          git tag v$VERSION
+          git push origin v$VERSION
+
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    needs: [validate-version, prepare-release]
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.prepare-release.outputs.version }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          pip install -e ".[dev]"
+
+      - name: Run linting
+        if: matrix.python-version == '3.11'
+        run: |
+          flake8 wikipedia_mcp tests
+          black --check wikipedia_mcp tests
+          mypy wikipedia_mcp
+
+      - name: Run tests
+        run: |
+          pytest --cov=wikipedia_mcp tests/ -v --cov-report=xml --cov-report=term
+
+      - name: Build package
+        if: matrix.python-version == '3.11'
+        run: |
+          python -m build
+          echo "✅ Built packages:"
+          ls -la dist/
+
+      - name: Check package
+        if: matrix.python-version == '3.11'
+        run: |
+          twine check dist/*
+
+      - name: Test installation
+        if: matrix.python-version == '3.11'
+        run: |
+          pip install dist/*.whl
+          wikipedia-mcp --help
+
+      - name: Upload build artifacts
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-packages
+          path: dist/
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate-version, prepare-release, build-and-test]
+    if: needs.prepare-release.outputs.is-draft == 'false'
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-packages
+          path: dist/
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          IS_PRERELEASE="${{ needs.prepare-release.outputs.is-prerelease }}"
+          
+          # Extract changelog section for this version
+          CHANGELOG_SECTION=$(awk "/^## \\[$VERSION\\]/,/^## \\[/{if (!/^## \\[/) print}" CHANGELOG.md | head -n -1)
+          
+          if [ -z "$CHANGELOG_SECTION" ]; then
+            CHANGELOG_SECTION="Release v$VERSION of Wikipedia MCP."
+          fi
+          
+          # Create release body
+          cat << EOF > release_body.md
+          ## 🚀 What's Changed
+          
+          $CHANGELOG_SECTION
+          
+          ## 📦 Installation
+          
+          ### From PyPI (Recommended)
+          \`\`\`bash
+          pip install wikipedia-mcp==$VERSION
+          \`\`\`
+          
+          ### Using uvx
+          \`\`\`bash
+          uvx wikipedia-mcp
+          \`\`\`
+          
+          ### From GitHub Release
+          Download the wheel file from the assets below and install:
+          \`\`\`bash
+          pip install wikipedia_mcp-$VERSION-py3-none-any.whl
+          \`\`\`
+          
+          ### From Source Distribution
+          \`\`\`bash
+          pip install wikipedia-mcp-$VERSION.tar.gz
+          \`\`\`
+          
+          ## 📁 Files in this release
+          - \`wikipedia_mcp-$VERSION-py3-none-any.whl\` - Python wheel package (recommended)
+          - \`wikipedia-mcp-$VERSION.tar.gz\` - Source distribution
+          
+          ## 🔧 Usage
+          \`\`\`bash
+          wikipedia-mcp --help
+          \`\`\`
+          
+          **Note:** This release has been automatically published to PyPI.
+          EOF
+          
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          cat release_body.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.prepare-release.outputs.version }}
+          name: Wikipedia MCP v${{ needs.prepare-release.outputs.version }}
+          body: ${{ steps.release_notes.outputs.body }}
+          draft: ${{ needs.prepare-release.outputs.is-draft }}
+          prerelease: ${{ needs.prepare-release.outputs.is-prerelease }}
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: [validate-version, prepare-release, build-and-test, create-release]
+    if: needs.prepare-release.outputs.is-prerelease == 'false'
+    environment:
+      name: pypi
+      url: https://pypi.org/p/wikipedia-mcp
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-packages
+          path: dist/
+
+      - name: Verify package before publishing
+        run: |
+          echo "🔍 Verifying packages before PyPI upload..."
+          twine check dist/*
+          echo "✅ Package verification passed"
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Verify PyPI upload
+        run: |
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          echo "🔍 Verifying PyPI upload..."
+          sleep 10  # Wait for PyPI to process
+          pip install wikipedia-mcp==$VERSION --force-reinstall
+          wikipedia-mcp --help
+          echo "✅ PyPI upload verified successfully"
+
+  rollback-on-failure:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [validate-version, prepare-release]
+    if: failure() && needs.prepare-release.outputs.version != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete tag if exists
+        run: |
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          if git ls-remote --tags origin "v$VERSION" | grep -q "v$VERSION"; then
+            git push origin --delete "v$VERSION" || true
+            echo "🗑️ Deleted tag v$VERSION"
+          fi
+
+      - name: Revert version changes
+        run: |
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git reset --hard HEAD~1 || true
+          git push --force origin HEAD:main || true
+          echo "🔄 Reverted version changes"
