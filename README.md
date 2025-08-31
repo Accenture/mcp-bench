@@ -329,6 +329,10 @@ If you use MCP-Bench in your research, please cite:
 }
 ```
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=accenture/mcp-bench&type=Date)](https://star-history.com/#accenture/mcp-bench&Date)
+
 ## Acknowledgments
 
 - Built on the [Model Context Protocol](https://github.com/anthropics/mcp) by Anthropic
