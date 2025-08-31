@@ -1,0 +1,22 @@
+{
+    "temperature": {
+        "units": ["celsius", "fahrenheit", "kelvin"],
+        "base_unit": "celsius",
+        "description": "Temperature conversion units"
+    },
+    "length": {
+        "units": ["meter", "kilometer", "centimeter", "millimeter", "inch", "foot", "yard", "mile"],
+        "base_unit": "meter",
+        "description": "Length conversion units"
+    },
+    "weight": {
+        "units": ["kilogram", "gram", "pound", "ounce", "ton"],
+        "base_unit": "kilogram",
+        "description": "Weight conversion units"
+    },
+    "volume": {
+        "units": ["liter", "milliliter", "gallon", "quart", "pint", "cup", "fluid_ounce"],
+        "base_unit": "liter",
+        "description": "Volume conversion units"
+    }
+} 
