@@ -228,34 +228,34 @@ This way all models will be accessed through OpenRouter's unified API.
 
 MCP-Bench includes 28 diverse MCP servers:
 
-- [BioMCP](https://github.com/ckreutzer/biomcp) - Biomedical research data, clinical trials, and health information
-- [Bibliomantic](https://github.com/Fardin-Data/bibliomantic-mcp-server) - I Ching divination, hexagrams, and mystical guidance
-- [Call for Papers](https://github.com/shawnchen03/call-for-papers-mcp) - Academic conference submissions and call announcements
-- [Car Price Evaluator](https://github.com/aryamanpandya99/car-price-mcp) - Vehicle valuation and automotive market analysis
-- [Context7](https://github.com/3cn-ecn/context7-mcp) - Project context management and documentation services
-- [DEX Paprika](https://github.com/suekou/dexpaprika-mcp) - Cryptocurrency DeFi analytics and decentralized exchange data
-- [FruityVice](https://github.com/anthonyprawira/fruityvice-mcp) - Comprehensive fruit nutrition information and dietary data
-- [Game Trends](https://github.com/StefanMaran/game-trends-mcp) - Gaming industry statistics and trend analysis
-- [Google Maps](https://github.com/wknd24/mcp-google-map) - Location services, geocoding, and mapping functionality
-- [Huge Icons](https://github.com/stocai/hugeicons-mcp-server) - Icon search, management, and design resources
-- [Hugging Face](https://github.com/smartagentcom/huggingface-mcp-server) - Machine learning models, datasets, and AI capabilities
-- [Math MCP](https://github.com/SaintMiner/math-mcp) - Mathematical calculations and computational operations
-- [Medical Calculator](https://github.com/cdrcx/MedCalc-bench/tree/main/MedCalcBench) - Clinical calculation tools and medical formulas
-- [Metropolitan Museum](https://github.com/ahochman/metmuseum-mcp) - Art collection database and museum information
-- [Movie Recommender](https://github.com/abhinavchadha/movie-recommender-mcp) - Film recommendations and movie metadata
-- [NASA Data](https://github.com/ianryan/nasa-mcp) - Space mission data and astronomical information
-- [National Parks](https://github.com/geobio/mcp-server-nationalparks) - US National Parks information and visitor services
-- [NixOS](https://github.com/pico-lab/mcp-nixos-search) - Package management and system configuration tools
-- [OKX Exchange](https://github.com/JaminLiu/okx-mcp) - Cryptocurrency trading data and market information
-- [OpenAPI Explorer](https://github.com/hharasaki/openapi-mcp-server) - API specification exploration and testing tools
-- [OSINT Intelligence](https://github.com/fybits/osint-mcp) - Open source intelligence gathering and analysis
-- [Paper Search](https://github.com/shaneholloman/paper-search-mcp) - Academic paper search across multiple research databases
-- [Reddit](https://github.com/modelcontextprotocol/servers/tree/main/src/reddit) - Social media content and community discussions
-- [Scientific Computing](https://github.com/Srivatzn/scientific_computation_mcp) - Advanced mathematical computations and data analysis
-- [Time MCP](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Date, time utilities, and timezone conversions
-- [Unit Converter](https://github.com/modelcontextprotocol/servers/tree/main/src/unit-converter) - Measurement conversions across different unit systems
-- [Weather Data](https://github.com/thrillee/weather_mcp) - Weather forecasts and meteorological information
-- [Wikipedia](https://github.com/modelcontextprotocol/servers/tree/main/src/wikipedia) - Encyclopedia content search and retrieval
+- [BioMCP](https://github.com/genomoncology/biomcp) - Biomedical research data, clinical trials, and health information
+- [Bibliomantic](https://github.com/d4nshields/bibliomantic-mcp-server) - I Ching divination, hexagrams, and mystical guidance
+- [Call for Papers](https://github.com/iremert/call-for-papers-mcp) - Academic conference submissions and call announcements
+- [Car Price Evaluator](https://github.com/yusaaztrk/car-price-mcp-main) - Vehicle valuation and automotive market analysis
+- [Context7](https://github.com/upstash/context7) - Project context management and documentation services
+- [DEX Paprika](https://github.com/coinpaprika/dexpaprika-mcp) - Cryptocurrency DeFi analytics and decentralized exchange data
+- [FruityVice](https://github.com/CelalKhalilov/fruityvice-mcp) - Comprehensive fruit nutrition information and dietary data
+- [Game Trends](https://github.com/halismertkir/game-trends-mcp) - Gaming industry statistics and trend analysis
+- [Google Maps](https://github.com/cablate/mcp-google-map) - Location services, geocoding, and mapping functionality
+- [Huge Icons](https://github.com/hugeicons/mcp-server) - Icon search, management, and design resources
+- [Hugging Face](https://github.com/shreyaskarnik/huggingface-mcp-server) - Machine learning models, datasets, and AI capabilities
+- [Math MCP](https://github.com/EthanHenrickson/math-mcp) - Mathematical calculations and computational operations
+- [Medical Calculator](https://github.com/vitaldb/medcalc) - Clinical calculation tools and medical formulas
+- [Metropolitan Museum](https://github.com/mikechao/metmuseum-mcp) - Art collection database and museum information
+- [Movie Recommender](https://github.com/iremert/movie-recommender-mcp) - Film recommendations and movie metadata
+- [NASA Data](https://github.com/AnCode666/nasa-mcp) - Space mission data and astronomical information
+- [National Parks](https://github.com/KyrieTangSheng/mcp-server-nationalparks) - US National Parks information and visitor services
+- [NixOS](https://github.com/utensils/mcp-nixos) - Package management and system configuration tools
+- [OKX Exchange](https://github.com/esshka/okx-mcp) - Cryptocurrency trading data and market information
+- [OpenAPI Explorer](https://github.com/janwilmake/openapi-mcp-server) - API specification exploration and testing tools
+- [OSINT Intelligence](https://github.com/himanshusanecha/mcp-osint-server) - Open source intelligence gathering and analysis
+- [Paper Search](https://github.com/openags/paper-search-mcp) - Academic paper search across multiple research databases
+- [Reddit](https://github.com/dumyCq/mcp-reddit) - Social media content and community discussions
+- [Scientific Computing](https://github.com/Aman-Amith-Shastry/scientific_computation_mcp) - Advanced mathematical computations and data analysis
+- [Time MCP](https://github.com/dumyCq/time-mcp) - Date, time utilities, and timezone conversions
+- [Unit Converter](https://github.com/zazencodes/unit-converter-mcp) - Measurement conversions across different unit systems
+- [Weather Data](https://github.com/HarunGuclu/weather_mcp) - Weather forecasts and meteorological information
+- [Wikipedia](https://github.com/Rudra-ravi/wikipedia-mcp) - Encyclopedia content search and retrieval
 
 ## Project Structure
 
