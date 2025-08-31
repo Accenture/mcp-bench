@@ -1,67 +1,31 @@
-# Python virtual environments
-mcp_catalog_servers/
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
 venv/
 env/
 .venv/
 .env/
 
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Node.js dependencies and builds
+# Node modules
 node_modules/
-build/
-dist/
+
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Lock files (generated during installation)
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-bun.lock
-uv.lock
-
-# TypeScript compiled output
-*.js
-*.js.map
-*.d.ts
-
-# Test and log files
-*.log
-test_*.py
-*_test.py
-test_results/
-coverage/
-
-# API keys and environment files
+# Environment variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# IDE and editor files
+# IDE files
 .vscode/
 .idea/
 *.swp
@@ -77,9 +41,11 @@ Thumbs.db
 *.temp
 .cache/
 
-# Server-specific ignore patterns
-# (Individual servers may have their own build artifacts)
-*/build/
-*/dist/
-*/.next/
-*/coverage/
+# Coverage reports
+coverage/
+.coverage
+htmlcov/
+
+# Python egg info (可以重新生成)
+*.egg-info/
+.eggs/
