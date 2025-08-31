@@ -293,8 +293,7 @@ mcp-bench/
 │   ├── README.md             # Task synthesis documentation
 │   └── split_combinations/   # Server combination splits
 │       ├── mcp_2server_combinations.json
-│       ├── mcp_3server_combinations.json
-│       └── mcp_4plus_server_combinations.json
+│       └── mcp_3server_combinations.json
 ├── utils/                    # Utilities
 │   ├── __init__.py
 │   ├── collect_mcp_info.py  # Server discovery and tool collection
@@ -304,8 +303,6 @@ mcp-bench/
 │   ├── mcpbench_tasks_single_runner_format.json
 │   ├── mcpbench_tasks_multi_2server_runner_format.json
 │   └── mcpbench_tasks_multi_3server_runner_format.json
-├── images/                   # Documentation images
-│   └── mcpbench_intro.png
 ├── mcp_servers/             # MCP server implementations (28 servers)
 │   ├── api_key              # API keys configuration file
 │   ├── commands.json        # Server command configurations
