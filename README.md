@@ -260,46 +260,63 @@ MCP-Bench includes 28 diverse MCP servers:
 ## Project Structure
 
 ```
-MCP-Benchmark/
+mcp-bench/
 ├── agent/                     # Task execution agents
+│   ├── __init__.py
 │   ├── executor.py           # Multi-round task executor with retry logic
 │   └── execution_context.py  # Execution context management
 ├── benchmark/                 # Evaluation framework
+│   ├── __init__.py
 │   ├── evaluator.py          # LLM-as-judge evaluation metrics
 │   ├── runner.py             # Benchmark orchestrator
 │   ├── results_aggregator.py # Results aggregation and statistics
 │   └── results_formatter.py  # Results formatting and display
 ├── config/                    # Configuration management
+│   ├── __init__.py
 │   ├── benchmark_config.yaml # Benchmark configuration
 │   └── config_loader.py      # Configuration loader
 ├── llm/                       # LLM provider abstractions
+│   ├── __init__.py
 │   ├── factory.py            # Model factory for multiple providers
 │   └── provider.py           # Unified provider interface
 ├── mcp_modules/              # MCP server management
+│   ├── __init__.py
 │   ├── connector.py          # Server connection handling
 │   ├── server_manager.py     # Multi-server orchestration
-│   └── server_manager_persistent.py # Persistent connection manager
+│   ├── server_manager_persistent.py # Persistent connection manager
+│   └── tool_cache.py         # Tool call caching mechanism
 ├── synthesis/                # Task generation
+│   ├── __init__.py
 │   ├── task_synthesis.py     # Task generation with fuzzy conversion
-│   ├── generate_benchmark_tasks.py # Batch task generation
+│   ├── generate_benchmark_tasks.py # Batch task generation script
 │   ├── benchmark_generator.py # Unified benchmark task generator
+│   ├── README.md             # Task synthesis documentation
 │   └── split_combinations/   # Server combination splits
+│       ├── mcp_2server_combinations.json
+│       ├── mcp_3server_combinations.json
+│       └── mcp_4plus_server_combinations.json
 ├── utils/                    # Utilities
+│   ├── __init__.py
 │   ├── collect_mcp_info.py  # Server discovery and tool collection
 │   ├── local_server_config.py # Local server configuration
 │   └── error_handler.py     # Error handling utilities
 ├── tasks/                    # Benchmark task files
 │   ├── mcpbench_tasks_single_runner_format.json
 │   ├── mcpbench_tasks_multi_2server_runner_format.json
-│   ├── mcpbench_tasks_multi_3server_runner_format.json
-│   └── mcpbench_tasks_multi_4plus_server_runner_format.json
+│   └── mcpbench_tasks_multi_3server_runner_format.json
+├── images/                   # Documentation images
+│   └── mcpbench_intro.png
 ├── mcp_servers/             # MCP server implementations (28 servers)
+│   ├── api_key              # API keys configuration file
 │   ├── commands.json        # Server command configurations
 │   ├── install.sh          # Installation script for all servers
 │   ├── requirements.txt    # Python dependencies
 │   └── [28 server directories]
+├── cache/                   # Tool call cache directory (auto-created)
 ├── run_benchmark.py         # Main benchmark runner script
-└── README.md               # Project documentation
+├── README.md               # Project documentation
+├── .gitignore              # Git ignore configuration
+└── .gitmodules             # Git submodules configuration
 ```
 
 ## Citation
