@@ -46,6 +46,6 @@ coverage/
 .coverage
 htmlcov/
 
-# Python egg info (可以重新生成)
+# Python egg info
 *.egg-info/
 .eggs/
