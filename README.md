@@ -51,6 +51,7 @@ cd mcp-bench
 2. **Install dependencies**
 ```bash
 conda create -n mcpbench python=3.10
+conda activate mcpbench
 cd mcp_servers
 # Install MCP server dependencies
 bash ./install.sh
