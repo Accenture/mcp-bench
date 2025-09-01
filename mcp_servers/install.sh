@@ -274,6 +274,21 @@ install_nodejs_dependencies() {
                 npm install
                 # Install additional missing dependencies
                 npm install image-to-base64 --save
+                # Install TypeScript as dev dependency
+                npm install typescript --save-dev
+                # Try to install type definitions, if not available create a declaration file
+                npm install @types/image-to-base64 --save-dev 2>/dev/null || {
+                    log_info "Creating type declaration for image-to-base64"
+                    mkdir -p src/types
+                    cat > src/types/image-to-base64.d.ts << 'EOF'
+declare module 'image-to-base64' {
+    function imageToBase64(url: string): Promise<string>;
+    export = imageToBase64;
+}
+EOF
+                }
+                # Compile TypeScript to generate dist folder
+                npx tsc
                 # Mark as already installed to skip duplicate installation
                 SKIP_NPM_INSTALL=true
             elif [ "$server" = "context7-mcp" ]; then
