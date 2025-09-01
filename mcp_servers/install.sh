@@ -269,8 +269,28 @@ install_nodejs_dependencies() {
                 log_info "Applying fix for hugeicons-mcp-server: installing typescript"
                 npm install typescript --save-dev 2>/dev/null
             elif [ "$server" = "metmuseum-mcp" ]; then
-                log_info "Applying fix for metmuseum-mcp: installing typescript and missing types"
-                npm install typescript @types/image-to-base64 --save-dev 2>/dev/null
+                log_info "Applying fix for metmuseum-mcp: ensuring all dependencies"
+                # Install all dependencies from package.json
+                npm install
+                # Install additional missing dependencies
+                npm install image-to-base64 --save
+                # Install TypeScript as dev dependency
+                npm install typescript --save-dev
+                # Try to install type definitions, if not available create a declaration file
+                npm install @types/image-to-base64 --save-dev 2>/dev/null || {
+                    log_info "Creating type declaration for image-to-base64"
+                    mkdir -p src/types
+                    cat > src/types/image-to-base64.d.ts << 'EOF'
+declare module 'image-to-base64' {
+    function imageToBase64(url: string): Promise<string>;
+    export = imageToBase64;
+}
+EOF
+                }
+                # Compile TypeScript to generate dist folder
+                npx tsc
+                # Mark as already installed to skip duplicate installation
+                SKIP_NPM_INSTALL=true
             elif [ "$server" = "context7-mcp" ]; then
                 log_info "Applying fix for context7-mcp: installing typescript"
                 npm install typescript --save-dev 2>/dev/null
