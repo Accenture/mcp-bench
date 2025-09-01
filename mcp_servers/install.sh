@@ -513,7 +513,7 @@ main() {
     echo ""
     log_success "MCP Catalog installation completed!"
     echo ""
-    log_info "Next steps:"
+    log_info "Next steps: "
     echo "1. Edit the api_key file with your actual API keys"
     echo "2. Source environment variables: source api_key"
     echo "3. Run individual servers using commands from commands.json"
