@@ -65,9 +65,9 @@ cd ..
 # For Azure OpenAI, you also need to set your API version in file benchmark_config.yaml (line205)
 # For OpenRouter-only setup, see "Optional: Using only OpenRouter API" section below
 cat > .env << EOF
-OPENROUTER_API_KEY=your_openrouterkey_here
-AZURE_OPENAI_API_KEY=your_azureopenai_apikey_here
-AZURE_OPENAI_ENDPOINT=your_azureopenai_endpoint_here
+export OPENROUTER_API_KEY="your_openrouterkey_here"
+export AZURE_OPENAI_API_KEY="your_azureopenai_apikey_here"
+export AZURE_OPENAI_ENDPOINT="your_azureopenai_endpoint_here"
 EOF
 ```
 

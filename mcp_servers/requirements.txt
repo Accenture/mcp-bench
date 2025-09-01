@@ -54,3 +54,6 @@ PyPDF2>=3.0.0
 lxml>=4.9.0
 praw
 redditwarp
+
+# Other
+json_repair==0.47.4
