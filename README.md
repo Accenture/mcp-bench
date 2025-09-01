@@ -92,7 +92,8 @@ Required API keys include (These API keys are free and easy to get. You can get 
 
 ```bash
 # 1. Verify all MCP servers can be connected
-##You should see "28/28 servers connected" and "All successfully connected servers returned tools!" after running this
+##You should see "28/28 servers connected" 
+##and "All successfully connected servers returned tools!" after running this
 python ./utils/collect_mcp_info.py
 
 
