@@ -85,7 +85,7 @@ Required API keys include (These API keys are free and easy to get. You can get 
 - `NASA_API_KEY`: NASA Open Data API key (for nasa-mcp server) - [Get API key](https://api.nasa.gov/)
 - `HF_TOKEN`: Hugging Face token (for huggingface-mcp-server) - [Get token](https://huggingface.co/docs/hub/security-tokens)
 - `GOOGLE_MAPS_API_KEY`: Google Maps API key (for mcp-google-map server) - [Get API key](https://developers.google.com/maps)
-- `NCI_API_KEY`: National Cancer Institute API key (for biomcp server) - [Get API key](https://clinicaltrialsapi.cancer.gov/)
+- `NCI_API_KEY`: National Cancer Institute API key (for biomcp server) - [Get API key](https://clinicaltrialsapi.cancer.gov/) This api key registration website might require US IP to open, see Issue #10 if you have difficulies for getting this api key.
 
 
 ### Basic Usage
