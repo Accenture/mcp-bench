@@ -267,6 +267,13 @@ MCP-Bench includes 28 diverse MCP servers:
 - [Weather Data](https://github.com/HarunGuclu/weather_mcp) - Weather forecasts and meteorological information
 - [Wikipedia](https://github.com/Rudra-ravi/wikipedia-mcp) - Encyclopedia content search and retrieval
 
+
+More MCP Resources for Benchmarks:
+
+- [Open MCP Marketplace](https://github.com/AI-Agent-Hub/mcp-marketplace) An open source python-based MCP Client. Use mcp.config file and admin panel to manage MCP servers just as using IDE such as Claude, Cursor, etc. Run benchmarks through MCP APIs endpoints programmably.
+- [OneKey MCP Router](https://github.com/AI-Agent-Hub/mcp-marketplace/tree/main/app/onekey_mcp_router): Use OneKey MCP Router to simplify MCP access key registration process and access many commercial MCPs (Google Maps,Google Search,Tavily Search,Bing Image search,etc.) for benchmarking using a single key.  [Get OneKey API key](https://www.deepnlp.org/agent/onekey-mcp-router)
+
+
 ## Project Structure
 
 ```
