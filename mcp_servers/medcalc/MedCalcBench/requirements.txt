@@ -148,7 +148,7 @@ torch==2.3.0
 tornado==6.4
 tqdm==4.66.2
 traitlets==5.14.3
-transformers==4.41.2
+transformers==4.53.0
 txt2tags==3.9
 typer==0.12.3
 types-python-dateutil==2.9.0.20240316
