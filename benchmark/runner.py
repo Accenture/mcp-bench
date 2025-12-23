@@ -27,7 +27,7 @@ from typing import Dict, List, Any, Optional
 # Add parent directory to Python path to resolve imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from openai import AsyncAzureOpenAI
+from openai import AsyncOpenAI
 
 from agent.executor import TaskExecutor
 from mcp_modules.server_manager_persistent import PersistentMultiServerManager
@@ -428,12 +428,26 @@ class BenchmarkRunner:
         
         # Initialize judge provider once for this task execution
         if not hasattr(self, '_judge_provider') or self._judge_provider is None:
-            azure_client = AsyncAzureOpenAI(
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                api_version=config_loader.get_azure_api_version()
-            )
-            self._judge_provider = LLMProvider(azure_client, "o4-mini", "azure")
+            # Try to get a judge provider from available API keys
+            # Priority: OpenAI (o4-mini) > Gemini (gemini-1.5-flash)
+            openai_api_key = os.getenv("OPENAI_API_KEY")
+            gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+            if openai_api_key:
+                # Prefer OpenAI for judging
+                openai_client = AsyncOpenAI(api_key=openai_api_key)
+                self._judge_provider = LLMProvider(openai_client, "o4-mini", "openai")
+                logger.info("Using OpenAI o4-mini as judge model")
+            elif gemini_api_key:
+                # Fall back to Gemini if OpenAI not available
+                import google.generativeai as genai
+                genai.configure(api_key=gemini_api_key)
+                gemini_client = genai.GenerativeModel("gemini-1.5-flash")
+                self._judge_provider = LLMProvider(gemini_client, "gemini-1.5-flash", "gemini")
+                logger.info("Using Gemini gemini-1.5-flash as judge model")
+            else:
+                logger.error("Neither OPENAI_API_KEY nor GEMINI_API_KEY is set, but one is required for LLM judging.")
+                raise RuntimeError("Either OPENAI_API_KEY or GEMINI_API_KEY environment variable is required for benchmark judging.")
         
         # Step 1: Prepare task execution information
         task_execution_info = await self._prepare_task_execution(task_info)

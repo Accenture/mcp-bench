@@ -1,0 +1,24 @@
+{
+    "timestamp": "20251207_155002",
+    "mode": "distraction",
+    "count": 10,
+    "tasks_per_server": 15,
+    "description": "Ablation study with distraction mode, count=10",
+    "results": {
+        "single_server": {
+            "success": true,
+            "file": "ablation_single_server_tasks.json",
+            "runner_format": "ablation_single_server_tasks_runner_format.json"
+        },
+        "two_server": {
+            "success": true,
+            "file": "ablation_2server_tasks.json",
+            "runner_format": "ablation_2server_tasks_runner_format.json"
+        },
+        "three_server": {
+            "success": true,
+            "file": "ablation_3server_tasks.json",
+            "runner_format": "ablation_3server_tasks_runner_format.json"
+        }
+    }
+}

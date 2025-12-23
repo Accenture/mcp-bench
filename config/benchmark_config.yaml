@@ -17,7 +17,7 @@ mcp:
     process_wait_timeout: 5
     # Batch operation timeout (seconds)
     batch_timeout: 60
-  
+
   ports:
     # Default MCP server port
     default_port: 3001
@@ -63,7 +63,16 @@ execution:
     - "Paper Search:download_iacr"
     # AlphaGenome predictor - requires API key that is not provided
     - "BioMCP:alphagenome_predictor"
-  
+    # Reddit tools - rate limits and authentication issues
+    - "Reddit:search_reddit"
+    - "Reddit:get_reddit_post"
+    - "Reddit:get_reddit_comments"
+    - "Reddit:get_reddit_user"
+    # Wikipedia tools - potential rate limiting and parsing issues
+    - "Wikipedia:search"
+    - "Wikipedia:get_page"
+    - "Wikipedia:get_summary"
+
   # Content summary token threshold
   content_summary_threshold: 1000
   # Content truncation length
@@ -82,17 +91,17 @@ benchmark:
     - "Time MCP"
   # Inter-task delay (seconds)
   task_delay: 1
-  
+
   # File paths configuration
   # All task files for comprehensive benchmark (default runs all when no specific file is provided)
   all_task_files:
     - "./tasks/mcpbench_tasks_single_runner_format.json"
     - "./tasks/mcpbench_tasks_multi_2server_runner_format.json"
     - "./tasks/mcpbench_tasks_multi_3server_runner_format.json"
-  
+
   # Default tasks file path (used when specific file is provided)
-  tasks_file: null  # Default to None in Python, will run all task files
-  
+  tasks_file: null # Default to None in Python, will run all task files
+
   # Feature toggles (defaults match current runner.py behavior)
   # Enable LLM judge stability testing (multiple evaluations with randomization)
   enable_judge_stability: true
@@ -124,12 +133,12 @@ cache:
   # Enable cache statistics logging
   log_stats: true
   # Cache cleanup interval in hours (0 = no automatic cleanup)
-  cleanup_interval: 0  # No automatic cleanup
+  cleanup_interval: 0 # No automatic cleanup
   # Cache persistence between runs
   persistent: true
   # Server whitelist - only cache tools from these servers (empty list = cache all)
   # Use exact server names as they appear in server configurations
-  server_whitelist: []  # Empty list means cache all servers
+  server_whitelist: [] # Empty list means cache all servers
 
 # Evaluation related configuration
 evaluation:
@@ -184,6 +193,10 @@ task_generation:
   tasks_per_combination: 1
   # Maximum retry count for task generation
   generation_max_retries: 3
+  # Number of total servers to process (null means all available servers)
+  total_servers_limit: null
+  # Skip first N servers (for resuming generation)
+  skip_servers: 0
 
 # Dependency extraction configuration
 dependency_extraction:

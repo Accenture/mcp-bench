@@ -5,5 +5,9 @@
     "axios": "^1.11.0",
     "image-to-base64": "^2.2.0",
     "mcpscout": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/image-to-base64": "^2.1.2",
+    "typescript": "^5.9.3"
   }
 }
