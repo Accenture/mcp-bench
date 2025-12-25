@@ -57,3 +57,7 @@ redditwarp
 
 # Other
 json_repair==0.47.4
+
+# LLM Provider SDKs
+openai>=1.0.0
+google-generativeai>=0.8.0

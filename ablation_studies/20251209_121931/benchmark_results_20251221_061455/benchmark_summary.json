@@ -1,0 +1,18 @@
+{
+  "timestamp": "20251221_061455",
+  "study": "20251209_121931",
+  "models": [
+    "gpt-4o"
+  ],
+  "configs_tested": [
+    "single",
+    "2server",
+    "3server"
+  ],
+  "output_directory": "/home/himaneeshsompalle/mcp-bench-main-3/ablation_studies/20251209_121931/benchmark_results_20251221_061455",
+  "results": {
+    "single": "success",
+    "2server": "success",
+    "3server": "success"
+  }
+}
