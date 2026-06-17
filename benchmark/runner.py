@@ -27,7 +27,7 @@ from typing import Dict, List, Any, Optional
 # Add parent directory to Python path to resolve imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from openai import AsyncAzureOpenAI
+from openai import AsyncAzureOpenAI, AsyncOpenAI
 
 from agent.executor import TaskExecutor
 from mcp_modules.server_manager_persistent import PersistentMultiServerManager
@@ -428,12 +428,30 @@ class BenchmarkRunner:
         
         # Initialize judge provider once for this task execution
         if not hasattr(self, '_judge_provider') or self._judge_provider is None:
-            azure_client = AsyncAzureOpenAI(
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                api_version=config_loader.get_azure_api_version()
-            )
-            self._judge_provider = LLMProvider(azure_client, "o4-mini", "azure")
+            # Use Azure first, then OpenRouter, then fall back to custom model
+            if os.getenv("AZURE_OPENAI_API_KEY") and os.getenv("AZURE_OPENAI_ENDPOINT"):
+                azure_client = AsyncAzureOpenAI(
+                    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                    api_version=config_loader.get_azure_api_version()
+                )
+                self._judge_provider = LLMProvider(azure_client, "o4-mini", "azure")
+            elif os.getenv("OPENROUTER_API_KEY"):
+                openrouter_client = AsyncOpenAI(
+                    api_key=os.getenv("OPENROUTER_API_KEY"),
+                    base_url="https://openrouter.ai/api/v1"
+                )
+                self._judge_provider = LLMProvider(openrouter_client, "anthropic/claude-opus-4", "openrouter")
+            elif os.getenv("GLM47_FLASH_API_KEY") and os.getenv("GLM47_FLASH_BASE_URL"):
+                # Fall back to GLM-4.7-Flash as judge (self-eval mode)
+                judge_client = AsyncOpenAI(
+                    api_key=os.getenv("GLM47_FLASH_API_KEY"),
+                    base_url=os.getenv("GLM47_FLASH_BASE_URL")
+                )
+                self._judge_provider = LLMProvider(judge_client, os.getenv("GLM47_FLASH_MODEL", "glm-47-flash"), "openai_compatible")
+                logger.warning("Using GLM-4.7-Flash as judge (no Azure/OpenRouter credentials available)")
+            else:
+                raise ValueError("No judge provider available. Set AZURE_OPENAI_API_KEY/AZURE_OPENAI_ENDPOINT or OPENROUTER_API_KEY")
         
         # Step 1: Prepare task execution information
         task_execution_info = await self._prepare_task_execution(task_info)
@@ -634,51 +652,60 @@ class BenchmarkRunner:
                 model_results = []
                 completed_tasks = 0
                 failed_tasks = 0
-                
-                # Execute each task with this model
-                for i, task_info in enumerate(tasks, 1):
-                    # Calculate overall progress
-                    overall_progress_pct = (completed_tasks_all_models / total_tasks_all_models) * 100 if total_tasks_all_models > 0 else 0
-                    
-                    logger.info(f"\n[Overall Progress: {completed_tasks_all_models}/{total_tasks_all_models} ({overall_progress_pct:.1f}%)]")
-                    logger.info(f"Model {model_name} ({model_idx}/{len(available_models)}): Processing task {i}/{len(tasks)}")
-                    
-                    result = await self.execute_single_task_with_model(
-                        task_info, servers_info, model_name, llm_provider)
-                    
-                    # execute_single_task_with_model should never return None
-                    if result is None:
-                        raise RuntimeError(f"execute_single_task_with_model returned None for task {i} - this is a bug")
-                    
+
+                # Per-model task execution. Honour MCPBENCH_CONCURRENCY (default 1
+                # = original sequential behaviour). Higher values run multiple
+                # tasks concurrently against the same shared LLM/MCP state.
+                # MCP server discovery already happened in _initialize_benchmark,
+                # so servers_info is read-only here — safe to share across coros.
+                import os as _os
+                concurrency = max(1, int(_os.environ.get("MCPBENCH_CONCURRENCY", "1")))
+                sem = asyncio.Semaphore(concurrency)
+                task_total = len(tasks)
+
+                async def _run_one(i, task_info):
+                    async with sem:
+                        logger.info(f"Model {model_name} ({model_idx}/{len(available_models)}): Starting task {i}/{task_total}")
+                        result = await self.execute_single_task_with_model(
+                            task_info, servers_info, model_name, llm_provider)
+                        if result is None:
+                            raise RuntimeError(f"execute_single_task_with_model returned None for task {i} - this is a bug")
+                        return i, result
+
+                coros = [_run_one(i, ti) for i, ti in enumerate(tasks, 1)]
+                logger.info(f"Launching {task_total} tasks with concurrency={concurrency}")
+
+                for fut in asyncio.as_completed(coros):
+                    try:
+                        i, result = await fut
+                    except Exception as e:
+                        logger.error(f"Task coroutine raised: {e}")
+                        import traceback
+                        logger.error(traceback.format_exc())
+                        failed_tasks += 1
+                        completed_tasks_all_models += 1
+                        continue
+
                     model_results.append(result)
-                    
                     if result['status'] == 'completed':
                         completed_tasks += 1
                     else:
                         failed_tasks += 1
-                    
-                    # Update overall progress
                     completed_tasks_all_models += 1
-                    
-                    # Log task completion status
+
+                    overall_progress_pct = (completed_tasks_all_models / total_tasks_all_models) * 100 if total_tasks_all_models > 0 else 0
                     status_text = "SUCCESS" if result['status'] == 'completed' else "FAILED"
-                    logger.info(f"[{status_text}] Task {result['task_id']} completed with status: {result['status']}")
-                    
-                    # Display current metrics after each task
+                    logger.info(f"[Overall {completed_tasks_all_models}/{total_tasks_all_models} ({overall_progress_pct:.1f}%)] [{status_text}] Task {result['task_id']}")
+
                     if completed_tasks > 0:
                         try:
                             current_metrics = self.aggregator.aggregate_current_metrics(model_results)
                             self.formatter.format_current_metrics(model_name, completed_tasks, len(tasks), current_metrics, self.tasks_file)
-                            # Update tracked cumulative metrics
                             self.last_cumulative_metrics = current_metrics.copy()
                         except Exception as e:
                             logger.error(f"Error calculating metrics for task {i}: {e}")
                             import traceback
                             logger.error(f"Full traceback: {traceback.format_exc()}")
-                            logger.info(f"Continuing to next task despite metrics calculation error...")
-                        
-                    # Small delay between tasks
-                    await asyncio.sleep(config_loader.get_task_delay())
                 
                 logger.info(f"Model {model_name} completed: {completed_tasks}/{len(tasks)} tasks successful")
                 
