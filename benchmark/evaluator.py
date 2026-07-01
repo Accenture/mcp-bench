@@ -15,6 +15,10 @@ from abc import ABC, abstractmethod
 import jsonschema
 from jsonschema import ValidationError
 import config.config_loader as config_loader
+from benchmark.score_normalization import (
+    LLM_JUDGE_SUBDIMENSION_SCORE_FIELDS,
+    normalize_raw_llm_judge_scores,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -384,7 +388,12 @@ class LLMJudge:
                 logger.warning(f"No valid scores found for {field}, using 0")
                 averaged_result[field] = 0
         
-        # Recalculate aggregate scores from averaged subdimension scores
+        averaged_result = normalize_raw_llm_judge_scores(
+            averaged_result,
+            LLM_JUDGE_SUBDIMENSION_SCORE_FIELDS,
+        )
+
+        # Recalculate aggregate scores from normalized subdimension scores
         task_completion_scores = [
             averaged_result['task_fulfillment'], 
             averaged_result['grounding']
@@ -880,15 +889,19 @@ class LLMJudge:
             logger.info(f"   Parsing time: {parse_time:.3f}s")
             logger.debug(f"Parsed result: {result}")
             
-            # Extract 6 subdimension scores
-            task_fulfillment = result.get('task_fulfillment')
-            grounding = result.get('grounding')
+            # Extract and normalize 6 raw subdimension scores from 0-10 to 0-1.
+            normalized_result = normalize_raw_llm_judge_scores(
+                result,
+                LLM_JUDGE_SUBDIMENSION_SCORE_FIELDS,
+            )
+            task_fulfillment = normalized_result.get('task_fulfillment')
+            grounding = normalized_result.get('grounding')
             
-            tool_appropriateness = result.get('tool_appropriateness')
-            parameter_accuracy = result.get('parameter_accuracy')
+            tool_appropriateness = normalized_result.get('tool_appropriateness')
+            parameter_accuracy = normalized_result.get('parameter_accuracy')
             
-            dependency_awareness = result.get('dependency_awareness')
-            parallelism_and_efficiency = result.get('parallelism_and_efficiency')
+            dependency_awareness = normalized_result.get('dependency_awareness')
+            parallelism_and_efficiency = normalized_result.get('parallelism_and_efficiency')
             
             # Calculate aggregate scores (2 scores per category)
             task_completion_scores = [task_fulfillment, grounding]

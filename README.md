@@ -43,6 +43,8 @@ MCP-Bench is a comprehensive evaluation framework designed to assess Large Langu
 
 *Overall Score represents the average performance across all evaluation dimensions including rule-based schema understanding, LLM-judged (o4-mini as judge model) task completion, tool usage, and planning effectiveness. Scores are averaged across single-server and multi-server settings.*
 
+LLM judge prompts use a 0-10 raw scoring rubric. MCP-Bench normalizes LLM judge subdimension and aggregate scores to the 0-1 range in result JSON, while rule-based rate metrics such as schema compliance are already reported on the 0-1 scale.
+
 ## Quick Start
 
 ### Installation
