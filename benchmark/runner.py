@@ -36,6 +36,7 @@ from llm.factory import LLMFactory
 from benchmark.evaluator import TaskEvaluator
 from benchmark.results_aggregator import ResultsAggregator
 from benchmark.results_formatter import ResultsFormatter, execution_results_to_text
+from benchmark.trajectory_writer import write_task_trajectory
 from utils.local_server_config import LocalServerConfigLoader
 import config.config_loader as config_loader
 
@@ -176,6 +177,7 @@ class BenchmarkRunner:
         filter_problematic_tools: Optional[bool] = None, 
         concurrent_summarization: Optional[bool] = None, 
         use_fuzzy_descriptions: Optional[bool] = None,
+        trajectory_output_dir: Optional[str] = None,
         # Dependency injection parameters
         local_config_loader: Optional[LocalServerConfigLoader] = None,
         aggregator: Optional[ResultsAggregator] = None,
@@ -197,6 +199,7 @@ class BenchmarkRunner:
         self.filter_problematic_tools = filter_problematic_tools if filter_problematic_tools is not None else config_loader.is_problematic_tools_filter_enabled()
         self.concurrent_summarization = concurrent_summarization if concurrent_summarization is not None else config_loader.is_concurrent_summarization_enabled()
         self.use_fuzzy_descriptions = use_fuzzy_descriptions if use_fuzzy_descriptions is not None else config_loader.use_fuzzy_descriptions()
+        self.trajectory_output_dir = trajectory_output_dir
         self.enable_concrete_description_ref = config_loader.is_concrete_description_ref_enabled()
         self.commands_config = None
         
@@ -1026,10 +1029,27 @@ class BenchmarkRunner:
         if evaluation:
             logger.info("\n TASK METRICS:")
             self.formatter.format_single_task_report(task_id, evaluation, [])
-        
+
+        trajectory_file = None
+        if self.trajectory_output_dir:
+            trajectory_text = evaluator.llm_judge._create_execution_summary(
+                result.get('execution_results', []),
+                result.get('total_rounds', 0),
+                accumulated_info
+            )
+            trajectory_file = write_task_trajectory(
+                output_dir=self.trajectory_output_dir,
+                task_id=task_id,
+                model_name=model_name,
+                server_name=server_name,
+                task_description=task_description,
+                trajectory_text=trajectory_text
+            )
+            logger.info(f"Trajectory saved to {trajectory_file}")
+
         logger.info("="*80 + "\n")
-        
-        return {
+
+        final_result = {
             'task_id': task_id,
             'server_name': server_name,
             'model_name': model_name,
@@ -1047,6 +1067,9 @@ class BenchmarkRunner:
             'total_prompt_tokens': result.get('total_prompt_tokens', 0),
             'total_tokens': result.get('total_tokens', 0)
         }
+        if trajectory_file:
+            final_result['trajectory_file'] = trajectory_file
+        return final_result
 
 
 def parse_arguments():
@@ -1080,6 +1103,12 @@ Examples:
         '--output',
         metavar='FILE',
         help='Output file for results (default: auto-generated timestamp name)'
+    )
+
+    parser.add_argument(
+        '--trajectory-output-dir',
+        metavar='DIR',
+        help='Directory for per-task agent trajectory text files (default: disabled)'
     )
     
     parser.add_argument(
@@ -1194,7 +1223,8 @@ def _create_runner_and_get_models(args, tasks_file, enable_distraction):
         enable_judge_stability=not args.disable_judge_stability,
         filter_problematic_tools=not args.disable_filter_problematic_tools,
         concurrent_summarization=not args.disable_concurrent_summarization,
-        use_fuzzy_descriptions=not args.disable_fuzzy
+        use_fuzzy_descriptions=not args.disable_fuzzy,
+        trajectory_output_dir=args.trajectory_output_dir
     )
     available_models = list(runner.model_configs.keys())
     
@@ -1264,6 +1294,9 @@ def _print_configuration(selected_models, available_models, runner, args):
     
     if args.output:
         print(f"   Output file: {args.output}")
+
+    if args.trajectory_output_dir:
+        print(f"   Trajectory output dir: {args.trajectory_output_dir}")
 
 async def main():
     """Main entry point for multi-model benchmark runner"""
