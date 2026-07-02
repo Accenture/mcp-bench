@@ -127,6 +127,12 @@ source .env
 python run_benchmark.py --models gpt-oss-20b \
 --tasks-file tasks/mcpbench_tasks_multi_3server_runner_format.json
 
+## optional: save per-task agent trajectories for debugging or analysis
+source .env
+python run_benchmark.py --models gpt-oss-20b \
+--tasks-file tasks/mcpbench_tasks_single_runner_format.json \
+--trajectory-output-dir trajectories
+
 ```
 
 ### Optional: Add other model providers
@@ -280,7 +286,8 @@ mcp-bench/
 │   ├── evaluator.py          # LLM-as-judge evaluation metrics
 │   ├── runner.py             # Benchmark orchestrator
 │   ├── results_aggregator.py # Results aggregation and statistics
-│   └── results_formatter.py  # Results formatting and display
+│   ├── results_formatter.py  # Results formatting and display
+│   └── trajectory_writer.py  # Per-task trajectory text export
 ├── config/                    # Configuration management
 │   ├── __init__.py
 │   ├── benchmark_config.yaml # Benchmark configuration
